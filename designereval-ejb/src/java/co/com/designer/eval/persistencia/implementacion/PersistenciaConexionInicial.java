@@ -113,6 +113,23 @@ public class PersistenciaConexionInicial implements IPersistenciaConexionInicial
     }
 
     @Override
+    public void setearRolEntrada(EntityManager eManager) {
+        System.out.println(this.getClass().getName() + ".setearRolEntrada()");
+        String texto = "SET ROLE ROLENTRADA";
+        System.out.println("setearUsuario:texto: " + texto);
+        try {
+            eManager.getTransaction().begin();
+            String sqlQuery = texto;
+            Query query = eManager.createNativeQuery(sqlQuery);
+            query.executeUpdate();
+            eManager.getTransaction().commit();
+        } catch (Exception e) {
+            System.out.println("Persistencia.PersistenciaConexionInicial.setearRolEntrada() e: " + e);
+            terminarTransaccionException(eManager);
+        }
+    }
+    
+    @Override
     public void setearUsuario(EntityManager eManager, String rol, String pwd) {
         System.out.println(this.getClass().getName() + ".setearUsuario()");
         System.out.println("setearUsuario:rol: " + rol);

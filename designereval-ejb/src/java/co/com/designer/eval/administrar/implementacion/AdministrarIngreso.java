@@ -76,6 +76,7 @@ public class AdministrarIngreso implements IAdministrarIngreso {
     public Personas conexionUsuario(String baseDatos, String usuario, String clave) {
         try {
             persona = null;
+            persistenciaConexionInicial.setearRolEntrada(em);
             secPerfil = persistenciaConexionInicial.usuarioLogin(em, usuario);
             if (secPerfil != null) {
                 perfilUsuario = persistenciaConexionInicial.perfilUsuario(em, secPerfil);
@@ -105,6 +106,7 @@ public class AdministrarIngreso implements IAdministrarIngreso {
         }
     }
 
+    
     public boolean setearRol() {
         try {
             if (em != null) {

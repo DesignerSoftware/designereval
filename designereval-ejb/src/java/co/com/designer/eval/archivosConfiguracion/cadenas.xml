@@ -16,4 +16,12 @@
         <grupo>GrupoEmpresarial2</grupo>
         <observacion>true</observacion>
     </cadenas>
+    <cadenas id="3">
+        <descripcion>DESIGNER pruebas</descripcion>
+        <cadena>DEFAULT3</cadena>
+        <nit>830045567</nit>
+        <fondo>fondoMenu.png</fondo>
+        <grupo>GrupoEmpresarial3</grupo>
+        <observacion>true</observacion>
+    </cadenas>
 </conexiones>

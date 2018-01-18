@@ -163,7 +163,11 @@ public class ControladorInicioEval implements Serializable {
             secConvocatoria = new BigDecimal(convocatorias.get(index).getSecuencia());
             PrimefacesContextUI.ejecutar("PF('opcionesReporteCerrar').show();");
         } else if (i.equals("5")) {
+            System.out.println("Empleado seleccionado en tipo 5");
             evaluado = evaluados.get(index);
+            System.out.println("evaluado: "+evaluado.getNombrePersona());
+            System.out.println("consolidado: "+evaluado.getConsolidado());
+            System.out.println("booleano: "+evaluado.isEsConsolidado());
             secEvaluado = new BigDecimal(evaluado.getSecuencia());
             PrimefacesContextUI.ejecutar("PF('opcionesReporteEvaluado').show();");
         } else {

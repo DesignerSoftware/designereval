@@ -163,13 +163,13 @@
                                 <br/>
                             </p:column>
                             <p:column>
-                                <p:commandButton value="Resumido" style="float: right" 
+                                <p:commandButton value="Resumido" style="float: right;" 
                                                  process="@this" onclick="PF('opcionesReporteEvaluado').hide(); PF('opcionesReporteResumido').show()"
                                                  disabled="#{!evaluado.esConsolidado}"/>
-                                <p:commandButton value="Consolidado" style="float: right" 
+                                <p:commandButton value="Consolidado" style="float: right;" 
                                                  process="@this" onclick="PF('opcionesReporteEvaluado').hide(); PF('opcionesReporteConsolidado').show()"
                                                  disabled="#{!evaluado.esConsolidado}"/>
-                                <p:commandButton value="Evaluador" style="float: right" 
+                                <p:commandButton value="Evaluador" style="float: right;" 
                                                  process="@this" onclick="PF('opcionesReporteEvaluado').hide(); PF('opcionesReporteEvaluador').show()"/>
                             </p:column>
                         </p:panelGrid>

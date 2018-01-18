@@ -17,6 +17,12 @@ public interface IPersistenciaConexionInicial {
 
     public Perfiles perfilUsuario(EntityManager eManager, BigInteger secPerfil);
 
+    /**
+     * Método para ejecutar el query de seteo del rol entrada.
+     * @param eManager 
+     */
+    public void setearRolEntrada(EntityManager eManager);
+    
     public void setearUsuario(EntityManager eManager, String rol, String pwd);
 
     public Personas obtenerPersona(EntityManager eManager, String usuarioBD);

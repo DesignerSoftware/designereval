@@ -49,7 +49,7 @@
                                   style="font-weight: bold"/>
                     <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}">
                         <f:selectItems value="#{pregunta.respuestas}" var="r" 
-                                       itemLabel=" #{r.cuantitativo} - #{r.cualitativo}" 
+                                       itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
                                        itemValue="#{r.secuencia}"/> 
                         <p:ajax update=":principalForm:cuestionario" oncomplete="actualizarScore();"/> 
                     </p:selectOneRadio>
@@ -59,12 +59,12 @@
         </p:column>
 
         <p:column>
-            <h:outputText value="#{controladorEvaluacion.observacionObligatoria ? '*Observación:' : 'Observación:' }" style="font-weight: bold"/>
+            <h:outputText value="#{controladorEvaluacion.observacionObligatoria ? '*' : '' }Observación (al menos 30 letras):" style="font-weight: bold"/>
             <br/>
-            <p:inputTextarea value="#{controladorEvaluacion.observacionEvaluador}"
-                             style="width: 50%; height: 150px; font-size: 15px">
+            <p:inputTextarea id="obseval" value="#{controladorEvaluacion.observacionEvaluador}"
+                             style="width: 50%; height: 150px; font-size: 15px;" 
+                             maxlength="500">
                 <p:ajax update="@this"/>
-                <f:validateLength maximum="500"/>
             </p:inputTextarea>
         </p:column>
         <p:column>
@@ -82,9 +82,10 @@
         <p:column>
             <center>
                 <p:commandButton value="Volver" onclick="refrescarListas();"
-                                 process="@this" style="font-size: 18px"/>
+                                 process="@this" style="font-size: 18px !important; background-color: red; color: white; "/>
+                <p:spacer height="20" width="20"/>
                 <p:commandButton value="Enviar" onclick="PF('alerta').show();"
-                                 process="@this" style="font-size: 18px"/>
+                                 process="@this" style="font-size: 18px !important; background-color: lime; color: black;"/>
             </center>
         </p:column>
     </p:panelGrid>

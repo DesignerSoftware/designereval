@@ -97,21 +97,27 @@ public class ControladorEvaluacion implements Serializable {
             }
         }
         if (todas) {
-            if (!observacionObligatoria || (observacionObligatoria && (observacionEvaluador != null && !observacionEvaluador.isEmpty()))) {
-                boolean error = true;
-                if (administrarEvaluacion.registrarActualizarRespuesta(preguntas, secIndigacion)) {
-                    error = false;
-                } else {
-                    MensajesUI.error("No fue posible registrar las respuesta.");
-                    error = true;
-                }
-                if (!error) {
-                    if (administrarEvaluacion.actualizarPorcentaje(secIndigacion, observacionEvaluador, porcentaje)
-                            && administrarEvaluacion.actualizarPorcentaje(secConvocatoria, secEvaluado, agrupado)) {
-                        PrimefacesContextUI.ejecutar("PF('envioExitoso').show()");
+            observacionEvaluador = observacionEvaluador.trim();
+            if ((observacionObligatoria && (observacionEvaluador != null && !observacionEvaluador.isEmpty()))) {
+                if ((observacionEvaluador.length() > 30 && observacionEvaluador.length() < 500)
+                        || observacionEvaluador.length() == 30 || observacionEvaluador.length() == 500) {
+                    boolean error = true;
+                    if (administrarEvaluacion.registrarActualizarRespuesta(preguntas, secIndigacion)) {
+                        error = false;
                     } else {
-                        MensajesUI.error("No fue posible registrar el puntaje, ni la observación en la prueba.");
+                        MensajesUI.error("No fue posible registrar las respuesta.");
+                        error = true;
                     }
+                    if (!error) {
+                        if (administrarEvaluacion.actualizarPorcentaje(secIndigacion, observacionEvaluador, porcentaje)
+                                && administrarEvaluacion.actualizarPorcentaje(secConvocatoria, secEvaluado, agrupado)) {
+                            PrimefacesContextUI.ejecutar("PF('envioExitoso').show()");
+                        } else {
+                            MensajesUI.error("No fue posible registrar el puntaje, ni la observación en la prueba.");
+                        }
+                    }
+                } else {
+                    MensajesUI.error("La observación debe tener al menos 30 caracteres pero sin pasar de 500.");
                 }
             } else {
                 MensajesUI.error("La observación es obligatoria.");
