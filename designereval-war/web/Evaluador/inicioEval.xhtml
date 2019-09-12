@@ -298,7 +298,7 @@
             <p:column>
                 <p:commandButton value="Enviar por correo" style="float: right;"
                                  actionListener="#{controladorInicioEval.envioCorreoCierreConvocatoria(4)}"
-                                 process="@this" onclick="PF('opcionesReporteResumido').hide()"/>
+                                 process="@this" onclick="PF('opcionesReporteResumido').hide(); PF('estadoReporte').show();"/>
                 <p:commandButton value="Descargar" style="float: right;" 
                                  actionListener="#{controladorInicioEval.descargarReporte(4)}" 
                                  process="@this" onclick="PF('opcionesReporteResumido').hide(); PF('estadoReporte').show();"/>
@@ -316,7 +316,7 @@
             <p:column>
                 <p:commandButton value="Enviar por correo" style="float: right;"
                                  actionListener="#{controladorInicioEval.envioCorreoCierreConvocatoria(3)}"
-                                 process="@this" onclick="PF('opcionesReporteConsolidado').hide()"/>
+                                 process="@this" onclick="PF('opcionesReporteConsolidado').hide(); PF('estadoReporte').show();"/>
                 <p:commandButton value="Descargar" style="float: right;" 
                                  actionListener="#{controladorInicioEval.descargarReporte(3)}"
                                  process="@this" onclick="PF('opcionesReporteConsolidado').hide(); PF('estadoReporte').show();"/>

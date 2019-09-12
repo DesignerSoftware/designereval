@@ -1,27 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <conexiones>
     <cadenas id="1">
-        <descripcion>LM INSTRUMENTS S.A.</descripcion>
-        <cadena>DEFAULT2</cadena>
-        <nit>800077635</nit>
-        <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial1</grupo>
-        <observacion>true</observacion>
-    </cadenas>
-    <cadenas id="2">
-        <descripcion>LM pruebas</descripcion>
+        <descripcion>DS pruebas</descripcion>
         <cadena>DEFAULT1</cadena>
-        <nit>800077635</nit>
-        <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial2</grupo>
-        <observacion>true</observacion>
-    </cadenas>
-    <cadenas id="3">
-        <descripcion>DESIGNER pruebas</descripcion>
-        <cadena>DEFAULT3</cadena>
         <nit>830045567</nit>
         <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial3</grupo>
+        <grupo>GrupoEmpresarial1</grupo>
         <observacion>true</observacion>
     </cadenas>
 </conexiones>

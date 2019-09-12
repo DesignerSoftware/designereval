@@ -24,6 +24,8 @@ public class Evaluados implements Serializable {
     private BigInteger empleado;
     @Column(name = "NOMBREPERSONA")
     private String nombrePersona;
+    @Column(name = "EMAIL")
+    private String eMail;
     @Column(name = "PUNTAJEOBTENIDO")
     private BigDecimal puntajeObtenido;
     @Column(name = "FECHAPERIODODESDE")
@@ -76,6 +78,14 @@ public class Evaluados implements Serializable {
 
     public void setNombrePersona(String nombrePersona) {
         this.nombrePersona = nombrePersona;
+    }
+
+    public String geteMail() {
+        return eMail;
+    }
+
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
     }
 
     public BigDecimal getPuntajeObtenido() {

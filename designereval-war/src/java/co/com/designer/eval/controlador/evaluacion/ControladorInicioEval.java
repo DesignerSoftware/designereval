@@ -165,9 +165,9 @@ public class ControladorInicioEval implements Serializable {
         } else if (i.equals("5")) {
             System.out.println("Empleado seleccionado en tipo 5");
             evaluado = evaluados.get(index);
-            System.out.println("evaluado: "+evaluado.getNombrePersona());
-            System.out.println("consolidado: "+evaluado.getConsolidado());
-            System.out.println("booleano: "+evaluado.isEsConsolidado());
+            System.out.println("evaluado: " + evaluado.getNombrePersona());
+            System.out.println("consolidado: " + evaluado.getConsolidado());
+            System.out.println("booleano: " + evaluado.isEsConsolidado());
             secEvaluado = new BigDecimal(evaluado.getSecuencia());
             PrimefacesContextUI.ejecutar("PF('opcionesReporteEvaluado').show();");
         } else {
@@ -275,12 +275,34 @@ public class ControladorInicioEval implements Serializable {
                 if (c != null) {
                     secConvocatoria = new BigDecimal(c.getSecuencia());
                     generarReporte(c, codReporte);
-                    if (pathReporteGenerado != null && administrarInicio.enviarCorreo(nitEmpresa, email,
-                            "Reporte Evaluación Competencias - " + c.getCodigo(), "Mensaje enviado automáticamente, por favor no responda a este correo.",
-                            pathReporteGenerado)) {
-                        MensajesUI.info("Se ha enviado un reporte con los resultados de la convocatoria a su dirección de correo.");
+                    if (pathReporteGenerado != null) {
+                        String resul = "";
+                        boolean resbl1 = false;
+                        boolean resbl2 = false;
+                        resbl1 = administrarInicio.enviarCorreo(nitEmpresa, email,
+                                "Reporte Evaluación Competencias - " + c.getCodigo(), "Mensaje enviado automáticamente, por favor no responda a este correo.",
+                                pathReporteGenerado);
+                        if (resbl1) {
+                            resul = resul + "Se ha enviado un reporte con los resultados de la convocatoria a la dirección de correo del usuario conectado.";
+                        }else{
+                            resul = resul + "No fue posible enviar el reporte consolidado de la convocatoria seleccionada a la dirección de correo del usuario conectado.";
+                        }
+                        resbl2 =administrarInicio.enviarCorreo(nitEmpresa, this.evaluado.geteMail(),
+                                "Reporte Evaluación Competencias - " + c.getCodigo(), "Mensaje enviado automáticamente, por favor no responda a este correo.",
+                                pathReporteGenerado);
+                        if (resbl2) {
+                            resul = resul + " Se ha enviado un reporte con los resultados de la convocatoria a la dirección de correo del empleado evaluado.";
+                        }else{
+                            resul = resul + " No fue posible enviar el reporte consolidado de la convocatoria seleccionada a la dirección de correo del empleado evaluado.";
+                        }
+                        if (resbl1 && resbl2) {
+                            MensajesUI.info(resul);
+                        } else {
+                            MensajesUI.error(resul+" Comuníquese con soporte.");
+                        }
                     } else {
-                        MensajesUI.error("No fue posible enviar el reporte consolidado de la convocatoria que acaba de cerrar, por favor comuníquese con soporte.");
+                        //MensajesUI.error("No fue posible enviar el reporte consolidado de la convocatoria que acaba de cerrar, por favor comuníquese con soporte.");
+                        MensajesUI.error("No fue posible generar el reporte consolidado de la convocatoria seleccionada, por favor comuníquese con soporte.");
                     }
                 } else {
                     MensajesUI.error("Error al intentar obtener la convocatoria, por favor comuníquese con soporte.");
@@ -290,8 +312,10 @@ public class ControladorInicioEval implements Serializable {
             }
         } else {
             System.out.println("Secuencia de la convocatoria nula.");
-            PrimefacesContextUI.ejecutar("PF('estadoReporte').hide();");
+            MensajesUI.error("Secuencia de la convocatoria nula..");
+            //PrimefacesContextUI.ejecutar("PF('estadoReporte').hide();");
         }
+        PrimefacesContextUI.ejecutar("PF('estadoReporte').hide();");
     }
 
     public void descargarReporte(int codReporte) {

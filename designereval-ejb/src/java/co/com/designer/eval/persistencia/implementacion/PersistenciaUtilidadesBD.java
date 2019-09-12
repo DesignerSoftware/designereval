@@ -17,6 +17,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
     @Override
     public byte[] encriptar(EntityManager eManager, String valor) {
         try {
+            eManager.joinTransaction();
             String sqlQuery = "SELECT GENERALES_PKG.ENCRYPT( ? ) FROM DUAL ";
             Query query = eManager.createNativeQuery(sqlQuery);
             query.setParameter(1, valor);
@@ -34,6 +35,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
 //        System.out.println(valor);
         String resultado = "";
         try {
+            eManager.joinTransaction();
             String sqlQuery = "SELECT GENERALES_PKG.DECRYPT( ? ) FROM DUAL ";
             Query query = eManager.createNativeQuery(sqlQuery);
             query.setParameter(1, valor);
@@ -49,15 +51,16 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
     @Override
     public BigDecimal totalEmpleadosEvaluador(EntityManager em, BigInteger secuenciaEvaluador) {
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query q = em.createNativeQuery("SELECT EVALPREGUNTAS_PKG.TotalEmpleadosEvaluador(?) FROM DUAL");
             q.setParameter(1, secuenciaEvaluador);
             BigDecimal resultado = (BigDecimal) q.getSingleResult();
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
             System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             return null;
         }
     }
@@ -65,15 +68,16 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
     @Override
     public BigDecimal cantidadEvaluadosConvocatoria(EntityManager em, BigInteger secConvocatoria) {
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query q = em.createNativeQuery("SELECT EVALPREGUNTAS_PKG.TotalEmpleadosConvocatoria(?) FROM DUAL");
             q.setParameter(1, secConvocatoria);
             BigDecimal resultado = (BigDecimal) q.getSingleResult();
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
             System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             return null;
         }
     }
@@ -81,16 +85,17 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
     @Override
     public BigDecimal totalEmpleadosEvaluadorConvocatoria(EntityManager em, BigInteger secuenciaEvaluador, BigInteger secConvocatoria) {
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query q = em.createNativeQuery("SELECT EVALPREGUNTAS_PKG.TotalEmpleadosEvaluador(?, ?) FROM DUAL");
             q.setParameter(1, secuenciaEvaluador);
             q.setParameter(2, secConvocatoria);
             BigDecimal resultado = (BigDecimal) q.getSingleResult();
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
             System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             return null;
         }
     }
@@ -98,16 +103,17 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
     @Override
     public BigDecimal cantidadEvaluados(EntityManager em, BigInteger secuenciaEvaluador, BigInteger secConvocatoria) {
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query q = em.createNativeQuery("SELECT evalpreguntas_pkg.cantidadevaluados(?, ?) FROM DUAL");
             q.setParameter(1, secConvocatoria);
             q.setParameter(2, secuenciaEvaluador);
             BigDecimal resultado = (BigDecimal) q.getSingleResult();
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
             System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             return null;
         }
     }
@@ -116,7 +122,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
         if (em != null && em.isOpen() && em.getTransaction().isActive()) {
             System.out.println("Antes de hacer rollback");
-            em.getTransaction().rollback();
+//            em.getTransaction().rollback();
             System.out.println("Despues de hacer rollback");
         }
     }

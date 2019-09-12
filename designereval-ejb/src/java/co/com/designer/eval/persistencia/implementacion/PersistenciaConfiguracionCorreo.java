@@ -19,12 +19,13 @@ public class PersistenciaConfiguracionCorreo implements IPersistenciaConfiguraci
         ConfiguracionCorreo cc = null;
         try {
             if (eManager != null && eManager.isOpen()) {
-                eManager.getTransaction().begin();
+                eManager.joinTransaction();
+//                eManager.getTransaction().begin();
                 String sqlQuery = "SELECT cc FROM ConfiguracionCorreo cc WHERE cc.empresa.nit = :nitEmpresa";
                 Query query = eManager.createQuery(sqlQuery);
                 query.setParameter("nitEmpresa", Long.valueOf(nitEmpresa));
                 cc = (ConfiguracionCorreo) query.getSingleResult();
-                eManager.getTransaction().commit();
+//                eManager.getTransaction().commit();
             } else {
                 cc = null;
                 System.out.println("entityManager nulo.");
@@ -33,9 +34,9 @@ public class PersistenciaConfiguracionCorreo implements IPersistenciaConfiguraci
             System.out.println("ERROR: " + ise.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("Error PersistenciaConfiguracionCorreo.consultarConfiguracionServidorCorreo: " + e);
-        } finally {
+        } /*finally {
             terminarTransaccionException(eManager);
-        }
+        }*/
         return cc;
     }
 
@@ -43,7 +44,7 @@ public class PersistenciaConfiguracionCorreo implements IPersistenciaConfiguraci
         System.out.println(this.getClass().getName()+".terminarTransaccionException");
         if (em != null && em.isOpen() && em.getTransaction().isActive()) {
             System.out.println("Antes de hacer rollback");
-            em.getTransaction().rollback();
+//            em.getTransaction().rollback();
             System.out.println("Despues de hacer rollback");
         }
     }

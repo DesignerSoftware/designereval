@@ -25,9 +25,10 @@ public class IniciarReporte implements IniciarReporteInterface, Serializable {
     private Connection inicarC(EntityManager em) {
         Connection conexion = null;
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             conexion = em.unwrap(java.sql.Connection.class);
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
         } catch (Exception e) {
             System.out.println("Error: " + this.getClass().getName() + ".iniciarC()");
             System.out.println("Causa: " + e);

@@ -27,7 +27,7 @@ public class SesionEntityManagerFactory implements ISesionEntityManagerFactory, 
 
     @Override
     public EntityManagerFactory crearFactoryUsuario(String usuario, String clave, String baseDatos) {
-        try {
+        /*try {
             Map<String, String> properties = new HashMap<>();
             properties.put("javax.persistence.jdbc.user", usuario);
             properties.put("javax.persistence.jdbc.password", clave);
@@ -35,6 +35,7 @@ public class SesionEntityManagerFactory implements ISesionEntityManagerFactory, 
         } catch (Exception e) {
             System.out.println("Error crearFactoryUsuario: " + e.getMessage());
             return null;
-        }
+        }*/
+        return crearConexionUsuario(baseDatos);
     }
 }

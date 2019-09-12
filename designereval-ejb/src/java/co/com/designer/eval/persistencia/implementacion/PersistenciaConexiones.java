@@ -20,12 +20,13 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
     public BigInteger consultarSIDActual(EntityManager em) throws Exception {
         BigInteger sid = BigInteger.ZERO;
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query query = em.createNativeQuery("SELECT sys_context('USERENV', 'SID') FROM DUAL");
-            sid = new BigInteger((String)query.getSingleResult()) ;
-            em.getTransaction().commit();
+            sid = new BigInteger((String) query.getSingleResult());
+//            em.getTransaction().commit();
         } catch (Exception e) {
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             throw new Exception(e);
         }
         return sid;
@@ -34,12 +35,13 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
     private BigDecimal contarConexionesSID(EntityManager em, BigInteger sid) throws Exception {
         BigDecimal conteo = null;
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query query = em.createNativeQuery("SELECT COUNT(*) FROM CONEXIONES WHERE SID =? ");
             query.setParameter(1, sid);
             conteo = (BigDecimal) query.getSingleResult();
             //System.out.println("tipo del conteo: " + conteo.getClass().getName());
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
         } catch (Exception e) {
             System.out.println("contarConexionesSID-excepcion: " + e.getMessage());
             throw new Exception(e);
@@ -52,26 +54,27 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
         boolean resul = false;
         long conteo = 0;
         try {
-            conteo = contarConexionesSID(em, conexion.getSid()).longValue() ;
+            conteo = contarConexionesSID(em, conexion.getSid()).longValue();
         } catch (Exception ee) {
             conteo = 0;
         }
         if (conteo == 0) {
             try {
-                em.getTransaction().begin();
+//                em.getTransaction().begin();
+                em.joinTransaction();
                 em.persist(conexion);
-                em.getTransaction().commit();
+//                em.getTransaction().commit();
                 resul = true;
             } catch (Exception ex) {
                 System.out.println("Error PersistenciaConexiones.insertarUltimaConexion: la conexion existe");
                 if (ExtraeCausaExcepcion.obtenerMensajeSQLException(ex).contains("ORA-00001")) {
                     resul = modificarConexion(em, conexion);
                 } else {
-                    terminarTransaccionException(em);
+//                    terminarTransaccionException(em);
                     resul = false;
                 }
             }
-        }else{
+        } else {
             resul = modificarConexion(em, conexion);
         }
         return resul;
@@ -80,7 +83,8 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
     private boolean modificarConexion(EntityManager em, Conexiones conexion) {
         try {
             System.out.println("La conexion se modificara");
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query query = em.createQuery("select c from Conexiones c where c.sid = :sid ");
             query.setParameter("sid", conexion.getSid());
             Conexiones con2 = (Conexiones) query.getSingleResult();
@@ -92,10 +96,10 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
             em.merge(con2);
             conexion = con2;
             System.out.println("conexion modificada");
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
             return true;
         } catch (Exception ex2) {
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             return false;
         }
     }
@@ -104,7 +108,7 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
         if (em != null && em.isOpen() && em.getTransaction().isActive()) {
             System.out.println("Antes de hacer rollback");
-            em.getTransaction().rollback();
+//            em.getTransaction().rollback();
             System.out.println("Despues de hacer rollback");
         }
     }

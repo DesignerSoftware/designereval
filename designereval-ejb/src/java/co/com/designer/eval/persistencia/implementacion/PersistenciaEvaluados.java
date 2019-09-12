@@ -19,8 +19,10 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
     @Override
     public List<Evaluados> obtenerEvaluados(EntityManager em, String usuario, BigInteger secConvocatoria) {
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query q = em.createNativeQuery("SELECT R.SECUENCIA, R.EMPLEADO, CONCAT(CONCAT(CONCAT(CONCAT(PE.NOMBRE,' '),PE.PRIMERAPELLIDO),' '),PE.SEGUNDOAPELLIDO) NOMBREPERSONA, R.PUNTAJEOBTENIDO, "
+                    + "PE.EMAIL, "
                     + "R.FECHAPERIODODESDE, R.FECHAPERIODOHASTA, R.EVALCONVOCATORIA, "
                     + "R.NOMBREPRUEBA, R.ESTADOEVAL, "
                     + "EVALCONVOCATORIAS_PKG.ESTACONSOLIDADO(R.EVALCONVOCATORIA,R.EMPLEADO) CONSOLIDADO "
@@ -39,11 +41,11 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
             q.setParameter(1, usuario);
             q.setParameter(2, secConvocatoria);
             List<Evaluados> lst = q.getResultList();
-            em.getTransaction().commit();
+//            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
             System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             return null;
         }
     }
@@ -51,7 +53,8 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
     @Override
     public boolean actualizarPorcentaje(EntityManager em, BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado) {
         try {
-            em.getTransaction().begin();
+//            em.getTransaction().begin();
+            em.joinTransaction();
             Query q;
             Integer total;
             if (agrupado == 1) {
@@ -65,12 +68,22 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
             }
 
             if (total != null && total != 0) {
-                q = em.createNativeQuery("SELECT sum(nvl(a.puntoobtenido,0)*b.puntos)/100/? "
+                /*q = em.createNativeQuery("SELECT sum(nvl(a.puntoobtenido,0)*b.puntos)/100/? "
                         + "FROM evalindagaciones a, evalpruebas b "
                         + "WHERE a.evalprueba = b.secuencia "
-                        + "AND a.evalresultadoconv = ? ");
-                q.setParameter(1, total);
-                q.setParameter(2, secEvaluado);
+                        + "AND a.evalresultadoconv = ? ");*/
+                q = em.createNativeQuery("select sum(t.puntos) "
+                        + " from ( "
+                        + " select c.descripcion, sum(nvl(a.puntoobtenido,0)*b.puntos)/100*c.pesocompetencia/100 puntos "
+                        + " from evalindagaciones a, evalpruebas b, evalplanillas c "
+                        + " where a.evalprueba = b.secuencia "
+                        + " and c.secuencia = b.planilla "
+                        + " and a.evalresultadoconv = ? "
+                        + " group by c.descripcion, c.pesocompetencia "
+                        + " ) T ");
+//                q.setParameter(1, total);
+//                q.setParameter(2, total);
+                q.setParameter(1, secEvaluado);
                 BigDecimal porcentaje = (BigDecimal) q.getSingleResult();
                 if (porcentaje != null) {
                     q = em.createNativeQuery("UPDATE EVALRESULTADOSCONV A SET A.PUNTAJEOBTENIDO = ? WHERE A.SECUENCIA = ? ");
@@ -78,12 +91,12 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
                     q.setParameter(2, secEvaluado);
                     q.executeUpdate();
                 }
-                em.getTransaction().commit();
+//                em.getTransaction().commit();
             }
             return true;
         } catch (Exception ex) {
             System.out.println("Error PersistenciaEvaluados.actualizarPorcentaje: " + ex);
-            terminarTransaccionException(em);
+//            terminarTransaccionException(em);
             return false;
         }
     }
@@ -92,7 +105,7 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
         if (em != null && em.isOpen() && em.getTransaction().isActive()) {
             System.out.println("Antes de hacer rollback");
-            em.getTransaction().rollback();
+//            em.getTransaction().rollback();
             System.out.println("Despues de hacer rollback");
         }
     }
