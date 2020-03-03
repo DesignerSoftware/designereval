@@ -45,7 +45,7 @@ public class filtroAutenticacion implements Filter {
                 res.sendRedirect(req.getContextPath());
             }
         } catch (IOException | ServletException t) {
-            System.out.println(t.getMessage());
+            System.out.println(this.getClass().getName() + t.getMessage());
         }
     }
 

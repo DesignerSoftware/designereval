@@ -40,13 +40,17 @@
         <p:column>
             <center><p:commandButton value="Eliminar todas las respuestas" onclick="PF('alertaEliminar').show();"
                                      process="@this"
-                                     style="display: #{controladorEvaluacion.tieneRespuestas ? '' : 'none'}"/></center>
+                                     style="display: #{controladorEvaluacion.tieneRespuestas ? '' : 'none'}"/>
+            </center>
         </p:column>
         <p:column>
             <ui:repeat var="pregunta" value="#{controladorEvaluacion.preguntas}" varStatus="status">
-                <div style="background-color: #{pregunta.respuesta == null ? '' : '#B7F8BE'}">
-                    <h:outputText value="#{pregunta.descripcion}"
-                                  style="font-weight: bold"/>
+                <div style="background-color: #{pregunta.respuesta == null ? '' : '#D1D7FA'}">
+                    <ui:repeat var="despreg" value="#{pregunta.arDescripcion}" varStatus="desstatus">
+                        <h:outputText value="#{despreg}"
+                                      style="font-weight: bold;"/>
+                        <br/>
+                    </ui:repeat>
                     <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}">
                         <f:selectItems value="#{pregunta.respuestas}" var="r" 
                                        itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
@@ -59,7 +63,7 @@
         </p:column>
 
         <p:column>
-            <h:outputText value="#{controladorEvaluacion.observacionObligatoria ? '*' : '' }Observación (al menos 30 letras):" style="font-weight: bold"/>
+            <h:outputText value="#{controladorEvaluacion.observacionObligatoria ? '*' : '' }Observación (al menos 30 letras):" style="font-weight: bold;"/>
             <br/>
             <p:inputTextarea id="obseval" value="#{controladorEvaluacion.observacionEvaluador}"
                              style="width: 50%; height: 150px; font-size: 15px;" 

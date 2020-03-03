@@ -28,24 +28,27 @@ public class PersistenciaConfiguracionCorreo implements IPersistenciaConfiguraci
 //                eManager.getTransaction().commit();
             } else {
                 cc = null;
-                System.out.println("entityManager nulo.");
+                System.out.println(this.getClass().getName()+": "+"entityManager nulo.");
             }
         } catch (IllegalStateException ise) {
-            System.out.println("ERROR: " + ise.getMessage());
+            System.out.println(this.getClass().getName()+": "+"ERROR: " + ise.getMessage());
         } catch (NumberFormatException e) {
-            System.out.println("Error PersistenciaConfiguracionCorreo.consultarConfiguracionServidorCorreo: " + e);
-        } /*finally {
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConfiguracionCorreo.consultarConfiguracionServidorCorreo: " + e);
+        }
+        /*finally {
             terminarTransaccionException(eManager);
         }*/
         return cc;
     }
 
     public void terminarTransaccionException(EntityManager em) {
-        System.out.println(this.getClass().getName()+".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
+        System.out.println(this.getClass().getName() + ".terminarTransaccionException");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen()) {
+            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
 //            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
+            em.close();
+            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
         }
     }
 }

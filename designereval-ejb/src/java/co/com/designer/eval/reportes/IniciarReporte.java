@@ -31,7 +31,7 @@ public class IniciarReporte implements IniciarReporteInterface, Serializable {
 //            em.getTransaction().commit();
         } catch (Exception e) {
             System.out.println("Error: " + this.getClass().getName() + ".iniciarC()");
-            System.out.println("Causa: " + e);
+            System.out.println(this.getClass().getName()+": "+"Causa: " + e);
         }
         return conexion;
     }
@@ -71,13 +71,13 @@ public class IniciarReporte implements IniciarReporteInterface, Serializable {
             }
             return outFileName;
         } catch (JRException e) {
-            System.out.println("Error: IniciarReporte.ejecutarReporte: " + e);
-            System.out.println("************************************");
+            System.out.println(this.getClass().getName()+": "+"Error: IniciarReporte.ejecutarReporte: " + e);
+            System.out.println(this.getClass().getName()+": "+"************************************");
             //e.printStackTrace();
             if (e.getCause() != null) {
-                return "Error: INICIARREPORTE " + e.toString() + "\n" + e.getCause().toString();
+                return this.getClass().getName()+": "+"Error: INICIARREPORTE " + e.toString() + "\n" + e.getCause().toString();
             } else {
-                return "Error: INICIARREPORTE " + e.toString();
+                return this.getClass().getName()+": "+"Error: INICIARREPORTE " + e.toString();
             }
         }
     }

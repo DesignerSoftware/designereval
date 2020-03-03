@@ -25,26 +25,30 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
                     + "PE.EMAIL, "
                     + "R.FECHAPERIODODESDE, R.FECHAPERIODOHASTA, R.EVALCONVOCATORIA, "
                     + "R.NOMBREPRUEBA, R.ESTADOEVAL, "
-                    + "EVALCONVOCATORIAS_PKG.ESTACONSOLIDADO(R.EVALCONVOCATORIA,R.EMPLEADO) CONSOLIDADO "
+                    //                    + "EVALCONVOCATORIAS_PKG.ESTACONSOLIDADO(R.EVALCONVOCATORIA,R.EMPLEADO) CONSOLIDADO "
+                    + "EVALCONVOCATORIAS_PKG.ESTACONSOLIDADO(R.EVALCONVOCATORIA, R.EMPLEADO , ? ) CONSOLIDADO "
                     + "FROM EVALRESULTADOSCONV R, EMPLEADOS E, PERSONAS PE "
                     + "WHERE (EXISTS(SELECT 'X' "
                     + "              FROM EVALINDAGACIONES I "
                     + "			  WHERE I.EMPLEADOEVALUADOR=(SELECT P.SECUENCIA "
-                    + "                     FROM USUARIOS U, PERSONAS P "
+                    //                    + "                     FROM USUARIOS U, PERSONAS P "
+                    + "                     FROM CONEXIONESEVAL U, PERSONAS P "
                     + "                     WHERE U.persona=P.secuencia "
-                    + "                     AND U.ALIAS=?) "
+                    //                    + "                     AND U.ALIAS=?) "
+                    + "                     AND U.SEUDONIMO = ? ) "
                     + "              AND R.SECUENCIA=I.evalresultadoconv) "
                     + "      ) "
                     + "AND R.EVALCONVOCATORIA = ? "
                     + "AND R.EMPLEADO = E.SECUENCIA "
                     + "AND E.PERSONA = PE.SECUENCIA ", Evaluados.class);
             q.setParameter(1, usuario);
-            q.setParameter(2, secConvocatoria);
+            q.setParameter(2, usuario);
+            q.setParameter(3, secConvocatoria);
             List<Evaluados> lst = q.getResultList();
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -54,7 +58,7 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
     public boolean actualizarPorcentaje(EntityManager em, BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado) {
         try {
 //            em.getTransaction().begin();
-            em.joinTransaction();
+//            em.joinTransaction();
             Query q;
             Integer total;
             if (agrupado == 1) {
@@ -81,6 +85,36 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
                         + " and a.evalresultadoconv = ? "
                         + " group by c.descripcion, c.pesocompetencia "
                         + " ) T ");
+                /*q = em.createNativeQuery("select sum(te.x) puntaje from ( \n"
+                        + "select \n"
+                        + "t.descripcion, t.puntosevlr, t.puntosevlr*t.puntosm/100 x,  t.pesocompetencia \n"
+                        + "from ( \n"
+                        + "select epl.secuencia, \n"
+                        + "epl.descripcion, \n"
+                        + "sum(ei.puntoobtenido*(select ti.pesoevaluador from ( \n"
+                        + "select \n"
+                        + "epri.convocatoria, epri.planilla, \n"
+                        + "epri.puntos/count( distinct epri.evalevaluador) pesoevaluador \n"
+                        + "from evalpruebas epri \n"
+                        + "group by epri.convocatoria, epri.planilla, epri.puntos \n"
+                        + ") Ti where ti.planilla = epl.secuencia) \n"
+                        + ")/100 puntosevlr, \n"
+                        + "(select epli.pesocompetencia/count(distinct epli.descripcion) \n"
+                        + "from evalplanillas epli, evalpruebas epri, evalindagaciones eii \n"
+                        + "where epri.planilla = epli.secuencia \n"
+                        + "and eii.evalprueba = epri.secuencia \n"
+                        + "and epli.pesocompetencia = epl.pesocompetencia \n"
+                        + "and eii.evalresultadoconv = ei.evalresultadoconv \n"
+                        + "group by epli.pesocompetencia, epli.empresa, epli.evalenfoque, epli.fechacreacion, eii.evalresultadoconv) \n"
+                        + "puntosm, \n"
+                        + "epl.pesocompetencia \n"
+                        + " from evalindagaciones ei, evalpruebas epr, evalplanillas epl \n"
+                        + " where ei.evalprueba = epr.secuencia \n"
+                        + " and epl.secuencia = epr.planilla \n"
+                        + " and ei.evalresultadoconv = ? \n"
+                        + " group by epl.secuencia, epl.descripcion, epl.pesocompetencia, ei.evalresultadoconv \n"
+                        + " ) T \n"
+                        + ") te ");*/
 //                q.setParameter(1, total);
 //                q.setParameter(2, total);
                 q.setParameter(1, secEvaluado);
@@ -95,7 +129,7 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
             }
             return true;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaEvaluados.actualizarPorcentaje: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaEvaluados.actualizarPorcentaje: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -103,10 +137,12 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
 
     public void terminarTransaccionException(EntityManager em) {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen()) {
+            System.out.println(this.getClass().getName() + ": " + "Antes de hacer rollback");
 //            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
+            em.close();
+            System.out.println(this.getClass().getName() + ": " + "Despues de hacer rollback");
         }
     }
 }

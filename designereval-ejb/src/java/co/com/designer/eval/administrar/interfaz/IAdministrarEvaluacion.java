@@ -27,5 +27,9 @@ public interface IAdministrarEvaluacion {
     public boolean actualizarPorcentaje(BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
 
     public boolean registrarActualizarRespuesta(List<Preguntas> preguntas, BigInteger secIndagacion);
-    
+    public boolean registrarRespuestasPuntos(List<Preguntas> preguntas, BigInteger secIndagacion,
+            String observacionEvaluador, double porcentaje,
+            BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
+
+    public boolean reiniciarEvaluacion(BigInteger secIndagacion, String observacion, double porcentaje, BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
 }

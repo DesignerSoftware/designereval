@@ -23,7 +23,7 @@
         </script>
     </h:head>
     <h:body style="font-size: 14px;">
-        <h:form id="fprincipal" style="position: absolute; left: 0px; top: 0px; width: 100%">
+        <h:form id="fprincipal" style="position: absolute; left: 0px; top: 0px; width: 100%;">
             <p:remoteCommand name="validarGrupo" actionListener="#{controladorIngreso.validarGrupo()}"
                              process="@this" />
             <p:focus context="pnlIngreso"/>
@@ -47,13 +47,13 @@
                             <h:outputText value="Inicie sesi&oacute;n para consultar sus convocatorias y evaluar" style="font-family: Arial; font-size: 16px; color:#000;"/>
                             <br/>
                             <br/>
-                            <h:outputText value="En el campo Usuario, por favor ingrese el nombre de usuario que se le asigno. " style="font-family: Arial; font-size: 10px; color:#000;"/>
+                            <h:outputText value="En el campo Usuario, por favor ingrese el nombre de usuario que se le asignó. " style="font-family: Arial; font-size: 10px; color:#000;"/>
                         </center>
                         <br/>
                         <p:panelGrid id="pnlIngreso" styleClass="noBorders">
                             <p:row>
                                 <p:column>
-                                    <h:outputText value="* Usuario:" style="font-weight: bold"/>
+                                    <h:outputText value="* Usuario:" style="font-weight: bold;"/>
                                 </p:column>
                                 <p:column>
                                     <p:inputText id="user" value="#{controladorIngreso.usuario}" 
@@ -74,12 +74,12 @@
                             </p:row>
                             <p:row>
                                 <p:column>
-                                    <h:outputText value="* Empresa:" style="font-weight: bold"/>
+                                    <h:outputText value="* Empresa:" style="font-weight: bold;"/>
                                 </p:column>
                                 <p:column>
                                     <p:selectOneMenu id="seEmpresa" value="#{controladorIngreso.unidadPersistenciaIngreso}" 
                                                      disabled="#{controladorIngreso.obtenerCadenasConexion().size() == 1 ?  'true' : controladorIngreso.ingresoExitoso ? 'true' : 'false'}"
-                                                     style="width: 89%">
+                                                     style="width: 89%;">
                                         <f:selectItem itemLabel="Seleccione una empresa" itemValue="#{null}"/>
                                         <f:selectItems value="#{controladorIngreso.obtenerCadenasConexion()}" var="cadena"
                                                        itemLabel="#{cadena.descripcion}" itemValue="#{cadena.id}" />
@@ -90,7 +90,7 @@
                                 <p:column>
                                     <p:commandButton id="btnEntrar" value="#{!controladorIngreso.ingresoExitoso ? '' : 'Entrar'}" 
                                                      action="#{controladorIngreso.entrar()}" 
-                                                     style="float: right" update="pnlIngreso" icon="ui-icon-carat-1-e" iconPos="right"
+                                                     style="float: right;" update="pnlIngreso" icon="ui-icon-carat-1-e" iconPos="right"
                                                      rendered="#{controladorIngreso.ingresoExitoso}"/>
                                 </p:column>
                                 <p:column>
@@ -98,7 +98,7 @@
                                                      action="#{controladorIngreso.ingresar()}" onclick="PF('estadoSesion').show()"
                                                      oncomplete="PF('estadoSesion').hide()"
                                                      update="pnlIngreso" icon="ui-icon-carat-1-e" iconPos="right"
-                                                     style="float: right"/>
+                                                     style="float: right;"/>
                                 </p:column>
                             </p:row>
                             <p:row>

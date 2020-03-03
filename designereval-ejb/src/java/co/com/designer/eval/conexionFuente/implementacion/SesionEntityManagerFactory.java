@@ -2,8 +2,8 @@ package co.com.designer.eval.conexionFuente.implementacion;
 
 import co.com.designer.eval.conexionFuente.interfaz.ISesionEntityManagerFactory;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+//import java.util.HashMap;
+//import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -20,7 +20,7 @@ public class SesionEntityManagerFactory implements ISesionEntityManagerFactory, 
         try {
             return Persistence.createEntityManagerFactory(unidadPersistencia);
         } catch (Exception e) {
-            System.out.println("Error SesionEntityManagerFactory.crearConexionUsuario: " + e);
+            System.out.println(this.getClass().getName()+": "+"Error SesionEntityManagerFactory.crearConexionUsuario: " + e);
             return null;
         }
     }

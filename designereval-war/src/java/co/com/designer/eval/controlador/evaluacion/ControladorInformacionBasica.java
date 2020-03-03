@@ -34,6 +34,7 @@ public class ControladorInformacionBasica implements Serializable {
     private IAdministrarInicioEval administrarInicioEval;
     private Date ultimaConexionEmpleado;
     private Personas persona;
+    private String usuario;
     private StreamedContent logoEmpresa;
     private String pathImagenes;
     private String nitEmpresa;
@@ -51,13 +52,13 @@ public class ControladorInformacionBasica implements Serializable {
             HttpSession ses = (HttpSession) x.getExternalContext().getSession(false);
             administrarInicioEval.obtenerConexion(ses.getId());
             persona = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getPersona();
+            usuario = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getUsuario();
             ultimaConexionEmpleado = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getUltimaConexion();
             nitEmpresa = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getNit();
             pathImagenes = administrarInicioEval.obtenerRutaImagenes();
             System.out.println("Inicializado");
         } catch (ELException e) {
-            System.out.println("Error postconstruct " + this.getClass().getName() + ": " + e);
-            System.out.println("Causa: " + e.getCause());
+            System.out.println(this.getClass().getName() + ".inicializarAdministrador" + ": " + e);
         }
     }
 
@@ -68,7 +69,7 @@ public class ControladorInformacionBasica implements Serializable {
         try {
             logo = rstLogo.substring(0, rstLogo.length() - 4);
         } catch (NullPointerException npe) {
-            System.out.println("Nombre de logo vacio: " + npe.getMessage());
+            System.out.println(this.getClass().getName() + ".inicializarAdministrador npe" + ": " + npe);
             logo = null;
         }
         if (logo != null && !"".equalsIgnoreCase(logo)) {
@@ -83,10 +84,9 @@ public class ControladorInformacionBasica implements Serializable {
                         rutaLogo = pathImagenes + "sinLogo.png";
                         fis = new FileInputStream(new File(rutaLogo));
                         logoEmpresa = new DefaultStreamedContent(fis, formatoFotoEmpleado, rutaLogo);
+                        System.out.println(this.getClass().getName() + ".obtenerLogoEmpresa e" + ": " + e);
                     } catch (FileNotFoundException ex) {
-                        System.out.println("ERROR. No se encontro el logo de la empresa. \n");
-                        System.out.println("ruta: " + rutaLogo);
-                        System.out.println("exception: " + ex);
+                        System.out.println(this.getClass().getName() + ".obtenerLogoEmpresa ex" + ": " + ex);
                     }
                 }
             }
@@ -141,6 +141,14 @@ public class ControladorInformacionBasica implements Serializable {
 
     public Personas getPersona() {
         return persona;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
 }

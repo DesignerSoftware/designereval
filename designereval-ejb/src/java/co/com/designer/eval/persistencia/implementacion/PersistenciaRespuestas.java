@@ -31,7 +31,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaRespuestas.obtenerRespuestas: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.obtenerRespuestas: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -57,7 +57,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaRespuestas.registrarRespuesta: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.registrarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -84,7 +84,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaRespuestas.actualizarRespuesta: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.actualizarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -104,7 +104,6 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                             + "(SELECT CUANTITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) "
                             + ") ");
                 } else {
-
                     q = em.createNativeQuery("UPDATE EVALRESPUESTASINDAGACIONES "
                             + "SET CUALITATIVOASIGNADO = (SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) , "
                             + "CUANTITATIVOASIGNADO = (SELECT CUANTITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) , "
@@ -122,7 +121,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaRespuestas.registrarActualizarRespuesta: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.registrarActualizarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -144,7 +143,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return resultado.toBigInteger();
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaRespuestas.consultarRespuesta: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.consultarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -162,18 +161,20 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaRespuestas.eliminarRespuestas: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.eliminarRespuestas: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
     }
 
     public void terminarTransaccionException(EntityManager em) {
-        System.out.println(this.getClass().getName()+".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
+        System.out.println(this.getClass().getName() + ".terminarTransaccionException");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen()) {
+            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
 //            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
+            em.close();
+            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
         }
     }
 }

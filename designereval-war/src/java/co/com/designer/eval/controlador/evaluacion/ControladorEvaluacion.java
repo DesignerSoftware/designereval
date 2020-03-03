@@ -56,8 +56,7 @@ public class ControladorEvaluacion implements Serializable {
             administrarEvaluacion.obtenerConexion(ses.getId());
             System.out.println("Inicializado");
         } catch (ELException e) {
-            System.out.println("Error postconstruct " + this.getClass().getName() + ": " + e);
-            System.out.println("Causa: " + e.getCause());
+            System.out.println(this.getClass().getName() + ".inicializarAdministrador" + ": " + e);
         }
     }
 
@@ -102,7 +101,7 @@ public class ControladorEvaluacion implements Serializable {
                 if ((observacionEvaluador.length() > 30 && observacionEvaluador.length() < 500)
                         || observacionEvaluador.length() == 30 || observacionEvaluador.length() == 500) {
                     boolean error = true;
-                    if (administrarEvaluacion.registrarActualizarRespuesta(preguntas, secIndigacion)) {
+                    /*if (administrarEvaluacion.registrarActualizarRespuesta(preguntas, secIndigacion)) {
                         error = false;
                     } else {
                         MensajesUI.error("No fue posible registrar las respuesta.");
@@ -115,6 +114,13 @@ public class ControladorEvaluacion implements Serializable {
                         } else {
                             MensajesUI.error("No fue posible registrar el puntaje, ni la observación en la prueba.");
                         }
+                    }*/
+                    if (administrarEvaluacion.registrarRespuestasPuntos(preguntas, secIndigacion,
+                            observacionEvaluador, porcentaje,
+                            secConvocatoria, secEvaluado, agrupado)) {
+                        PrimefacesContextUI.ejecutar("PF('envioExitoso').show()");
+                    } else {
+                        MensajesUI.error("No fue posible registrar la evaluación. Inténtelo de nuevo por favor.");
                     }
                 } else {
                     MensajesUI.error("La observación debe tener al menos 30 caracteres pero sin pasar de 500.");
@@ -129,9 +135,11 @@ public class ControladorEvaluacion implements Serializable {
 
     public void eliminarRespuestas() {
         observacionEvaluador = null;
-        if (administrarEvaluacion.eliminarRespuestas(secIndigacion)
+        /*if (administrarEvaluacion.eliminarRespuestas(secIndigacion)
                 && administrarEvaluacion.actualizarPorcentaje(secIndigacion, observacionEvaluador, 0)
-                && administrarEvaluacion.actualizarPorcentaje(secConvocatoria, secEvaluado, agrupado)) {
+                && administrarEvaluacion.actualizarPorcentaje(secConvocatoria, secEvaluado, agrupado)) {*/
+        if (administrarEvaluacion.reiniciarEvaluacion(secIndigacion, observacionEvaluador, 0, 
+                secConvocatoria, secEvaluado, agrupado)){
             MensajesUI.info("Respuestas eliminadas exitosamente.");
         } else {
             MensajesUI.error("No fue posible eliminar las respuestas.");
@@ -142,7 +150,8 @@ public class ControladorEvaluacion implements Serializable {
     public void validarSiExistenRespuestas() {
         tieneRespuestas = false;
         for (Preguntas pregunta : preguntas) {
-            if (!pregunta.isNuevo()) {
+//            if (!pregunta.isNuevo()) {
+            if (pregunta.getRespuesta() != null) {
                 tieneRespuestas = true;
                 break;
             }

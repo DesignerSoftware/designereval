@@ -12,6 +12,8 @@ public interface IPersistenciaConexionInicial {
     public EntityManager validarConexionUsuario(EntityManagerFactory emf);
 
     public boolean validarUsuario(EntityManager eManager, String usuario);
+    
+    public BigInteger usuarioLogin(EntityManager eManager, String usuarioBD, String esquema);
 
     public BigInteger usuarioLogin(EntityManager eManager, String usuarioBD);
 
@@ -22,6 +24,8 @@ public interface IPersistenciaConexionInicial {
      * @param eManager 
      */
     public void setearRolEntrada(EntityManager eManager);
+    
+    public void setearRolEntrada(EntityManager eManager, String esquema);
     
     public void setearUsuario(EntityManager eManager, String rol, String pwd);
 

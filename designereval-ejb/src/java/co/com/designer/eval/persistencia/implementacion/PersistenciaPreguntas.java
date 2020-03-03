@@ -21,7 +21,7 @@ public class PersistenciaPreguntas implements IPersistenciaPreguntas {
         try {
 //            em.getTransaction().begin();
             em.joinTransaction();
-            Query q = em.createNativeQuery("SELECT SECUENCIA, CONSECUTIVO, DESCRIPCION, OBSERVACIONES "
+            Query q = em.createNativeQuery("SELECT SECUENCIA, CONSECUTIVO, REPLACE(DESCRIPCION, CHR(10), chr(35)) DESCRIPCION, OBSERVACIONES "
                     + "FROM EVALPREGUNTAS "
                     + "WHERE EVALPLANILLA=(SELECT PL.SECUENCIA "
                     + "       FROM EVALPRUEBAS PR, EVALPLANILLAS PL "
@@ -34,7 +34,7 @@ public class PersistenciaPreguntas implements IPersistenciaPreguntas {
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaPreguntas.obtenerPreguntas: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPreguntas.obtenerPreguntas: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -54,7 +54,7 @@ public class PersistenciaPreguntas implements IPersistenciaPreguntas {
 //            em.getTransaction().commit();
             return resultado.toBigInteger();
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaPreguntas.obtenerPreguntas: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPreguntas.obtenerPreguntas: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -62,10 +62,12 @@ public class PersistenciaPreguntas implements IPersistenciaPreguntas {
 
     public void terminarTransaccionException(EntityManager em) {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen()) {
+            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
 //            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
+            em.close();
+            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
         }
     }
 }

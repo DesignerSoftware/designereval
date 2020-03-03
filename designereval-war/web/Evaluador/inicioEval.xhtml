@@ -50,7 +50,8 @@
                 <p:column headerText="Pruebas" width="85" style="display: #{controladorInicioEval.estadoConvocatoria == 1 ? 'none' : ''}">
                     <p:commandButton value="Cerrar" actionListener="#{controladorInicioEval.obtenerSecuenciaConvocatoria(convocatoria.secuencia)}"
                                      style="display: #{controladorInicioEval.estadoConvocatoria == 1 ? 'none' : ''}"
-                                     onclick="PF('alertaCerrar').show()"/>
+                                     onclick="PF('alertaCerrar').show()"
+                                     />
                 </p:column>
             </p:dataTable>
         </p:column>
@@ -135,7 +136,7 @@
                 <p:column headerText="Nombre">
                     <h:outputText value="#{prueba.prueba}"/>
                     <br/>
-                    <h:outputText value="Observación:" style="font-weight: bold"/>
+                    <h:outputText value="Observación:" style="font-weight: bold;"/>
                     <br/>
                     <h:outputText value="#{prueba.obsEvaluador != null ? 
                                            prueba.obsEvaluador.length() > 30 ? prueba.obsEvaluador.substring(0, 30).concat('...') : 

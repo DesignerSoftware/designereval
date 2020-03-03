@@ -74,8 +74,7 @@ public class ControladorInicioEval implements Serializable {
             email = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getPersona().getEmail();
             System.out.println("INICIALIZADO!!!!  " + ses.getId());
         } catch (ELException e) {
-            System.out.println("Error postconstruct " + this.getClass().getName() + ": " + e);
-            System.out.println("Causa: " + e);
+            System.out.println(this.getClass().getName() + ".inicializarAdministrador" + ": " + e);
         }
     }
 
@@ -128,19 +127,28 @@ public class ControladorInicioEval implements Serializable {
         1 - Evaluador
         2 - Convocatoria
         3 - Prueba
+        4 - usuario
+        d - null
          */
+        FacesContext x = FacesContext.getCurrentInstance();
+        HttpSession ses = (HttpSession) x.getExternalContext().getSession(false);
         switch (opcion) {
             case 0:
                 return evaluado;
             case 1:
-                FacesContext x = FacesContext.getCurrentInstance();
-                HttpSession ses = (HttpSession) x.getExternalContext().getSession(false);
+//                FacesContext x = FacesContext.getCurrentInstance();
+//                HttpSession ses = (HttpSession) x.getExternalContext().getSession(false);
                 return ((ControladorInformacionBasica) x.getApplication().evaluateExpressionGet(x, "#{controladorInformacionBasica}", ControladorInformacionBasica.class
                 )).getPersona().getNombreCompleto();
             case 2:
                 return convocatoria;
-            default:
+            case 3:
                 return prueba;
+            case 4:
+                return ((ControladorInformacionBasica) x.getApplication().evaluateExpressionGet(x, "#{controladorInformacionBasica}", ControladorInformacionBasica.class
+                )).getUsuario();
+            default:
+                return null;
         }
     }
 
@@ -207,7 +215,7 @@ public class ControladorInicioEval implements Serializable {
         try {
             secConvocatoria = new BigDecimal(convocatoria.getSecuencia());
             System.out.println("Secuencia de la convocatoria: " + secConvocatoria);
-            if (administrarInicio.cerrarEvaluaciones(secConvocatoria)) {
+            if (administrarInicio.cerrarEvaluaciones(secConvocatoria, this.usuario)) {
                 //MensajesUI.info("Convocatoria cerrada exitosamente.");
 //                reiniciarDatos();
                 PrimefacesContextUI.ejecutar("PF('opcionesReporteCerrar').show()");
@@ -217,6 +225,7 @@ public class ControladorInicioEval implements Serializable {
         } catch (Exception e) {
             MensajesUI.error(ExtraeCausaExcepcion.obtenerMensajeSQLException(e));
         }
+        System.out.println(this.getClass().getName() + ".cerrarEvaluaciones");
         System.out.println("cerrarEvaluaciones-convocatoria: " + convocatoria);
         System.out.println("cerrarEvaluaciones-secConvocatoria: " + secConvocatoria);
     }
@@ -224,7 +233,7 @@ public class ControladorInicioEval implements Serializable {
     public void cerrarConvocatoria() {
         String resultado = "";
         try {
-            resultado = administrarInicio.cerrarConvocatoria(secConvocatoria);
+            resultado = administrarInicio.cerrarConvocatoria(secConvocatoria, this.usuario);
             reiniciarDatos();
             MensajesUI.info(resultado);
             //PrimefacesContextUI.ejecutar("PF('opcionesReporteCerrar').show()");
@@ -284,21 +293,21 @@ public class ControladorInicioEval implements Serializable {
                                 pathReporteGenerado);
                         if (resbl1) {
                             resul = resul + "Se ha enviado un reporte con los resultados de la convocatoria a la dirección de correo del usuario conectado.";
-                        }else{
+                        } else {
                             resul = resul + "No fue posible enviar el reporte consolidado de la convocatoria seleccionada a la dirección de correo del usuario conectado.";
                         }
-                        resbl2 =administrarInicio.enviarCorreo(nitEmpresa, this.evaluado.geteMail(),
+                        resbl2 = administrarInicio.enviarCorreo(nitEmpresa, this.evaluado.geteMail(),
                                 "Reporte Evaluación Competencias - " + c.getCodigo(), "Mensaje enviado automáticamente, por favor no responda a este correo.",
                                 pathReporteGenerado);
                         if (resbl2) {
                             resul = resul + " Se ha enviado un reporte con los resultados de la convocatoria a la dirección de correo del empleado evaluado.";
-                        }else{
+                        } else {
                             resul = resul + " No fue posible enviar el reporte consolidado de la convocatoria seleccionada a la dirección de correo del empleado evaluado.";
                         }
                         if (resbl1 && resbl2) {
                             MensajesUI.info(resul);
                         } else {
-                            MensajesUI.error(resul+" Comuníquese con soporte.");
+                            MensajesUI.error(resul + " Comuníquese con soporte.");
                         }
                     } else {
                         //MensajesUI.error("No fue posible enviar el reporte consolidado de la convocatoria que acaba de cerrar, por favor comuníquese con soporte.");
@@ -341,18 +350,21 @@ public class ControladorInicioEval implements Serializable {
             System.out.println("Secuencia de la convocatoria nula.");
             PrimefacesContextUI.ejecutar("PF('estadoReporte').hide();");
         }
+        System.out.println(this.getClass().getName()+"descargarReporte");
         System.out.println("descargarReporte-convocatoria: " + convocatoria);
         System.out.println("descargarReporte-convocatoria: " + secConvocatoria);
     }
 
     public void generarReporte(Convocatorias c, int codReporte) {
         Map parametros = new HashMap();
+        System.out.println(this.getClass().getName()+"generarReporte");
         System.out.println("generarReporte-secConvocatoria: " + secConvocatoria);
         System.out.println("generarReporte-secEvaluado: " + secEvaluado);
         System.out.println("generarReporte-codReporte: " + codReporte);
         switch (codReporte) {
             case 1: //Se usa para generar reporte por convocatoria
                 parametros.put("secuenciaconvocatoria", secConvocatoria);
+                parametros.put("aliasEvaluador", this.usuario);
                 pathReporteGenerado = administrarInicio.generarReporte("evalcompetenciacerrada", "PDF", parametros, c.getCodigo());
                 if (pathReporteGenerado == null) {
                     MensajesUI.error("El reporte por evaluador de la convocatoria no se pudo generar.");
@@ -362,6 +374,7 @@ public class ControladorInicioEval implements Serializable {
             case 2: //Se usa para generar reporte por empleado
                 parametros.put("secuenciaconvocatoria", secConvocatoria);
                 parametros.put("secEvaluado", secEvaluado);
+                parametros.put("aliasEvaluador", this.usuario);
                 pathReporteGenerado = administrarInicio.generarReporte("evalconvevaluado", "PDF", parametros, c.getCodigo());
                 if (pathReporteGenerado == null) {
                     MensajesUI.error("El reporte por evaluador de la convocatoria no se pudo generar.");
@@ -370,6 +383,7 @@ public class ControladorInicioEval implements Serializable {
             case 3: //Se usar para generar el reporte consolidado de todos los evaluadores de la convocatoria
                 parametros.put("secuenciaconvocatoria", secConvocatoria);
                 parametros.put("secEvaluado", secEvaluado);
+                parametros.put("aliasEvaluador", this.usuario);
                 pathReporteGenerado = administrarInicio.generarReporte("evalconvdetallado", "PDF", parametros, c.getCodigo());
                 if (pathReporteGenerado == null) {
                     MensajesUI.error("El reporte consolidado por persona de la convocatoria no se pudo generar.");
@@ -378,6 +392,7 @@ public class ControladorInicioEval implements Serializable {
             case 4:
                 parametros.put("secuenciaconvocatoria", secConvocatoria);
                 parametros.put("secEvaluado", secEvaluado);
+                parametros.put("aliasEvaluador", this.usuario);
                 pathReporteGenerado = administrarInicio.generarReporte("evalconvresumido", "PDF", parametros, c.getCodigo());
                 if (pathReporteGenerado == null) {
                     MensajesUI.error("El reporte resumido por persona de la convocatoria no se pudo generar.");

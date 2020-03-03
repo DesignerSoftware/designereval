@@ -24,7 +24,7 @@ public class EnvioCorreo {
     public EnvioCorreo() {
     }
 
-    public static boolean enviarCorreo(ConfiguracionCorreo cfc, String destinatario, String asunto, String mensaje, String pathAdjunto) {
+    public boolean enviarCorreo(ConfiguracionCorreo cfc, String destinatario, String asunto, String mensaje, String pathAdjunto) {
         boolean resEnvio = false;
         // Propiedades de la conexión
         Properties propiedadesConexion = new Properties();
@@ -91,10 +91,10 @@ public class EnvioCorreo {
             //System.out.println("CORREO ENVIADO EXITOSAMENTE");
             resEnvio = true;
         } catch (NoSuchProviderException nspe) {
-            System.out.println("Error enviarCorreo: " + nspe.getMessage());
+            System.out.println(this.getClass().getName()+": "+"Error enviarCorreo: " + nspe.getMessage());
             resEnvio = false;
         } catch (MessagingException e) {
-            System.out.println("Error enviarCorreo: " + e.getMessage());
+            System.out.println(this.getClass().getName()+": "+"Error enviarCorreo: " + e.getMessage());
             resEnvio = false;
         }
         return resEnvio;

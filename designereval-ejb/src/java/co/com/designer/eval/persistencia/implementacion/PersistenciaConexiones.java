@@ -43,7 +43,8 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
             //System.out.println("tipo del conteo: " + conteo.getClass().getName());
 //            em.getTransaction().commit();
         } catch (Exception e) {
-            System.out.println("contarConexionesSID-excepcion: " + e.getMessage());
+            System.out.println(this.getClass().getName()+": "+"contarConexionesSID-excepcion: " + e.getMessage());
+//            terminarTransaccionException(em);
             throw new Exception(e);
         }
         return conteo;
@@ -66,7 +67,7 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
 //                em.getTransaction().commit();
                 resul = true;
             } catch (Exception ex) {
-                System.out.println("Error PersistenciaConexiones.insertarUltimaConexion: la conexion existe");
+                System.out.println(this.getClass().getName()+": "+"Error PersistenciaConexiones.insertarUltimaConexion: la conexion existe");
                 if (ExtraeCausaExcepcion.obtenerMensajeSQLException(ex).contains("ORA-00001")) {
                     resul = modificarConexion(em, conexion);
                 } else {
@@ -82,7 +83,7 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
 
     private boolean modificarConexion(EntityManager em, Conexiones conexion) {
         try {
-            System.out.println("La conexion se modificara");
+            System.out.println(this.getClass().getName()+": "+"La conexion se modificara");
 //            em.getTransaction().begin();
             em.joinTransaction();
             Query query = em.createQuery("select c from Conexiones c where c.sid = :sid ");
@@ -95,7 +96,7 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
             con2.setUsuarioso(conexion.getUsuarioso());
             em.merge(con2);
             conexion = con2;
-            System.out.println("conexion modificada");
+            System.out.println(this.getClass().getName()+": "+"conexion modificada");
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex2) {
@@ -106,10 +107,12 @@ public class PersistenciaConexiones implements IPersistenciaConexiones {
 
     public void terminarTransaccionException(EntityManager em) {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen()) {
+            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
 //            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
+            em.close();
+            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
         }
     }
 }

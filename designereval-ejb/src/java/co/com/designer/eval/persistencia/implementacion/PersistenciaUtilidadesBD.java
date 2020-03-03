@@ -23,7 +23,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
             query.setParameter(1, valor);
             return (byte[]) query.getSingleResult();
         } catch (Exception e) {
-            System.out.println("Error PersistenciaUtilidadesBD.encriptar: " + e);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaUtilidadesBD.encriptar: " + e);
             return null;
         }
     }
@@ -41,10 +41,10 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
             query.setParameter(1, valor);
             resultado = (String) query.getSingleResult();
         } catch (Exception e) {
-            System.out.println("Error PersistenciaUtilidadesBD.desencriptar: " + e);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaUtilidadesBD.desencriptar: " + e);
             resultado = null;
         }
-        System.out.println("Resultado: " + resultado);
+        System.out.println(this.getClass().getName()+": "+"Resultado: " + resultado);
         return resultado;
     }
 
@@ -59,7 +59,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
 //            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -76,7 +76,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
 //            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -94,7 +94,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
 //            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -112,7 +112,7 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
 //            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -120,10 +120,12 @@ public class PersistenciaUtilidadesBD implements IPersistenciaUtilidadesBD {
 
     public void terminarTransaccionException(EntityManager em) {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen() ) {
+            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
 //            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
+            em.close();
+            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
         }
     }
 }

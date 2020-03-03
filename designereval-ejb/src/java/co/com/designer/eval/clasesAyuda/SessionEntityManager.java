@@ -47,7 +47,7 @@ public class SessionEntityManager {
 
     public void setUnidadPersistencia(String unidadPersistencia) {
         System.out.println(this.getClass().getName() + ".setUnidadPersistencia()");
-        System.out.println("unidad de persistencia: " + this.unidadPersistencia);
+        System.out.println(this.getClass().getName()+": "+"unidad de persistencia: " + this.unidadPersistencia);
         this.unidadPersistencia = unidadPersistencia;
     }
 

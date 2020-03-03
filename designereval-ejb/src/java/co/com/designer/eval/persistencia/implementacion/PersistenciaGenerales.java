@@ -17,6 +17,9 @@ public class PersistenciaGenerales implements IPersistenciaGenerales {
     public Generales consultarRutasGenerales(EntityManager eManager) {
         try {
 //            eManager.getTransaction().begin();
+            if (eManager == null) {
+                System.out.println(this.getClass().getName()+".consultarRutasGenerales: "+"eManager es nulo.");
+            }
             eManager.joinTransaction();
             String sqlQuery = "SELECT g FROM Generales g";
             Query query = eManager.createQuery(sqlQuery);
@@ -24,8 +27,9 @@ public class PersistenciaGenerales implements IPersistenciaGenerales {
 //            eManager.getTransaction().commit();
             return g;
         } catch (Exception e) {
-            System.out.println("Error PersistenciaGenerales.consultarRutasGenerales: " + e);
-            terminarTransaccionException(eManager);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaGenerales.consultarRutasGenerales: " + e);
+            e.printStackTrace();
+//            terminarTransaccionException(eManager);
             return null;
         }
     }
@@ -42,18 +46,20 @@ public class PersistenciaGenerales implements IPersistenciaGenerales {
 //            eManager.getTransaction().commit();
             return logo;
         } catch (Exception e) {
-            System.out.println("Error PersistenciaGenerales.consultarRutasGenerales: " + e);
-            terminarTransaccionException(eManager);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaGenerales.consultarRutasGenerales: " + e);
+//            terminarTransaccionException(eManager);
             return null;
         }
     }
 
     public void terminarTransaccionException(EntityManager em) {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen()) {
+            System.out.println(this.getClass().getName() + ": " + "Antes de hacer rollback");
 //            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
+            em.close();
+            System.out.println(this.getClass().getName() + ": " + "Despues de hacer rollback");
         }
     }
 }

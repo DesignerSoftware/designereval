@@ -41,27 +41,27 @@ public class LeerArchivoXML {
                             eElement.getElementsByTagName("nit").item(0).getTextContent(),
                             eElement.getElementsByTagName("fondo").item(0).getTextContent(),
                             eElement.getElementsByTagName("grupo").item(0).getTextContent(),
-                            Boolean.valueOf(eElement.getElementsByTagName("observacion").item(0).getTextContent())
+                            Boolean.valueOf(eElement.getElementsByTagName("observacion").item(0).getTextContent()),
+                            eElement.getElementsByTagName("esquema").item(0).getTextContent()
                     ));
                 }
             }
             Collections.sort(listaCadenas);
             return listaCadenas;
         } catch (ParserConfigurationException e) {
-            System.out.println("Error LeerArchivoXML.leerArchivoEmpresasConexion");
-            System.out.println("Error parseando el archivo. " + e);
+            System.out.println(this.getClass().getName()+": "+"Error LeerArchivoXML.leerArchivoEmpresasConexion");
+            System.out.println(this.getClass().getName()+": "+"Error parseando el archivo. " + e);
             return null;
         } catch (SAXException e) {
-            System.out.println("Error LeerArchivoXML.leerArchivoEmpresasConexion");
-            System.out.println("Error SAX. " + e);
+            System.out.println(this.getClass().getName()+": "+"Error LeerArchivoXML.leerArchivoEmpresasConexion");
+            System.out.println(this.getClass().getName()+": "+"Error SAX. " + e);
             return null;
         } catch (IOException e) {
-            System.out.println("Error LeerArchivoXML.leerArchivoEmpresasConexion");
-            System.out.println("Error leyendo el archivo. " + e);
+            System.out.println(this.getClass().getName()+": "+"Error LeerArchivoXML.leerArchivoEmpresasConexion");
+            System.out.println(this.getClass().getName()+": "+"Error leyendo el archivo. " + e);
             return null;
         } catch (DOMException e) {
-            System.out.println("Error LeerArchivoXML.leerArchivoEmpresasConexion: ");
-            System.out.println("Error en DOM. " + e);
+            System.out.println(this.getClass().getName()+": "+"Error LeerArchivoXML.leerArchivoEmpresasConexion: ");
             return null;
         }
     }

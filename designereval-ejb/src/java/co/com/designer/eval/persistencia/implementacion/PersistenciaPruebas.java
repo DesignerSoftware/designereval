@@ -37,17 +37,20 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
                     + "FROM EVALINDAGACIONES EI \n"
                     + "WHERE EI.EMPLEADOEVALUADOR=( \n"
                     + "           SELECT P.SECUENCIA \n"
-                    + "           FROM USUARIOS U, PERSONAS P \n"
+                    //                    + "           FROM USUARIOS U, PERSONAS P \n"
+                    + "           FROM CONEXIONESEVAL U, PERSONAS P \n"
                     + "           WHERE U.persona=P.secuencia \n"
-                    + "           AND U.ALIAS=?) \n"
-                    + "AND EI.EVALRESULTADOCONV = ? ", Pruebas.class);
+                    //                    + "           AND U.ALIAS=?) \n"
+                    + "           AND U.SEUDONIMO = ? ) \n"
+                    + "AND EI.EVALRESULTADOCONV = ? "
+                    + "ORDER BY PRUEBA ", Pruebas.class);
             q.setParameter(1, usuario);
             q.setParameter(2, secEmplConvo);
             List<Pruebas> lst = q.getResultList();
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaPruebas.obtenerPruebasEvalaudo: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPruebas.obtenerPruebasEvalaudo: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -57,7 +60,7 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
     public boolean actualizarPorcentaje(EntityManager em, BigInteger secPrueba, String observacion, double porcentaje) {
         try {
 //            em.getTransaction().begin();
-            em.joinTransaction();
+//            em.joinTransaction();
             Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? WHERE A.SECUENCIA = ? ");
             q.setParameter(1, porcentaje);
             q.setParameter(2, observacion);
@@ -66,7 +69,7 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaPruebas.actualizarPorcentaje: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPruebas.actualizarPorcentaje: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -85,18 +88,9 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaPruebas.actualizarEstado: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPruebas.actualizarEstado: " + ex);
 //            terminarTransaccionException(em);
             return false;
-        }
-    }
-
-    private void terminarTransaccionException(EntityManager em) {
-        System.out.println(this.getClass().getName() + ".terminarTransaccionException");
-        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
-            System.out.println("Antes de hacer rollback");
-//            em.getTransaction().rollback();
-            System.out.println("Despues de hacer rollback");
         }
     }
 
@@ -105,16 +99,27 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
-            Query q = em.createNativeQuery("select EVALCONVOCATORIAS_PKG.ESTACONSOLIDADO(?,?) FROM DUAL ");
+            Query q = em.createNativeQuery("select EVALCONVOCATORIAS_PKG.ESTACONSOLIDADO( ? , ? ) FROM DUAL ");
             q.setParameter(1, secConvocatoria);
             q.setParameter(2, secEvaluado);
             String resul = (String) q.getSingleResult();
 //            em.getTransaction().commit();
             return resul;
         } catch (Exception ex) {
-            System.out.println("Error PersistenciaConvocatorias.cerrarEvaluaciones: " + ex);
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.cerrarEvaluaciones: " + ex);
 //            terminarTransaccionException(em);
             return "N";
+        }
+    }
+    
+    private void terminarTransaccionException(EntityManager em) {
+        System.out.println(this.getClass().getName() + ".terminarTransaccionException");
+//        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
+        if (em != null && em.isOpen()) {
+            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
+//            em.getTransaction().rollback();
+            em.close();
+            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
         }
     }
 }

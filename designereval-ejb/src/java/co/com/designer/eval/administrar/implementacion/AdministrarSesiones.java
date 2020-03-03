@@ -2,6 +2,7 @@ package co.com.designer.eval.administrar.implementacion;
 
 import co.com.designer.eval.administrar.interfaz.IAdministrarSesiones;
 import co.com.designer.eval.clasesAyuda.SessionEntityManager;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Singleton;
@@ -12,7 +13,7 @@ import javax.persistence.EntityManagerFactory;
  * @author Felipe Triviño
  */
 @Singleton
-public class AdministrarSesiones implements IAdministrarSesiones {
+public class AdministrarSesiones implements IAdministrarSesiones, Serializable {
 
     private final List<SessionEntityManager> sessionesActivas;
 
@@ -26,7 +27,7 @@ public class AdministrarSesiones implements IAdministrarSesiones {
             System.out.println(this.getClass().getName() + "." + "adicionarSesion" + "()");
             sessionesActivas.add(session);
         } catch (Exception e) {
-            System.out.println("Error AdministrarSesiones.adicionarSesion: " + e);
+            System.out.println(this.getClass().getName()+": "+"Error AdministrarSesiones.adicionarSesion: " + e);
         }
     }
 
@@ -46,12 +47,12 @@ public class AdministrarSesiones implements IAdministrarSesiones {
             }
             if (sesionActual != null) {
                 emf = sesionActual.getEmf();
-                System.out.println("Se creó entityManagerFactory.");
-                System.out.println("eManager" + emf.toString());
+                System.out.println(this.getClass().getName()+": "+"Se creó entityManagerFactory.");
+                System.out.println(this.getClass().getName()+": "+"eManager" + emf.toString());
             }
         } catch (Exception e) {
-            System.out.println("error en " + "obtenerConexionSesion");
-            System.out.println("Causa: " + e);
+            System.out.println(this.getClass().getName()+": "+"error en " + "obtenerConexionSesion");
+            System.out.println(this.getClass().getName()+": "+"Causa: " + e);
             sesionActual = null;
         }
         return emf;
@@ -71,7 +72,7 @@ public class AdministrarSesiones implements IAdministrarSesiones {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error AdministrarSesiones.borrarSesion: " + e);
+            System.out.println(this.getClass().getName()+": "+"Error AdministrarSesiones.borrarSesion: " + e);
         }
     }
 }

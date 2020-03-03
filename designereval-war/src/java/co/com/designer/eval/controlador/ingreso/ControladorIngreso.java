@@ -62,17 +62,15 @@ public class ControladorIngreso implements Serializable {
     }
 
     public List<CadenasConexion> obtenerCadenasConexion() {
-        return obtenerCadenasConexionGrupo();
-    }
-
-    public List<CadenasConexion> obtenerCadenasConexionGrupo() {
+        //return obtenerCadenasConexionGrupo();
         List<CadenasConexion> listaResultado;
-        boolean resultadoValidacion = false;
-        if ((grupo != null)) {
+//        boolean resultadoValidacion = false;
+        /*if ((grupo != null)) {
             if (!grupo.isEmpty()) {
                 resultadoValidacion = true;
             }
-        }
+        }*/
+        boolean resultadoValidacion = ((grupo != null) && (!grupo.isEmpty()));
         if (resultadoValidacion) {
             listaResultado = (new LeerArchivoXML()).leerArchivoEmpresasGrupo(this.grupo);
         } else {
@@ -80,6 +78,23 @@ public class ControladorIngreso implements Serializable {
         }
         return listaResultado;
     }
+
+    /*public List<CadenasConexion> obtenerCadenasConexionGrupo() {
+        List<CadenasConexion> listaResultado;
+//        boolean resultadoValidacion = false;
+        /*if ((grupo != null)) {
+            if (!grupo.isEmpty()) {
+                resultadoValidacion = true;
+            }
+        }*//*
+        boolean resultadoValidacion = ( (grupo != null) && (!grupo.isEmpty()) );            
+        if (resultadoValidacion) {
+            listaResultado = (new LeerArchivoXML()).leerArchivoEmpresasGrupo(this.grupo);
+        } else {
+            listaResultado = (new LeerArchivoXML()).leerArchivoEmpresasGrupo("0");
+        }
+        return listaResultado;
+    }*/
 
     public List<SelectItem> obtenerGruposCadenasConexion() {
         List<String> listaOriginal = (new LeerArchivoXML()).obtenerGruposEmpresas();
@@ -91,6 +106,14 @@ public class ControladorIngreso implements Serializable {
         return listaRetorno;
     }
 
+    /**
+     * Método que revisa si la empresa elegida se encuentra en la lista de
+     * elementos registrados.
+     *
+     * @param unidadP Nombre de la empresa elegida.
+     * @return La cadena de conexión que permite identificar la Unidad de
+     * Persistencia.
+     */
     private CadenasConexion validarUnidadPersistencia(String unidadP) {
         CadenasConexion resultado = null;
         for (CadenasConexion elemento : (new LeerArchivoXML()).leerArchivoEmpresasConexion()) {
@@ -115,7 +138,7 @@ public class ControladorIngreso implements Serializable {
                         && cadena != null) {
                     nit = cadena.getNit();
                     if (administrarIngreso.conexionIngreso(cadena.getCadena())) {
-                        persona = administrarIngreso.conexionUsuario(cadena.getCadena(), usuario, clave);
+                        persona = administrarIngreso.conexionUsuario(cadena.getCadena(), cadena.getEsquema(), usuario, clave);
                         if (persona != null) {
                             administrarIngreso.adicionarConexionUsuario(ses.getId());
                             conexion = administrarIngreso.ultimaConexionUsuario(usuario);
@@ -159,7 +182,9 @@ public class ControladorIngreso implements Serializable {
                 try {
                     ec.invalidateSession();
                 } catch (Exception npe) {
-                    System.out.println("ExternalContext vacio");
+//                    System.out.println(this.getClass().getName()+"ingresar npe"+": "+"ExternalContext vacio");
+                    imprimir("ingresar npe" + ": " + "ExternalContext vacio");
+                    System.out.println(this.getClass().getName() + "ingresar npe" + ": " + "ExternalContext vacio" + npe);
                 }
                 if (grupoSeleccionado != null) {
                     ec.redirect(ec.getRequestContextPath() + "/" + "?grupo=" + grupoSeleccionado);
@@ -168,9 +193,12 @@ public class ControladorIngreso implements Serializable {
                 }
             }
         } catch (EJBTransactionRolledbackException etre) {
-            System.out.println(this.getClass().getName() + ".ingresar() exception");
-            System.out.println("La transacción se deshizo.");
-            System.out.println(etre);
+//            System.out.println(this.getClass().getName() + ".ingresar() exception");
+            imprimir(".ingresar() exception");
+            System.out.println(this.getClass().getName() + ".ingresar() exception" + etre);
+            imprimir("La transacción se deshizo.");
+//            System.out.println("La transacción se deshizo.");
+//            System.out.println(etre);
         }
         return retorno;
     }
@@ -335,7 +363,7 @@ public class ControladorIngreso implements Serializable {
 
     private void imprimir(String mensajeConsola) {
         if (true) {
-            System.out.println(mensajeConsola);
+            System.out.println(this.getClass().getName() + "::" + mensajeConsola);
         }
     }
 
@@ -366,5 +394,4 @@ public class ControladorIngreso implements Serializable {
     public void setCadena(CadenasConexion cadena) {
         this.cadena = cadena;
     }
-
 }

@@ -2,6 +2,7 @@ package co.com.designer.eval.entidades;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,8 +32,11 @@ public class Preguntas implements Serializable {
     private BigInteger respuesta;
     @Transient
     private boolean nuevo;
+    @Transient
+    private List<String> arDescripcion;
 
     public Preguntas() {
+        arDescripcion = new ArrayList();
     }
 
     public Preguntas(BigInteger secuencia) {
@@ -97,6 +101,30 @@ public class Preguntas implements Serializable {
 
     public void setNuevo(boolean nuevo) {
         this.nuevo = nuevo;
+    }
+
+    public List<String> getArDescripcion() {
+        System.out.println("descripcion: " + descripcion);
+        boolean isExtrae = true;
+        if (descripcion != null && !descripcion.isEmpty()) {
+            if (arDescripcion == null) {
+                arDescripcion = new ArrayList();
+                isExtrae = true;
+            }
+            if (isExtrae || arDescripcion.isEmpty()) {
+                arDescripcion.clear();
+                String[] arreglo = descripcion.split("#");
+                for (String ob : arreglo) {
+                    arDescripcion.add(ob);
+                }
+                System.out.println("tamanho lista desc: " + arDescripcion.size());
+            }
+        }
+        return arDescripcion;
+    }
+
+    public void setArDescripcion(List<String> arDescripcion) {
+        this.arDescripcion = arDescripcion;
     }
 
     @Override

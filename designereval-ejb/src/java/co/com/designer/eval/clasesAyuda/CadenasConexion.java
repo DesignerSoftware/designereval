@@ -13,8 +13,9 @@ public class CadenasConexion implements Comparable {
     private String fondo;
     private String grupo;
     private boolean observacion;
+    private String esquema;
 
-    public CadenasConexion(String id, String descripcion, String cadena, String nit, String fondo, String grupo, boolean observacion) {
+    public CadenasConexion(String id, String descripcion, String cadena, String nit, String fondo, String grupo, boolean observacion, String esquema) {
         this.id = id;
         this.descripcion = descripcion;
         this.cadena = cadena;
@@ -22,6 +23,7 @@ public class CadenasConexion implements Comparable {
         this.fondo = fondo;
         this.grupo = grupo;
         this.observacion = observacion;
+        this.esquema = esquema;
     }
 
     public String getCadena() {
@@ -80,6 +82,14 @@ public class CadenasConexion implements Comparable {
         this.observacion = observacion;
     }
 
+    public String getEsquema() {
+        return esquema;
+    }
+
+    public void setEsquema(String esquema) {
+        this.esquema = esquema;
+    }
+    
     @Override
     public int compareTo(Object o) {
         int resultado;
