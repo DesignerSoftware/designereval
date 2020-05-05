@@ -147,7 +147,7 @@ public class Convocatorias implements Serializable {
 
     @Override
     public String toString() {
-        return "co.com.kiosko.administrar.entidades.ParametrizaClave[ secuencia=" + secuencia + " ]";
+        return "co.com.kiosko.administrar.entidades.Convocatorias[ secuencia=" + secuencia + " ]";
     }
 
 }

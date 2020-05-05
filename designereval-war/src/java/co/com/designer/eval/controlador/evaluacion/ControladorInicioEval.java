@@ -1,9 +1,11 @@
 package co.com.designer.eval.controlador.evaluacion;
 
 import co.com.designer.eval.administrar.interfaz.IAdministrarInicio;
+import co.com.designer.eval.administrar.interfaz.IAdministrarPlanDesarrollo;
 import co.com.designer.eval.clasesAyuda.ExtraeCausaExcepcion;
 import co.com.designer.eval.controlador.ingreso.ControladorIngreso;
 import co.com.designer.eval.entidades.Convocatorias;
+import co.com.designer.eval.entidades.EvalPlanesDesarrollos;
 import co.com.designer.eval.entidades.Evaluados;
 import co.com.designer.eval.entidades.Pruebas;
 import co.com.designer.eval.utilidadesUI.MensajesUI;
@@ -54,6 +56,14 @@ public class ControladorInicioEval implements Serializable {
     private Pruebas prueba;
 
     //private Convocatorias convocatoria;
+    
+    private String pruebastr="Hello world";
+    
+    //módulo evaluaciones
+    private List<EvalPlanesDesarrollos> evalPlanesDesarrollos;
+    @EJB
+    private IAdministrarPlanDesarrollo administrarPlanDesarrollo;
+            
     public ControladorInicioEval() {
     }
 
@@ -120,6 +130,20 @@ public class ControladorInicioEval implements Serializable {
             this.secEvaluado = null;
         }
     }
+    
+    public void seleccionPlanDesa() { //Validar si este metodo debe ir en ControladorPlanDesarrollo
+            //evaluados = administrarInicio.obtenerEvaluados(usuario, convocatoria.getSecuencia());
+            //empleadosConvocados = administrarInicio.cantidadEvaluadosConvocatoria(convocatoria.getSecuencia());
+            //empleadosAsignados = administrarInicio.totalEmpleadosEvaluadorConvocatoria(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
+            //empleadosEvaluados = administrarInicio.cantidadEvaluados(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
+            //secConvocatoria = new BigDecimal(convocatoria.getSecuencia());
+            //pruebas = administrarInicio.obtenerPruebasEvaluado(usuario, evaluado.getSecuencia());
+            //evaluado.setConsolidado(administrarInicio.estaConsolidado(evaluado.getEvalConvocatoria(), evaluado.getSecuencia()));
+            evalPlanesDesarrollos=administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluado.getSecuencia());
+            System.out.println("evaluado.getSecuencia() "+evaluado.getSecuencia());
+            this.secEvaluado = new BigDecimal(evaluado.getSecuencia());
+            System.out.println("ControladorInicioEval.seleccionPlanDesa()");
+    }
 
     public Object obtenerInformacion(int opcion) {
         /*
@@ -178,7 +202,16 @@ public class ControladorInicioEval implements Serializable {
             System.out.println("booleano: " + evaluado.isEsConsolidado());
             secEvaluado = new BigDecimal(evaluado.getSecuencia());
             PrimefacesContextUI.ejecutar("PF('opcionesReporteEvaluado').show();");
-        } else {
+        } else if(i.equals("6")){
+            evaluado = evaluados.get(index);
+            //System.out.println("evaluado para abrir plan de desarrollo: " + evaluado.getNombrePersona());
+            //prueba = pruebas.get(index);
+            secConvocatoria = new BigDecimal(convocatorias.get(index).getSecuencia());
+            secEvaluado = new BigDecimal(evaluado.getSecuencia());
+            evalPlanesDesarrollos=administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluado.getSecuencia());
+            PrimefacesContextUI.ejecutar("seleccionPlan()");
+        }
+        else {
             prueba = pruebas.get(index);
             cambiarEstado(prueba.getSecuencia(), prueba.getEstado());
         }
@@ -496,5 +529,29 @@ public class ControladorInicioEval implements Serializable {
     public void setEstadoConvocatoria(int estadoConvocatoria) {
         this.estadoConvocatoria = estadoConvocatoria;
     }
+    
+    public String getPruebastr(){
+        return this.pruebastr;
+    }
+    
+    public void setPruebastr(String str){
+        this.pruebastr=str;
+    }
 
+    public BigDecimal getSecConvocatoria() {
+        return secConvocatoria;
+    }
+
+    public void setSecConvocatoria(BigDecimal secConvocatoria) {
+        this.secConvocatoria = secConvocatoria;
+    }
+    
+    //Modulo plan de desarrollo
+
+    public List<EvalPlanesDesarrollos> getPlanes(){
+        return evalPlanesDesarrollos;
+    }
+
+    
+    
 }

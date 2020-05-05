@@ -9,7 +9,9 @@
                      process="@this" update=":principalForm"/>
     <p:commandButton id="descargarReporte" actionListener="#{controladorInicioEval.descarga()}"
                      process="@this" ajax="false" style="visibility: hidden;" onclick="PF('estadoReporte').hide();"/>
-
+    
+    <p:remoteCommand name="pantallaDinamicaPlanDesa" actionListener="#{controlNavegacion.pantallaDinamica('/Evaluador/planDesa.xhtml')}"
+                     process="@this" update=":principalForm"/>
     <p:panelGrid columns="2" columnClasses="rp3,rp4" styleClass="noBorders2">
         <p:column>
             <p:selectOneRadio value="#{controladorInicioEval.estadoConvocatoria}">
@@ -122,6 +124,13 @@
                                      onstart="PF('dtbEvaluados').selectRow(#{indice});"
                                      />
                 </p:column>
+                <p:column headerText="Plan de Desarrollo" width="80">
+                    <p:commandButton id="planDesa" value="Abrir" 
+                                     actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
+                                     onclick="pantallaDinamicaPlanDesa()"
+                                     disabled="#{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'true'}"
+                                     />
+                </p:column>                
             </p:dataTable>
         </p:column>
         <p:column>

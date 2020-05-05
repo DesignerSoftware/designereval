@@ -24,10 +24,17 @@
                              update="preguntas"
                              oncomplete="PrimeFaces.Mobile.navigate('#preguntas', {transition: 'flip'}); return false;"/>
             <p:remoteCommand name="seleccion" actionListener="#{controladorInicioEval.seleccion}"/>
+            <p:remoteCommand name="seleccionPd" actionListener="#{controladorPlanDesarrollo.seleccion()}"/>
             <p:remoteCommand name="cerrarSesion" actionListener="#{controladorIngreso.ingresar()}"/>
 
             <p:commandButton id="descargarReporte" actionListener="#{controladorInicioEval.descarga()}"
                              process="@this" ajax="false" style="visibility: hidden;"/>
+            <p:remoteCommand name="pantallaDinamicaPlanDesa"
+                             actionListener="#{controlNavegacion.pantallaDinamica('./Evaluador/planDesa.xhtml')}"
+                             process="@this" update=":principalForm"/>
+            <p:remoteCommand name="seleccionPlan" actionListener="#{controladorInicioEval.seleccionPlanDesa()}"
+                             update="planDesa"
+                             oncomplete="PrimeFaces.Mobile.navigate('#planDesa', {transition: 'flip'}); return false;"/>
         </h:form>
         <pm:page id="uno">
             <h:form>
@@ -151,8 +158,16 @@
                             <p><strong>Puntaje: </strong>#{ev.puntajeObtenido != null ?
                                                            ev.puntajeObtenido : 0}</p>
                         </h:outputLink>
+                        <p:commandButton value="IR A PLAN DE DESARROLLO" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
+                                         />
+
+                        <hr/>
                         <p:commandButton value="Reporte" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '5'}]);"
                                          />
+                        <p:commandButton value="Plan de desarrollo" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
+                                         disabled="#{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'true'}" style="display: #{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'none'}"             />
+                         <p:commandButton value="Plan de desarrollo2" onclick="PF('opcionesPlanPruebas').show()"
+                                         disabled="#{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'true'}" style="display: #{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'none'}"             />
                     </p:dataList>
 
                     <p:dialog id="opcionesReporteEvaluado" header="Información" widgetVar="opcionesReporteEvaluado"  resizable="false" 
@@ -229,10 +244,132 @@
                             </p:column>
                         </p:panelGrid>
                     </p:dialog>
+                    
+                    <p:dialog id="opcionesPlanPruebas" header="Opcion" widgetVar="opcionesPlanPruebas"  resizable="false" 
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">  
+                        <p:panelGrid columns="1" styleClass="noBorders">
+                            <p:column>
+                                <center><h:outputText value="Por favor seleccione la opción que desea abrir."/></center>
+                                <br/>
+                            </p:column>
+                            <p:column>
+                                <p:commandButton value="PRUEBAS" style="float: right;" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
+                                                 process="@this"/>
+                                <p:commandButton value="PLAN DE DESARROLLO" style="float: right;" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
+                                                 process="@this"/>
+                                    
+                            </p:column>
+                        </p:panelGrid>
+                    </p:dialog>
+                    
                 </pm:content>
             </h:form>
         </pm:page>
 
+        <pm:page id="planDesa">
+            <pm:header title="Plan de desarrollo" swatch="b"
+                       styleClass="ui-header">
+                <p:button styleClass="ui-btn-right ui-btn-inline" value="Salir" onclick="cerrarSesion();"/>
+                <p:button styleClass="ui-btn-left ui-btn-inline" value="Volver" icon="ui-icon-arrow-l" outcome="pm:evaluados?transition=flip"/>
+            </pm:header>
+
+            <h:form id="formulario2">
+                <pm:content>
+                        <center><h3>PLAN DE DESARROLLO</h3></center>
+                           
+                    <p:dataList value="#{controladorPlanDesarrollo.actividades}" var="act" rowIndexVar="indexP">
+                        <h:outputLink value="#">
+                            <p>#{act.descripcion}</p>
+                        </h:outputLink>
+                    </p:dataList>  
+                        <hr/>
+                        <p:dataList value="#{controladorInicioEval.planes}" var="epd" rowIndexVar="indexP">
+                        <h:outputLink value="#">
+                            <p>#{epd.codigo}</p>asdf
+                            <p>#{epd.evalActividad.descripcion}</p>
+                        </h:outputLink>
+                    </p:dataList> 
+                        <hr/>
+                    <p:dataList value="#{controladorInicioEval.evaluados}" var="ev" rowIndexVar="indexE">
+                    <p>#{ev.nombrePersona}</p>
+                    #{controladorPlanDesarrollo.evaluadoActual.nombrePersona}
+                        <h:outputLink value="#" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '1'}]);">
+                            #{controladorInicioEval.evaluado.nombrePersona}
+                            <p><strong>Cod: </strong>#{ev.puntajeObtenido != null ?
+                                                           ev.puntajeObtenido : 0}</p>
+                            <p><strong>Actividad a desarrollar: </strong>#{ev.puntajeObtenido != null ?
+                                                           ev.puntajeObtenido : 0}</p>
+                            <p><strong>Observación: </strong>#{ev.puntajeObtenido != null ?
+                                                           ev.puntajeObtenido : 0}</p>
+                            <p><strong>Educación: </strong>#{ev.puntajeObtenido != null ?
+                                                           ev.puntajeObtenido : 0}</p>
+                        </h:outputLink>
+                    <p:column style="margin-top: 2%">      
+                        <center>
+                            <p:spacer height="20" width="20"/>
+                            <p:commandButton value="Añadir Actividad" onclick="PF('alertaNuevaActividad').show();"
+                                              style="font-size: 18px !important; background-color: #3388D7; color: white;"/>
+                        </center>     
+                            
+                    </p:column>
+                    </p:dataList>
+
+                </pm:content>
+            </h:form>
+                <h:form id="nueva">
+                    <p:dialog id="alertaNuevaActividad" header="Añadir Actividad" widgetVar="alertaNuevaActividad"  resizable="false" 
+                              draggable="false" modal="true" closable="true" closeOnEscape="true" style="width:80%">  
+                        <p:panelGrid columns="2" styleClass="noBorders" id="alertaNewActPanelMovil">
+                        <h:outputText value="Código:" id="cod" />
+                        <p:inputText value="#{controladorPlanDesarrollo.codigo}" disabled="true"/>    
+                        <p:outputLabel value="Actividad a desarrollar:"  />
+                        <p:selectOneMenu id="selectActividad" value="#{controladorPlanDesarrollo.actividadSelec}" panelStyle="width:260px;"
+                                           style="width:260px" filter="true" filterMatchMode="contains">
+                            <f:selectItems value="#{controladorPlanDesarrollo.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.secuencia}" />
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Actividad"/>
+                                </f:facet>
+                                <h:outputText value="#{actividad.descripcion}" />
+                            </p:column>
+                            <p:ajax update="@this"/>
+                        </p:selectOneMenu>   
+                        <h:outputText value="Observación" />
+                         <p:inputTextarea rows="6" cols="51" id="obs" value="#{controladorPlanDesarrollo.observacion}"
+                                         maxlength="500">
+                            <p:ajax update="@this"/>
+                        </p:inputTextarea>
+
+                        <h:outputText value="Educación" />
+                        <p:selectOneMenu id="selectcursos" value="#{controladorPlanDesarrollo.secCurso}" panelStyle="width:260px;"
+                                           style="width:260px" filter="true" filterMatchMode="contains">
+                            <f:selectItems value="#{controladorPlanDesarrollo.cursos}" var="curso" itemLabel="#{curso.nombre}" itemValue="#{curso.secuencia}" />
+
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Curso"/>
+                                </f:facet>
+                                <h:outputText value="#{curso.nombre}" />
+                            </p:column>
+                            <p:ajax update="@this"/>
+                        </p:selectOneMenu>                        
+                    <p:column style="margin-top: 2%">      
+                        <center>
+                            <p:commandButton value="Guardar" 
+                                             process="@this" style="font-size: 18px !important; background-color: #3388D7; color: white;"
+                                             actionListener="#{controladorPlanDesarrollo.registrarPlanDesarrollo()}"
+                                             onclick="PF('alertanuevaactividad').hide();" 
+                                             update=":principalForm:nueva:alertaNewActPanel" />
+                            <p:spacer height="20" width="20"/>
+                            <p:commandButton value="Cancelar" onclick="PF('alertanuevaactividad').hide();"
+                                             process="@this" style="font-size: 18px !important; background-color: red; color: white; display: #{controladorPlanDesarrollo.secPrueba==false ? '':'none'}}" />
+                        </center>
+                    </p:column>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+        </pm:page>        
+        
         <pm:page id="pruebas">
             <pm:header title="Pruebas" swatch="b"
                        styleClass="ui-header">
@@ -431,6 +568,8 @@
                 </pm:content>
             </h:form>
         </pm:page>
+        
+
     </h:body>
 
 </html>
