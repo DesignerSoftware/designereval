@@ -30,7 +30,7 @@ public class EvalSeguimientosPD implements Serializable {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date fecha;
     @Column(name = "COMENTARIO")
-    private String observacion;
+    private String comentario;
     @Column(name = "PORCENTAJE")
     private int porcentaje;
 
@@ -58,12 +58,12 @@ public class EvalSeguimientosPD implements Serializable {
         this.fecha = fecha;
     }
 
-    public String getObservacion() {
-        return observacion;
+    public String getComentario() {
+        return comentario;
     }
 
-    public void setObservacion(String observacion) {
-        this.observacion = observacion;
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 
     public int getPorcentaje() {

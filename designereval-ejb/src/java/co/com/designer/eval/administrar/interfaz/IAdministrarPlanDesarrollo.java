@@ -9,6 +9,7 @@ import co.com.designer.eval.entidades.Convocatorias;
 import co.com.designer.eval.entidades.Cursos;
 import co.com.designer.eval.entidades.EvalActividades;
 import co.com.designer.eval.entidades.EvalPlanesDesarrollos;
+import co.com.designer.eval.entidades.EvalSeguimientosPD;
 import co.com.designer.eval.entidades.Profesiones;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,7 +19,7 @@ import javax.ejb.Local;
 
 /**
  *
- * @author Soporte
+ * @author Thalia Manrique
  */
 @Local
 public interface IAdministrarPlanDesarrollo {
@@ -34,6 +35,8 @@ public interface IAdministrarPlanDesarrollo {
     public BigDecimal obtenerUltimoCodigo(BigInteger secEvalResultadoConv);
     public EvalActividades consultarEvalActividad(BigDecimal secuencia);
     public List<Convocatorias> obtenerConvocatorias(String usuario);
-    public boolean registrarBitacora(BigDecimal secPlanDesarrollo, 
-            BigInteger secEvalResultado, String secEvalActividad, Date fecha, String comentario, String porcentaje);
+    public boolean registrarBitacora(BigInteger secPlanDesarrollo, 
+           Date fecha, String comentario, String porcentaje);
+    public List<EvalSeguimientosPD> obtenerBitacoras(BigInteger secPlanDesarrollo);    
+    public boolean eliminarBitacora(BigInteger secBitacora);
 }

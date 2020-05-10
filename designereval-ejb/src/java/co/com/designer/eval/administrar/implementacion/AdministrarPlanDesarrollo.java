@@ -6,6 +6,7 @@ import co.com.designer.eval.entidades.Convocatorias;
 import co.com.designer.eval.entidades.Cursos;
 import co.com.designer.eval.entidades.EvalActividades;
 import co.com.designer.eval.entidades.EvalPlanesDesarrollos;
+import co.com.designer.eval.entidades.EvalSeguimientosPD;
 import co.com.designer.eval.entidades.Profesiones;
 import co.com.designer.eval.persistencia.interfaz.IPersistenciaConvocatorias;
 import co.com.designer.eval.persistencia.interfaz.IPersistenciaCursos;
@@ -126,6 +127,7 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
         }
     }
 
+    @Override
     public List<Profesiones> obtenerProfesiones() {
         EntityManager em = null;
         try {
@@ -195,7 +197,7 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
 //            return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secEvalResultado, secEvalActividad, observacion, secCurso);
             return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secEvalResultado, secEvalActividad, observacion, secCurso, secProfesion);
         } catch (Exception e) {
-            System.out.println(this.getClass().getName() + ": " + "Error AdministrarEvaluacion.registrarActualizarRespuesta: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.registrarPlanDesarrollo: " + e);
             return false;
         } finally {
             if (em != null && em.isOpen()) {
@@ -205,7 +207,7 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
     }
 
     @Override
-    public BigDecimal obtenerUltimoCodigo(BigInteger secEvalResultadoConv) {
+    public BigDecimal obtenerUltimoCodigo(BigInteger secEvalResultadoConv) { // Consulta el maximo código  a las actividades del plan de desarrollo de una convocatoria y usuario especifico
         EntityManager em = null;
         BigDecimal res = new BigDecimal(0);
         try {
@@ -234,7 +236,7 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
             }
             return persistenciaEvalActividades.consultarEvalActividad(em, secuencia);
         } catch (Exception e) {
-            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.obtenerActividadesEmpl: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.consultarEvalActividad: " + e);
             return null;
         } finally {
             if (em != null && em.isOpen()) {
@@ -253,7 +255,7 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
             }
             return persistenciaConvocatorias.obtenerConvocatorias(em, usuario);
         } catch (Exception e) {
-            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.obtenerConvocatoriasAlcance: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.obtenerConvocatorias: " + e);
             return null;
         } finally {
             if (em != null && em.isOpen()) {
@@ -262,9 +264,9 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
         }
     }
     
-        @Override
-    public boolean registrarBitacora(BigDecimal secPlanDesarrollo, 
-            BigInteger secEvalResultado, String secEvalActividad, Date fecha, String comentario, String porcentaje) {
+       @Override
+    public boolean registrarBitacora(BigInteger secPlanDesarrollo, 
+             Date fecha, String comentario, String porcentaje) {
         EntityManager em = null;
         try {
             if (em != null && em.isOpen()) {
@@ -275,7 +277,46 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
 //            return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secEvalResultado, secEvalActividad, observacion, secCurso);
             return persistenciabitacoras.registrarEvalSeguimientoPD(em, secPlanDesarrollo, fecha, comentario, porcentaje);
         } catch (Exception e) {
-            System.out.println(this.getClass().getName() + ": " + "Error AdministrarEvaluacion.registrarActualizarRespuesta: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlan.registrarBitacora: " + e);
+            return false;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+    
+    @Override
+    public List<EvalSeguimientosPD> obtenerBitacoras(BigInteger secPlanDesarrollo) {
+        EntityManager em = null;
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            return persistenciabitacoras.obtenerEvalSeguimientosPD(em, secPlanDesarrollo);
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.obtenerBitacoras: " + e);
+            return null;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+    
+    @Override
+    public boolean eliminarBitacora(BigInteger secBitacora) {
+            System.out.println("Parametro secBitacora: "+secBitacora);
+        EntityManager em = null;
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            return persistenciabitacoras.eliminarBitacora(em, secBitacora);
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.eliminarBitacora: " + e);
             return false;
         } finally {
             if (em != null && em.isOpen()) {

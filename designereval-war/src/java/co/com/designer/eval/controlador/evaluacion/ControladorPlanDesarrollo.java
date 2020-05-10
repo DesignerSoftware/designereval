@@ -7,6 +7,7 @@ import co.com.designer.eval.entidades.Convocatorias;
 import co.com.designer.eval.entidades.Cursos;
 import co.com.designer.eval.entidades.EvalActividades;
 import co.com.designer.eval.entidades.EvalPlanesDesarrollos;
+import co.com.designer.eval.entidades.EvalSeguimientosPD;
 import co.com.designer.eval.entidades.Evaluados;
 import co.com.designer.eval.entidades.Profesiones;
 import co.com.designer.eval.utilidadesUI.MensajesUI;
@@ -14,6 +15,7 @@ import co.com.designer.eval.utilidadesUI.PrimefacesContextUI;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -24,6 +26,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.servlet.http.HttpSession;
+import org.primefaces.event.SelectEvent;
 
 /**
  *
@@ -41,6 +44,7 @@ public class ControladorPlanDesarrollo implements Serializable {
     private List<Profesiones> listaProfesiones;
     private List<Convocatorias> convocatorias;
     private List<EvalPlanesDesarrollos> evalPlanesDesarrollos;
+    private List<EvalSeguimientosPD> bitacoras;
     private EvalActividades evalActividad;
     private Cursos cursoSeleccionado;
     private Evaluados evaluadoActual;
@@ -57,6 +61,7 @@ public class ControladorPlanDesarrollo implements Serializable {
     private String actividadSelec;
     private String secCurso;
     private String secProfesion;
+    private boolean isSeleccionadoActividad=false;
 
     private String evaluadoActualPersona;
     private BigDecimal convocatoriaActualBigDecimal;
@@ -67,14 +72,12 @@ public class ControladorPlanDesarrollo implements Serializable {
     private Date fechaseg;
     private String porcent;
     private String comentario;
+    private EvalSeguimientosPD seleccionadoBitacora;
+    private boolean isSeleccionadoBitacora=false; //si hay una bitacora seleccionada
+    private BigInteger secuenciaBitacora;
     
 
     public ControladorPlanDesarrollo() {
-        //System.out.println("Constructor()");
-        //ed=new EvalActividades();
-        //ed.setCodigo(BigInteger.ONE);
-        //ed.setDescripcion("PRUEBA");
-        //ed.setSecuencia(BigInteger.TEN);
     }
 
     @PostConstruct
@@ -105,6 +108,10 @@ public class ControladorPlanDesarrollo implements Serializable {
             //System.out.println("EmpleadoActual: "+evaluadoActual.getEmpleado() + " convocatoria: "+convocatoriaActual.getSecuencia());
             deshabiProfesiones = true;
             deshabiCursos = true;
+            bitacoras=null; //Inicialmente no mostrar bitacoras
+            isSeleccionadoActividad=false;
+            isSeleccionadoBitacora=false;
+            secuenciaBitacora=null;
             System.out.println("Inicializado");
             //this.setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
         } catch (ELException e) {
@@ -121,7 +128,7 @@ public class ControladorPlanDesarrollo implements Serializable {
         System.out.println("secuenciaEvaluado: " + this.evaluadoActual.getSecuencia());
         evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
         setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
-        System.out.println("ultimo codigo plandesarrollo: " + this.codigoNuevo);
+        //System.out.println("ultimo codigo plandesarrollo: " + this.codigoNuevo);
         evalactividades = administrarPlanDesarrollo.obtenerActividades();
     }
 
@@ -194,6 +201,14 @@ public class ControladorPlanDesarrollo implements Serializable {
         return seleccionado;
     }
 
+    public boolean isIsSeleccionadoActividad() {
+        return isSeleccionadoActividad;
+    }
+
+    public void setIsSeleccionadoActividad(boolean isSeleccionadoActividad) {
+        this.isSeleccionadoActividad = isSeleccionadoActividad;
+    }
+
     public BigInteger getSecuenciaPlan() {
         return seleccionado.getSecuencia();
     }
@@ -216,14 +231,27 @@ public class ControladorPlanDesarrollo implements Serializable {
     
 
     public void eliminarPlanDesarrollo() {
-        System.out.println("Se dispone a eliminar Evalplanesdesarrollos sec: " + seleccionado.getSecuencia());
-        if (administrarPlanDesarrollo.eliminarPlanDesarrollo(seleccionado.getSecuencia())) {
-            MensajesUI.info("Actividad de plan de desarrollo eliminada exitosamente.");
-            evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
-            this.setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
+        if (isSeleccionadoActividad == false) {
+            MensajesUI.error("Seleccione la actividad que desea eliminar");
         } else {
-            MensajesUI.error("No fue posible eliminar la actividad de plan de desarrollo.");
+            System.out.println("Se dispone a eliminar Evalplanesdesarrollos sec: " + seleccionado.getSecuencia());
+            if (seleccionado.getSecuencia() == null) {
+                MensajesUI.error("Seleccione la actividad que desea eliminar");
+            }
+            if (administrarPlanDesarrollo.eliminarPlanDesarrollo(seleccionado.getSecuencia())) {
+                MensajesUI.info("Actividad de plan de desarrollo eliminada exitosamente.");
+                evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
+                this.setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
+                isSeleccionadoActividad = false;
+            } else {
+                MensajesUI.error("No fue posible eliminar la actividad de plan de desarrollo.");
+            }
         }
+        //if (isSeleccionadoActividad) {
+
+       /* }else{
+            MensajesUI.error("Seleccione el plan de desarrollo que desea");
+        }*/
     }
 
     public void registrarPlanDesarrollo() {
@@ -244,7 +272,10 @@ public class ControladorPlanDesarrollo implements Serializable {
                 evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
                 obsPlanDes = "";
                 setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
-
+                isSeleccionadoActividad=false;
+                isSeleccionadoBitacora=false;
+                secuenciaBitacora=null;
+                bitacoras=null;
             } else {
                 MensajesUI.error("No fue posible registrar la actividad de plan de desarrollo.");
             }
@@ -262,9 +293,17 @@ public class ControladorPlanDesarrollo implements Serializable {
     }
     
     public void actualizaListas(){
+        this.setObservacion(null);
         actualizaCod();
         actualizaActividades();
         cargarPlanesDesarrollo();
+    }
+    
+    public void actualizaListasBitacora(){
+        bitacoras=administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
+        this.setPorcent(null);
+        this.setComentario(null);
+        setComentario(null);
     }
 
     public boolean getSecPrueba() {
@@ -390,27 +429,155 @@ public class ControladorPlanDesarrollo implements Serializable {
     }
     
     public void registrarBitacora() {
+        if (isSeleccionadoActividad==false) {
+            MensajesUI.error("Seleccione la actividad del plan de desarrolla a la que se le va a añadir la bitácora.");
+        }else{
         try {
             System.out.println("Creacion nueva bitacora ");
-            System.out.println("sec EvalResultadoConv: " + evaluadoActual.getSecuencia());
+            //System.out.println("sec EvalResultadoConv: " + evaluadoActual.getSecuencia());
             //System.out.println("secActividad: "+ evalActividad.getSecuencia());
             System.out.println("fecha seguimiento: " + fechaseg );
             System.out.println("porcentaje: " + porcent);
             System.out.println("comentario: " + comentario);
+            System.out.println("Secuencia plandesarrollo: "+secPlanDesarrollo);
             //System.out.println("secCurso: "+cursoSeleccionado.getSecuencia());
-            /*if (administrarPlanDesarrollo.registrarPlanDesarrollo(codigoNuevo, evaluadoActual.getSecuencia(), actividadSelec, obsPlanDes, secCurso, secProfesion)) {
-                MensajesUI.info("Actividad de plan de desarrollo creada exitosamente.");
-                evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
-                obsPlanDes = "";
-                setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
-
+            if (administrarPlanDesarrollo.registrarBitacora(secPlanDesarrollo, fechaseg, comentario, porcent)) {
+                if(isSeleccionadoActividad==true){ // si hay actividad seleccionada, cargar los planes correspondientes
+                    bitacoras=administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);                    
+                }else{
+                    bitacoras=null;
+                }
+                MensajesUI.info("Bitacora creada exitosamente.");
+                porcent="";
+                comentario = "";
             } else {
-                MensajesUI.error("No fue posible registrar la actividad de plan de desarrollo.");
-            }*/
+                MensajesUI.error("No fue posible registrar la bitácora.");
+            }
         } catch (Exception e) {
             System.out.println("Error ControladorPlanDesarrollo.registrarBitacora(): " + e.getMessage());
         }
-    }    
+        }
+    } 
     
+    public void prueba(){
+        System.out.println("Prueba, se selecciono un registro!!!");
+        //bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
+        System.out.println("Secuencia plandesa: "+seleccionado.getSecuencia());
+    }
 
+    public EvalSeguimientosPD getSeleccionadoBitacora() {
+        return seleccionadoBitacora;
+    }
+
+    public void setSeleccionadoBitacora(EvalSeguimientosPD seleccionadoBitacora) {
+        this.seleccionadoBitacora = seleccionadoBitacora;
+    }
+
+    public List<EvalSeguimientosPD> getBitacoras() {
+        return bitacoras;
+    }
+
+    public void setBitacoras(List<EvalSeguimientosPD> bitacoras) {
+        this.bitacoras = bitacoras;
+    }
+    
+    public void seleccionPlan(int num){ //Cuando se seleccione alguna actividad del plan de desarrollo
+        //bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
+        switch (num) {
+            case 1:
+                System.out.println("Se ha seleccionado una actividad del plan de desarrollo "+ seleccionado.getSecuencia());
+                bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
+                isSeleccionadoActividad=true;
+                secPlanDesarrollo=seleccionado.getSecuencia();
+                this.setearFechaActualBitacora();
+                System.out.println("Se seleccionó el plan de desarrollo: "+secPlanDesarrollo);
+                break;
+            case 2:
+                bitacoras=null;
+                isSeleccionadoActividad=false;
+                isSeleccionadoBitacora=false;
+                break;
+            default:
+                bitacoras=null;
+                isSeleccionadoBitacora=false;
+                break;
+        }
+    }
+    
+    public void seleccionBitacora(int tipo){
+        switch (tipo) {
+            case 1:
+                System.out.println("Se seleccionó la bitacora: " + seleccionadoBitacora.getSecuencia()+" "+seleccionadoBitacora.getComentario());
+                isSeleccionadoBitacora=true;
+                setIsSeleccionadoBitacora(true);
+                secuenciaBitacora=seleccionadoBitacora.getSecuencia();
+                break;
+            case 2:
+                //seleccionadoBitacora.setSecuencia(null);
+                System.out.println("caso 2");
+                isSeleccionadoBitacora=false;
+                secuenciaBitacora=null;
+                break;
+            default:
+                //seleccionadoBitacora.setSecuencia(null);
+                System.out.println("caso por defecto");
+                isSeleccionadoBitacora=false;
+                secuenciaBitacora=null;
+                break;
+        }
+    }
+    
+    public void eliminarBitacora(){
+        System.out.println("Se dispone a eliminar EvalSeguimientosPD ");
+        if (isSeleccionadoBitacora==false) {
+            MensajesUI.error("Seleccione la bitácora que desea eliminar.");
+        }else{
+            try {
+                if (administrarPlanDesarrollo.eliminarBitacora(secuenciaBitacora)) {
+                    MensajesUI.info("Bitácora eliminada exitosamente");
+                    bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
+                    secuenciaBitacora=null;
+                    isSeleccionadoBitacora=false;
+                    this.setIsSeleccionadoBitacora(false);
+                    comentario="";
+                    porcent=null;
+                }else{
+                    MensajesUI.error("No fue posible eliminar la bitácora.");
+                }
+            } catch (Exception e) {
+                System.out.println("Error eliminarBitacora(): "+e.getMessage());
+            }
+        }
+    }
+
+    public boolean isIsSeleccionadoBitacora() {
+        return isSeleccionadoBitacora;
+    }
+
+    public void setIsSeleccionadoBitacora(boolean isSeleccionadoBitacora) {
+        this.isSeleccionadoBitacora = isSeleccionadoBitacora;
+    }
+    
+    public void onDateSelect(SelectEvent event) {
+           System.out.println("Fecha seleccionada: " + event.getObject());
+           System.out.println("Fecha: "+fechaseg);         
+       }    
+
+    public void setearFechaActualBitacora() {
+        Calendar cl = Calendar.getInstance();
+        String f = cl.get(Calendar.YEAR) + "/" + (cl.get(Calendar.MONTH) + 1) + "/" + cl.get(Calendar.DAY_OF_MONTH);
+        System.out.println("Fecha modify: " + f);
+        fechaseg=cl.getTime();
+    }
+
+    public BigInteger getSecuenciaBitacora() {
+        return secuenciaBitacora;
+    }
+
+    public void setSecuenciaBitacora(BigInteger secuenciaBitacora) {
+        this.secuenciaBitacora = secuenciaBitacora;
+    }
+    
+    
+    
 }
