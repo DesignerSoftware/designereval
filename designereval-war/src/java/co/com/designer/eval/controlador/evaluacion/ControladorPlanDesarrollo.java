@@ -429,35 +429,32 @@ public class ControladorPlanDesarrollo implements Serializable {
     }
     
     public void registrarBitacora() {
-        if (isSeleccionadoActividad==false) {
+        if (isSeleccionadoActividad == false) {
             MensajesUI.error("Seleccione la actividad del plan de desarrolla a la que se le va a añadir la bitácora.");
-        }else{
-        try {
-            System.out.println("Creacion nueva bitacora ");
-            //System.out.println("sec EvalResultadoConv: " + evaluadoActual.getSecuencia());
-            //System.out.println("secActividad: "+ evalActividad.getSecuencia());
-            System.out.println("fecha seguimiento: " + fechaseg );
-            System.out.println("porcentaje: " + porcent);
-            System.out.println("comentario: " + comentario);
-            System.out.println("Secuencia plandesarrollo: "+secPlanDesarrollo);
-            //System.out.println("secCurso: "+cursoSeleccionado.getSecuencia());
-            if (administrarPlanDesarrollo.registrarBitacora(secPlanDesarrollo, fechaseg, comentario, porcent)) {
-                if(isSeleccionadoActividad==true){ // si hay actividad seleccionada, cargar los planes correspondientes
-                    bitacoras=administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);                    
-                }else{
-                    bitacoras=null;
+        } else {
+            try {
+                System.out.println("Creacion nueva bitacora ");
+                //System.out.println("sec EvalResultadoConv: " + evaluadoActual.getSecuencia());
+                //System.out.println("secActividad: "+ evalActividad.getSecuencia());
+                System.out.println("fecha seguimiento: " + fechaseg);
+                System.out.println("porcentaje: " + porcent);
+                System.out.println("comentario: " + comentario);
+                System.out.println("Secuencia plandesarrollo: " + secPlanDesarrollo);
+                //System.out.println("secCurso: "+cursoSeleccionado.getSecuencia());
+                if (administrarPlanDesarrollo.registrarBitacora(secPlanDesarrollo, fechaseg, comentario, porcent)) {
+                    bitacoras = administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
+                    isSeleccionadoBitacora = false;
+                    MensajesUI.info("Bitacora creada exitosamente.");
+                    porcent = "";
+                    comentario = "";
+                } else {
+                    MensajesUI.error("No fue posible registrar la bitácora.");
                 }
-                MensajesUI.info("Bitacora creada exitosamente.");
-                porcent="";
-                comentario = "";
-            } else {
-                MensajesUI.error("No fue posible registrar la bitácora.");
+            } catch (Exception e) {
+                System.out.println("Error ControladorPlanDesarrollo.registrarBitacora(): " + e.getMessage());
             }
-        } catch (Exception e) {
-            System.out.println("Error ControladorPlanDesarrollo.registrarBitacora(): " + e.getMessage());
         }
-        }
-    } 
+    }
     
     public void prueba(){
         System.out.println("Prueba, se selecciono un registro!!!");
@@ -489,17 +486,26 @@ public class ControladorPlanDesarrollo implements Serializable {
                 bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
                 isSeleccionadoActividad=true;
                 secPlanDesarrollo=seleccionado.getSecuencia();
+                isSeleccionadoBitacora=false;
+                secuenciaBitacora=null;
                 this.setearFechaActualBitacora();
                 System.out.println("Se seleccionó el plan de desarrollo: "+secPlanDesarrollo);
                 break;
             case 2:
                 bitacoras=null;
+                secuenciaBitacora=null;
+                secPlanDesarrollo=null;
                 isSeleccionadoActividad=false;
                 isSeleccionadoBitacora=false;
+                System.out.println("SeleccionoPlan(2)");
                 break;
             default:
                 bitacoras=null;
+                secuenciaBitacora=null;
+                secPlanDesarrollo=null;
+                isSeleccionadoActividad=false;
                 isSeleccionadoBitacora=false;
+                System.out.println("Por defecto plan no seleccionado");
                 break;
         }
     }
@@ -578,6 +584,13 @@ public class ControladorPlanDesarrollo implements Serializable {
         this.secuenciaBitacora = secuenciaBitacora;
     }
     
-    
+    public void refrescaListas(){ // todos los valores que deban reiniciarse al abrir la pantalla
+        isSeleccionadoActividad=false;
+        isSeleccionadoBitacora=false;
+        secPlanDesarrollo=null;
+        secuenciaBitacora=null;
+        cargarPlanesDesarrollo();
+        bitacoras=null;
+    }
     
 }

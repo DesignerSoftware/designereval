@@ -8,8 +8,8 @@
     <p:remoteCommand name="pantallaDinamica"
                      actionListener="#{controlNavegacion.pantallaDinamica('/Evaluador/inicioEval.xhtml')}"
                      process="@this" update=":principalForm"/>
-    <p:remoteCommand name="refrescarListas" actionListener="#{controladorInicioEval.refrescarListas()}"
-                     process="@this" oncomplete="pantallaDinamica();"/>    
+    <p:remoteCommand name="refrescarListas" actionListener="#{controladorPlanDesarrollo.refrescaListas()}"
+                     process="@this" oncomplete="pantallaDinamica();" update=":principalForm:dtbPlanes"/>    
     <p:remoteCommand name="refrescarPlanes" actionListener="#{controladorPlanDesarrollo.cargarPlanesDesarrollo()}"
                      process="@this" autoRun="true" update=":principalForm:dtbPlanes"/>  
 
@@ -75,8 +75,8 @@
                      scrollable="true"
                      scrollHeight="200" 
                      style="margin-left: 10%; margin-right: 10%">
-            <p:ajax event="rowSelect" listener="#{controladorPlanDesarrollo.seleccionPlan(1)}"  update=":principalForm:alertaEliminarPanel :principalForm:dtbPlanSeguimiento"/>
-            <p:ajax event="rowUnselect" listener="#{controladorPlanDesarrollo.seleccionPlan(0)}" update=":principalForm:dtbPlanSeguimiento" oncomplete="#{controladorPlanDesarrollo.setSeleccionado(null)}" />
+            <p:ajax event="rowSelect" listener="#{controladorPlanDesarrollo.seleccionPlan(1)}"  update=":principalForm:alertaEliminarPanel :principalForm:dtbPlanSeguimiento :principalForm:nuevaBitacora:alertanuevabitacora :principalForm:alertaEliminarBitacora"/>
+            <p:ajax event="rowUnselect" listener="#{controladorPlanDesarrollo.seleccionPlan(0)}" update=":principalForm:dtbPlanSeguimiento :principalForm:nuevaBitacora:alertanuevabitacora :principalForm:alertaEliminarBitacora" oncomplete="#{controladorPlanDesarrollo.setSeleccionado(null)}" />
             <f:facet name="header">
                 <h:outputText value="Plan de desarrollo"/>
             </f:facet>
@@ -287,8 +287,13 @@
         <h:form id="nuevaBitacora">
             <p:dialog id="alertanuevabitacora" header="Añadir Bitácora" widgetVar="alertanuevabitacora"  resizable="false" 
                   draggable="true" modal="true" closable="true" closeOnEscape="true">  
-            <h3 style="margin-top:0;">Nueva Bitácora</h3>
-            <p:panelGrid columns="2" id="alertanewbitpanel">
+            <h:outputText value="Nueva Bitácora" style="margin-top:0; font-weight: bold" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}"/>
+            <p:column>
+                <center>
+                    <h:outputText value="Seleccione la actividad a la que desea añadirle la bitácora de seguimiento." rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad==false}"/>
+                </center>
+            </p:column>            
+            <p:panelGrid columns="2" id="alertanewbitpanel" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}">
                 <h:outputText value="Fecha de seguimiento" />
                     <p:calendar id="finicialdis" 
                                 value="#{controladorPlanDesarrollo.fechaseg}" 
@@ -311,14 +316,18 @@
             <p:spacer height="30" width="20"/>
             <p:column style="margin-top: 2%">      
                 <center>
-                    <p:commandButton value="Guardar" 
+                    <p:commandButton value="Guardar" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}"
                                      actionListener="#{controladorPlanDesarrollo.registrarBitacora()}"                                     
                                      process="@this" style="font-size: 18px !important; background-color: #00FF00; color: black;"
                                      onclick="PF('alertanuevabitacora').hide();" 
                                      update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:dtbPlanSeguimiento" />
                     <p:spacer height="20" width="20"/>
                     <p:commandButton value="Cancelar" onclick="PF('alertanuevabitacora').hide();" actionListener="#{controladorPlanDesarrollo.actualizaListasBitacora()}"
-                                     process="@this" style="font-size: 18px !important; background-color: red; color: white;}"
+                                     process="@this" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}"
+                                     style="font-size: 18px !important; background-color: red; color: white;}"
+                                     update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento" />
+                    <p:commandButton value="Aceptar" onclick="PF('alertanuevabitacora').hide();" actionListener="#{controladorPlanDesarrollo.actualizaListasBitacora()}"
+                                     process="@this" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad==false}"
                                      update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento" />
                 </center>
             </p:column>            
