@@ -63,7 +63,7 @@
     <p:column style="margin-top: 2%; margin-left: 10%;">  
             <p:commandButton value="Añadir Actividad"  actionListener="#{controladorPlanDesarrollo.actualizaListas()}"
                              process="@this" style="margin-left: 10%; font-size: 18px !important; background-color: #00FF00; color: black;" onclick="PF('alertanuevaactividad').show();"
-                             update=":principalForm:nueva:alertanewactpanel, :principalForm:dtbPlanes :principalForm:nuevaBitacora:alertanuevabitacora :principalForm:alertaEliminarBitacora :principalForm:nuevaBitacora:alertaeditabitacora :principalForm:alertaEliminar" />
+                             update=":principalForm:nueva:alertanewactpanel, :principalForm:dtbPlanes  :principalForm:alertaEliminarBitacora :principalForm:alertaEliminarPanelB" />
             <p:spacer height="20" width="20"/>
     </p:column>
             
@@ -105,7 +105,7 @@
     <p:column style="margin-top: 2%; width: 80%; float: right;">  
             <p:spacer height="20" width="20"/>
             <p:commandButton id="btnElimAct" value="Eliminar Actividad" onclick="PF('alertaEliminar').show();" disabled="#{!controladorPlanDesarrollo.habilitaEliminarActividad}"
-                             process="@this" style="float: right; margin-right: 10%; font-size: 18px !important; background-color: #3388D7; color: white;" />     
+                             process="@this" style="float: right; margin-right: 10%; font-size: 18px !important; background-color: #3388D7; color: white;" update=":principalForm:nuevaBitacora:alertanuevabitacora"/>     
     </p:column>
     
     <p:spacer height="60" width="20"/>
@@ -113,7 +113,7 @@
     <p:column style="margin-top: 2%; float: clear; width:80%"> 
         <p:commandButton id="btnAddBitacora" value="Añadir Bitácora"  onclick="PF('alertanuevabitacora').show();" disabled="#{!controladorPlanDesarrollo.habilitaEliminarActividad}"
                          process="@this" style="margin-left: 10%; float: left; font-size: 18px !important;  background-color: #00FF00; color: black;"
-                         update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento" />
+                          />
     </p:column>
     
     <p:dataTable id="dtbPlanSeguimiento" var="evalseguimiento" widgetVar="dtbPlanSeguimiento"
@@ -152,7 +152,7 @@
     <p:column style="margin-top: 2%; width: 80%; float: right;">  
         <p:commandButton id="btnElimBitacora" value="Eliminar Bitácora" onclick="PF('alertaEliminarBitacora').show();" disabled="#{!controladorPlanDesarrollo.habilitaEliminarBitacora}"
                              process="@this" style="float: right; margin-right: 10%; font-size: 18px !important;background-color: #3388D7; color: white; "
-                            update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento  :principalForm:alertaEliminarPanelB" />
+                            update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento :principalForm:alertaEliminarPanelB" />
     </p:column>
 
     <p:column style="margin-top: 2%">
@@ -177,7 +177,7 @@
                 <p:commandButton value="Si" style="float: right" 
                                  actionListener="#{controladorPlanDesarrollo.eliminarPlanDesarrollo()}"
                                  onclick="PF('alertaEliminar').hide();"
-                                 update=":principalForm:dtbPlanes :principalForm:dtbPlanSeguimiento :principalForm:alertaEliminarPanelB :principalForm:alertaEliminar :principalForm:btnElimAct :principalForm:btnElimBitacora :principalForm:btnAddBitacora"
+                                 update=":principalForm:dtbPlanes :principalForm:dtbPlanSeguimiento :principalForm:alertaEliminarPanelB :principalForm:alertaEliminar :principalForm:btnElimAct :principalForm:btnElimBitacora :principalForm:btnAddBitacora :principalForm:nuevaBitacora"
                                  process="@this" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}"/>
             </p:column>
         </p:panelGrid>
