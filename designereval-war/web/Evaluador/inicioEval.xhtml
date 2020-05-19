@@ -124,11 +124,11 @@
                                      onstart="PF('dtbEvaluados').selectRow(#{indice});"
                                      />
                 </p:column>
-                <p:column headerText="Plan de Desarrollo" width="80">
+                <p:column headerText="Plan de Desarrollo" width="80" rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}">
                     <p:commandButton id="planDesa" value="Abrir" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="pantallaDinamicaPlanDesa()"
-                                     disabled="#{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'true'}"
+                                     disabled="#{controladorInicioEval.esJefeInmediato()}"
                                      />
                 </p:column>                
             </p:dataTable>

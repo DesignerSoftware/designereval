@@ -102,5 +102,45 @@ public class PersistenciaEvalPlanesDesarrollos implements IPersistenciaEvalPlane
             return resultado;
         }
     }
-
+    
+    
+    @Override
+    public BigDecimal countBitacoras(EntityManager eManager, BigInteger secEvalPlanesDesarrollos) {
+        BigDecimal resultado=new BigDecimal(0);
+        try {
+//            eManager.getTransaction().begin();
+            eManager.joinTransaction();
+//            Query query = eManager.createNativeQuery("SELECT p.* FROM Usuarios u, Personas p WHERE u.alias = ? AND u.persona = p.secuencia ", Personas.class);
+            Query query = eManager.createNativeQuery("select count(*) from evalplanesdesarrollos epd, evalseguimientospd esp where epd.secuencia=esp.evalplandesarrollo and epd.secuencia = ?");
+            query.setParameter(1, secEvalPlanesDesarrollos);
+            resultado = (BigDecimal) query.getSingleResult();
+            System.out.println("cantidad de bitacoraso: "+resultado);
+//            eManager.getTransaction().commit();
+            return resultado;
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaEvalPlanesDesarrollos.countBitacoras: " + e);
+//            terminarTransaccionException(eManager);
+            return resultado;
+        }
+    }
+    
+    @Override
+    public BigDecimal cantidadEvalPlanesDesarrollos(EntityManager eManager, BigInteger secEvalResultadoConv) {
+        BigDecimal resultado = new BigDecimal(0);
+        try {
+//            eManager.getTransaction().begin();
+            eManager.joinTransaction();
+//            Query query = eManager.createNativeQuery("SELECT p.* FROM Usuarios u, Personas p WHERE u.alias = ? AND u.persona = p.secuencia ", Personas.class);
+            Query query = eManager.createNativeQuery("select count(*) from EvalPlanesDesarrollos epd where epd.evalresultadoconv=?");
+            query.setParameter(1, secEvalResultadoConv);
+            resultado = (BigDecimal) query.getSingleResult();
+            System.out.println("cantidad de evalplanesdesarrollos: " + resultado);
+//            eManager.getTransaction().commit();
+            return resultado;
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaEvalPlanesDesarrollos.cantidadEvalPlanesDesarrollos: " + e);
+//            terminarTransaccionException(eManager);
+            return resultado;
+        }
+    }
 }

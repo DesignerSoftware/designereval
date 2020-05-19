@@ -2,6 +2,7 @@ package co.com.designer.eval.persistencia.implementacion;
 
 import co.com.designer.eval.entidades.Pruebas;
 import co.com.designer.eval.persistencia.interfaz.IPersistenciaPruebas;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -108,6 +109,21 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
         } catch (Exception ex) {
             System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.cerrarEvaluaciones: " + ex);
 //            terminarTransaccionException(em);
+            return "N";
+        }
+    }
+    
+    @Override
+    public String validarJefeInmediato(EntityManager em, BigDecimal secEvaluador, BigInteger secEvaluado){
+        try {
+            em.joinTransaction();
+            Query q = em.createNativeQuery("select EVALCONVOCATORIAS_PKG.VALIDARJEFEINMEDIATO( ? , ? ) FROM DUAL ");
+            q.setParameter(1, secEvaluador);
+            q.setParameter(2, secEvaluado);
+            String resul = (String) q.getSingleResult();
+            return resul;
+        } catch (Exception ex) {
+            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.validarJefeInmediato: " + ex);
             return "N";
         }
     }

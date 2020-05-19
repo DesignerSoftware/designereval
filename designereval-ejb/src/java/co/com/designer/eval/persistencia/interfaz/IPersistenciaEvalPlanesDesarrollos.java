@@ -24,4 +24,6 @@ public interface IPersistenciaEvalPlanesDesarrollos {
             BigInteger secEvalResultado, String secEvalActividad, String observacion, String secCurso, String secProfesion);
     //BigInteger secEvalResultado, BigInteger secEvalActividad, String observacion, BigInteger secCurso);
     public BigDecimal obtenerUltimoCodigo(EntityManager eManager, BigInteger secEvalResultadoConv);
+    public BigDecimal countBitacoras(EntityManager eManager, BigInteger secEvalPlanesDesarrollos);
+    public BigDecimal cantidadEvalPlanesDesarrollos (EntityManager eManager, BigInteger secEvalResultadoConv);
 }

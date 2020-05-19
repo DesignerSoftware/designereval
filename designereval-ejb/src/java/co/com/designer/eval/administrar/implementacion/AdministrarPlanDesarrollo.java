@@ -324,4 +324,44 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
             }
         }
     }
+    
+    @Override
+    public BigDecimal cantidadBitacoras(BigInteger secEvalResultadoConv) { // consulta cantidad de bitacoras asociadas a un plan de desarrollo
+        EntityManager em = null;
+        BigDecimal res = new BigDecimal(0);
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            return persistenciaEvalPlanesDesarrollos.countBitacoras(em, secEvalResultadoConv);
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.cantidadBitacoras: " + e);
+            return res;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+    
+    @Override
+    public BigDecimal cantidadEvalPlanesDesarrollos(BigInteger secEvalResultadoConv) { // consulta cantidad de bitacoras asociadas a un plan de desarrollo
+        EntityManager em = null;
+        BigDecimal res = new BigDecimal(0);
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            return persistenciaEvalPlanesDesarrollos.cantidadEvalPlanesDesarrollos(em, secEvalResultadoConv);
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.cantidadBitacoras: " + e);
+            return res;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }    
 }

@@ -76,6 +76,9 @@ public class ControladorPlanDesarrollo implements Serializable {
     private boolean isSeleccionadoBitacora=false; //si hay una bitacora seleccionada
     private BigInteger secuenciaBitacora;
     
+    private boolean habilitaEliminarActividad=false;
+    private boolean habilitaEliminarBitacora=false;
+    private int tipoActividadNueva=0; // si es formal (5), no formal(6), cualquier otra (0)
 
     public ControladorPlanDesarrollo() {
     }
@@ -130,6 +133,8 @@ public class ControladorPlanDesarrollo implements Serializable {
         setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
         //System.out.println("ultimo codigo plandesarrollo: " + this.codigoNuevo);
         evalactividades = administrarPlanDesarrollo.obtenerActividades();
+        habilitaEliminarActividad=hasEvalPlanesDesarrollos();
+        habilitaEliminarBitacora=hasBitacoras();
     }
 
     public void procesarActividadSelec(AjaxBehaviorEvent event) {
@@ -138,18 +143,24 @@ public class ControladorPlanDesarrollo implements Serializable {
         for (EvalActividades cuActividad : evalactividades) {
             if (cuActividad.getSecuencia().equals(new BigInteger(this.actividadSelec))) {
                 if ( (new BigInteger("5")).equals(cuActividad.getCodigo()) ){
+                    System.out.println("Tipo de actividad: FORMAL (5)");
                     deshabiProfesiones = false;
                     deshabiCursos = true;
                     secCurso = "";
+                    tipoActividadNueva=5;
                 } else if ( (new BigInteger("6")).equals(cuActividad.getCodigo()) ){
+                    System.out.println("Tipo de actividad: NO FORMAL (6)");
                     deshabiProfesiones = true;
                     deshabiCursos = false;
                     secProfesion = "";
+                    tipoActividadNueva=6;
                 } else {
+                    System.out.println("Tipo de actividad: otra diferente a formal y no formal");
                     deshabiProfesiones = true;
                     deshabiCursos = true;
                     secProfesion = "";
                     secCurso = "";
+                    tipoActividadNueva=0;
                 }
                 break;
             }
@@ -228,30 +239,37 @@ public class ControladorPlanDesarrollo implements Serializable {
     public void setDeshabiCursos(boolean deshabiCursos) {
         this.deshabiCursos = deshabiCursos;
     }
-    
 
     public void eliminarPlanDesarrollo() {
         if (isSeleccionadoActividad == false) {
             MensajesUI.error("Seleccione la actividad que desea eliminar");
         } else {
-            System.out.println("Se dispone a eliminar Evalplanesdesarrollos sec: " + seleccionado.getSecuencia());
-            if (seleccionado.getSecuencia() == null) {
-                MensajesUI.error("Seleccione la actividad que desea eliminar");
-            }
-            if (administrarPlanDesarrollo.eliminarPlanDesarrollo(seleccionado.getSecuencia())) {
-                MensajesUI.info("Actividad de plan de desarrollo eliminada exitosamente.");
-                evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
-                this.setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
-                isSeleccionadoActividad = false;
+            if (hasBitacoras()) {
+                MensajesUI.error("No es posible eliminar un plan de desarrollo con bitácoras asignadas.");
+                evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia()); 
+                bitacoras=null;
             } else {
-                MensajesUI.error("No fue posible eliminar la actividad de plan de desarrollo.");
+
+                System.out.println("Se dispone a eliminar Evalplanesdesarrollos sec: " + seleccionado.getSecuencia());
+                if (seleccionado.getSecuencia() == null) {
+                    MensajesUI.error("Seleccione la actividad que desea eliminar");
+                }
+                if (administrarPlanDesarrollo.eliminarPlanDesarrollo(seleccionado.getSecuencia())) {
+                    MensajesUI.info("Actividad de plan de desarrollo eliminada exitosamente.");
+                    evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
+                    this.setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
+                    isSeleccionadoActividad = false;
+                } else {
+                    MensajesUI.error("No fue posible eliminar la actividad de plan de desarrollo.");
+                }
             }
         }
-        //if (isSeleccionadoActividad) {
-
-       /* }else{
-            MensajesUI.error("Seleccione el plan de desarrollo que desea");
-        }*/
+        isSeleccionadoActividad=false;
+        isSeleccionadoBitacora=false;
+        secPlanDesarrollo=null;
+        habilitaEliminarActividad=hasEvalPlanesDesarrollos();
+        habilitaEliminarBitacora=hasBitacoras();
+        evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());        
     }
 
     public void registrarPlanDesarrollo() {
@@ -264,24 +282,87 @@ public class ControladorPlanDesarrollo implements Serializable {
             //System.out.println("secActividad: "+ evalActividad.getSecuencia());
             System.out.println("obs: " + obsPlanDes);
             System.out.println("Curso: " + secCurso);
-            System.out.println("Curso: " + secProfesion);
+            System.out.println("Profesion: " + secProfesion);
             System.out.println("actividad: " + actividadSelec);
             //System.out.println("secCurso: "+cursoSeleccionado.getSecuencia());
-            if (administrarPlanDesarrollo.registrarPlanDesarrollo(codigoNuevo, evaluadoActual.getSecuencia(), actividadSelec, obsPlanDes, secCurso, secProfesion)) {
-                MensajesUI.info("Actividad de plan de desarrollo creada exitosamente.");
-                evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
-                obsPlanDes = "";
-                setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
-                isSeleccionadoActividad=false;
-                isSeleccionadoBitacora=false;
-                secuenciaBitacora=null;
-                bitacoras=null;
-            } else {
-                MensajesUI.error("No fue posible registrar la actividad de plan de desarrollo.");
+            if (actividadSelec==null) {
+                 MensajesUI.error("Por favor seleccione la actividad a desarrollar.");               
+            }else{
+               /* if (obsPlanDes!=null && obsPlanDes!="" && obsPlanDes.length()>0 && obsPlanDes.length()<=500) {
+                    if (administrarPlanDesarrollo.registrarPlanDesarrollo(codigoNuevo, evaluadoActual.getSecuencia(), actividadSelec, obsPlanDes, secCurso, secProfesion)) {
+                        MensajesUI.info("Actividad de plan de desarrollo creada exitosamente.");
+                        evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
+                        obsPlanDes = "";
+                        setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
+                        isSeleccionadoActividad=false;
+                        isSeleccionadoBitacora=false;
+                        secuenciaBitacora=null;
+                        bitacoras=null;
+                        this.setIsSeleccionadoActividad(false);
+                        PrimefacesContextUI.ejecutar("PF('alertanuevaactividad').hide();");
+                    } else {
+                        MensajesUI.error("No fue posible registrar la actividad de plan de desarrollo.");
+                        PrimefacesContextUI.ejecutar("PF('alertanuevaactividad').hide();");
+                    }                     
+                }else{
+                    MensajesUI.error("La observación no debe ser vacía y no debe superar los 500 carácteres.");
+                }*/
+            boolean validInfo=false;
+                System.out.println("tipo de actividad a registrar: "+tipoActividadNueva+ " curso: "+secCurso+ " Profesion: "+secProfesion+" obs: "+obsPlanDes);
+            switch (tipoActividadNueva) {
+                case 5:
+                    System.out.println("Seleccionó capacitación formal");
+                    if ((secProfesion != null && secProfesion!="") || (obsPlanDes != null && obsPlanDes!="" && obsPlanDes.length()>0 && obsPlanDes.length()<=500)) {
+                       validInfo=true;
+                    }else{
+                         MensajesUI.error("Seleccione un curso para capacitación formal ó digite una observación de máximo 500 carácteres. ");
+                    }
+                    break;
+                case 6:
+                    System.out.println("Seleccionó capacitación no formal");                   
+                    if ((secCurso != null && secCurso!="") || (obsPlanDes!= null && obsPlanDes!="" && obsPlanDes.length()>0 && obsPlanDes.length()<=500)) {
+                        MensajesUI.error("Seleccione un curso para capacitación no formal ó digite una observación");
+                    }else{
+                        validInfo=true;
+                    }
+                    break;
+                default:
+                    System.out.println("Seleccionó una capacitación x");                    
+                    if (obsPlanDes ==null || obsPlanDes=="" || obsPlanDes.length()<=0 || obsPlanDes.length()>500 ) {
+                        MensajesUI.error("Digite una observación de máximo 500 carácteres");
+                    }else{
+                        validInfo=true;
+                    }
+                    break;
             }
+            
+            if (validInfo) {
+                    if (administrarPlanDesarrollo.registrarPlanDesarrollo(codigoNuevo, evaluadoActual.getSecuencia(), actividadSelec, obsPlanDes, secCurso, secProfesion)) {
+                        MensajesUI.info("Actividad de plan de desarrollo creada exitosamente.");
+                        evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
+                        obsPlanDes = "";
+                        setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
+                        isSeleccionadoActividad=false;
+                        isSeleccionadoBitacora=false;
+                        secuenciaBitacora=null;
+                        bitacoras=null;
+                        this.setIsSeleccionadoActividad(false);
+                        PrimefacesContextUI.ejecutar("PF('alertanuevaactividad').hide();");
+                    } else {
+                        MensajesUI.error("No fue posible registrar la actividad de plan de desarrollo.");
+                        PrimefacesContextUI.ejecutar("PF('alertanuevaactividad').hide();");
+                    }                 
+            }
+            }
+
         } catch (Exception e) {
             System.out.println("Error ControladorPlanDesarrollo.registrarPlanDEsarrollo(): " + e.getMessage());
         }
+        /*this.setIsSeleccionadoActividad(false);
+        secActividad=null;
+        isSeleccionadoActividad=false;*/
+        habilitaEliminarActividad=hasEvalPlanesDesarrollos();
+        habilitaEliminarBitacora=hasBitacoras();
     }
 
     public void actualizaCod() {
@@ -297,6 +378,7 @@ public class ControladorPlanDesarrollo implements Serializable {
         actualizaCod();
         actualizaActividades();
         cargarPlanesDesarrollo();
+        isSeleccionadoActividad=false;
     }
     
     public void actualizaListasBitacora(){
@@ -428,30 +510,56 @@ public class ControladorPlanDesarrollo implements Serializable {
         this.comentario = comentario;
     }
     
+    public boolean validaNumPorcentaje(String porcentaje){
+        try {
+            int porcentajenum=Integer.parseInt(porcentaje);
+            System.out.println("Porcentaje: "+porcentajenum);
+            if (porcentajenum<0 || porcentajenum>100) {
+                //MensajesUI.error("El porcentaje debe ser un valor entre 0 y 100.");
+                 return false;
+            }else{
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Error: "+e.getMessage());
+            return false;
+        }
+        
+    }
+    
     public void registrarBitacora() {
         if (isSeleccionadoActividad == false) {
             MensajesUI.error("Seleccione la actividad del plan de desarrolla a la que se le va a añadir la bitácora.");
         } else {
-            try {
-                System.out.println("Creacion nueva bitacora ");
-                //System.out.println("sec EvalResultadoConv: " + evaluadoActual.getSecuencia());
-                //System.out.println("secActividad: "+ evalActividad.getSecuencia());
-                System.out.println("fecha seguimiento: " + fechaseg);
-                System.out.println("porcentaje: " + porcent);
-                System.out.println("comentario: " + comentario);
-                System.out.println("Secuencia plandesarrollo: " + secPlanDesarrollo);
-                //System.out.println("secCurso: "+cursoSeleccionado.getSecuencia());
-                if (administrarPlanDesarrollo.registrarBitacora(secPlanDesarrollo, fechaseg, comentario, porcent)) {
-                    bitacoras = administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
-                    isSeleccionadoBitacora = false;
-                    MensajesUI.info("Bitacora creada exitosamente.");
-                    porcent = "";
-                    comentario = "";
-                } else {
-                    MensajesUI.error("No fue posible registrar la bitácora.");
+            if (validaNumPorcentaje(porcent)) {
+                if (comentario!="" && comentario!=null) {
+                    try {
+                        System.out.println("Creacion nueva bitacora ");
+                        //System.out.println("sec EvalResultadoConv: " + evaluadoActual.getSecuencia());
+                        //System.out.println("secActividad: "+ evalActividad.getSecuencia());
+                        System.out.println("fecha seguimiento: " + fechaseg);
+                        System.out.println("porcentaje: " + porcent);
+                        System.out.println("comentario: " + comentario);
+                        System.out.println("Secuencia plandesarrollo: " + secPlanDesarrollo);
+                        //System.out.println("secCurso: "+cursoSeleccionado.getSecuencia());
+                        if (administrarPlanDesarrollo.registrarBitacora(secPlanDesarrollo, fechaseg, comentario, porcent)) {
+                            bitacoras = administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
+                            isSeleccionadoBitacora = false;
+                            MensajesUI.info("Bitacora creada exitosamente.");
+                            porcent = "";
+                            comentario = "";
+                            PrimefacesContextUI.ejecutar("PF('alertanuevabitacora').hide();");
+                        } else {
+                            MensajesUI.error("No fue posible registrar la bitácora.");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error ControladorPlanDesarrollo.registrarBitacora(): " + e.getMessage());
+                    }
+                }else{
+                    MensajesUI.error("Debe digitar una observación en el campo de aprendizaje adquirido (Máximo 500 carácteres");
                 }
-            } catch (Exception e) {
-                System.out.println("Error ControladorPlanDesarrollo.registrarBitacora(): " + e.getMessage());
+            }else{
+               MensajesUI.error("El valor del porcentaje debe ser un valor númerico entre 0 y 100.");
             }
         }
     }
@@ -486,10 +594,14 @@ public class ControladorPlanDesarrollo implements Serializable {
                 bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
                 isSeleccionadoActividad=true;
                 secPlanDesarrollo=seleccionado.getSecuencia();
+                habilitaEliminarActividad=hasEvalPlanesDesarrollos();
+                habilitaEliminarBitacora=hasBitacoras();
                 isSeleccionadoBitacora=false;
                 secuenciaBitacora=null;
                 this.setearFechaActualBitacora();
                 System.out.println("Se seleccionó el plan de desarrollo: "+secPlanDesarrollo);
+                habilitaEliminarActividad=hasEvalPlanesDesarrollos();
+                habilitaEliminarBitacora=hasBitacoras();
                 break;
             case 2:
                 bitacoras=null;
@@ -498,6 +610,7 @@ public class ControladorPlanDesarrollo implements Serializable {
                 isSeleccionadoActividad=false;
                 isSeleccionadoBitacora=false;
                 System.out.println("SeleccionoPlan(2)");
+                habilitaEliminarActividad=false;
                 break;
             default:
                 bitacoras=null;
@@ -506,6 +619,7 @@ public class ControladorPlanDesarrollo implements Serializable {
                 isSeleccionadoActividad=false;
                 isSeleccionadoBitacora=false;
                 System.out.println("Por defecto plan no seleccionado");
+                habilitaEliminarActividad=false;
                 break;
         }
     }
@@ -517,43 +631,51 @@ public class ControladorPlanDesarrollo implements Serializable {
                 isSeleccionadoBitacora=true;
                 setIsSeleccionadoBitacora(true);
                 secuenciaBitacora=seleccionadoBitacora.getSecuencia();
+                comentario=seleccionadoBitacora.getComentario();
+                habilitaEliminarBitacora=hasBitacoras();
                 break;
             case 2:
                 //seleccionadoBitacora.setSecuencia(null);
                 System.out.println("caso 2");
                 isSeleccionadoBitacora=false;
                 secuenciaBitacora=null;
+                comentario="";
                 break;
             default:
                 //seleccionadoBitacora.setSecuencia(null);
                 System.out.println("caso por defecto");
                 isSeleccionadoBitacora=false;
                 secuenciaBitacora=null;
+                comentario="";
                 break;
         }
     }
     
-    public void eliminarBitacora(){
-        System.out.println("Se dispone a eliminar EvalSeguimientosPD ");
-        if (isSeleccionadoBitacora==false) {
+    public void eliminarBitacora() {
+        System.out.println("Se dispone a eliminar EvalSeguimientosPD "+secuenciaBitacora+ " del plan de desarrollo: "+secPlanDesarrollo);
+        if (isSeleccionadoBitacora == false) {
             MensajesUI.error("Seleccione la bitácora que desea eliminar.");
-        }else{
-            try {
-                if (administrarPlanDesarrollo.eliminarBitacora(secuenciaBitacora)) {
-                    MensajesUI.info("Bitácora eliminada exitosamente");
-                    bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
-                    secuenciaBitacora=null;
-                    isSeleccionadoBitacora=false;
-                    this.setIsSeleccionadoBitacora(false);
-                    comentario="";
-                    porcent=null;
-                }else{
-                    MensajesUI.error("No fue posible eliminar la bitácora.");
+        } else {
+                try {
+                    if (administrarPlanDesarrollo.eliminarBitacora(secuenciaBitacora)) {
+                        MensajesUI.info("Bitácora eliminada exitosamente");
+                        bitacoras = administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
+                        secuenciaBitacora = null;
+                        isSeleccionadoBitacora = false;
+                        this.setIsSeleccionadoBitacora(false);
+                        comentario = "";
+                        porcent = null;
+                    } else {
+                        MensajesUI.error("No fue posible eliminar la bitácora.");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Error eliminarBitacora(): " + e.getMessage());
                 }
-            } catch (Exception e) {
-                System.out.println("Error eliminarBitacora(): "+e.getMessage());
-            }
         }
+        bitacoras=administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
+        isSeleccionadoBitacora=false;
+        habilitaEliminarActividad=hasEvalPlanesDesarrollos();
+        habilitaEliminarBitacora=hasBitacoras();
     }
 
     public boolean isIsSeleccionadoBitacora() {
@@ -592,5 +714,45 @@ public class ControladorPlanDesarrollo implements Serializable {
         cargarPlanesDesarrollo();
         bitacoras=null;
     }
+    
+    public boolean hasBitacoras() { // Validar si una actividad tiene bitacoras asignadas
+        int count = administrarPlanDesarrollo.cantidadBitacoras(secPlanDesarrollo).intValue();
+        if (count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+     public boolean hasEvalPlanesDesarrollos() { // Validar si un empleado tiene actividades asignadas
+        int count = administrarPlanDesarrollo.cantidadEvalPlanesDesarrollos(evaluadoActual.getSecuencia()).intValue();
+        if (count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+     }
+    
+    public void editaBitacora() {
+        System.out.println("Click en botón editar");
+        System.out.println("SecBitacora: "+seleccionadoBitacora.getSecuencia()+ " Seleccionada bitacora:" + isSeleccionadoBitacora + " "+seleccionadoBitacora.getSecuencia());
+    }
+
+    public boolean isHabilitaEliminarActividad() {
+        return habilitaEliminarActividad;
+    }
+
+    public void setHabilitaEliminarActividad(boolean habilitaEliminarActividad) {
+        this.habilitaEliminarActividad = habilitaEliminarActividad;
+    }
+
+    public boolean isHabilitaEliminarBitacora() {
+        return habilitaEliminarBitacora;
+    }
+
+    public void setHabilitaEliminarBitacora(boolean habilitaEliminarBitacora) {
+        this.habilitaEliminarBitacora = habilitaEliminarBitacora;
+    }
+    
     
 }

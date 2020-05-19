@@ -11,7 +11,7 @@
     <p:remoteCommand name="refrescarListas" actionListener="#{controladorPlanDesarrollo.refrescaListas()}"
                      process="@this" oncomplete="pantallaDinamica();" update=":principalForm:dtbPlanes"/>    
     <p:remoteCommand name="refrescarPlanes" actionListener="#{controladorPlanDesarrollo.cargarPlanesDesarrollo()}"
-                     process="@this" autoRun="true" update=":principalForm:dtbPlanes"/>  
+                     process="@this" autoRun="true" update=":principalForm:dtbPlanes :principalForm:btnElimAct :principalForm:btnAddBitacora :principalForm:btnElimBitacora"/>  
 
     <center><h3>PLAN DE DESARROLLO</h3></center>
 
@@ -62,12 +62,12 @@
     <!--<p:column style="padding-bottom: 5%">-->
     <p:column style="margin-top: 2%; margin-left: 10%;">  
             <p:commandButton value="Añadir Actividad"  actionListener="#{controladorPlanDesarrollo.actualizaListas()}"
-                             process="@this" style="margin-left: 10%; font-size: 18px !important; background-color: #3388D7; color: white;" onclick="PF('alertanuevaactividad').show();"
-                             update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes" />
+                             process="@this" style="margin-left: 10%; font-size: 18px !important; background-color: #00FF00; color: black;" onclick="PF('alertanuevaactividad').show();"
+                             update=":principalForm:nueva:alertanewactpanel, :principalForm:dtbPlanes :principalForm:nuevaBitacora:alertanuevabitacora :principalForm:alertaEliminarBitacora :principalForm:nuevaBitacora:alertaeditabitacora :principalForm:alertaEliminar" />
             <p:spacer height="20" width="20"/>
     </p:column>
             
-        <p:dataTable id="dtbPlanes" var="planes" widgetVar="dtbPlanes" 
+        <p:dataTable id="dtbPlanes" var="planes" widgetVar="dtbPlanes"
                      emptyMessage="No hay datos" selectionMode="single"  
                      selection="#{controladorPlanDesarrollo.seleccionado}" 
                      rowKey="#{planes.secuencia}"
@@ -75,19 +75,19 @@
                      scrollable="true"
                      scrollHeight="200" 
                      style="margin-left: 10%; margin-right: 10%">
-            <p:ajax event="rowSelect" listener="#{controladorPlanDesarrollo.seleccionPlan(1)}"  update=":principalForm:alertaEliminarPanel :principalForm:dtbPlanSeguimiento :principalForm:nuevaBitacora:alertanuevabitacora :principalForm:alertaEliminarBitacora"/>
-            <p:ajax event="rowUnselect" listener="#{controladorPlanDesarrollo.seleccionPlan(0)}" update=":principalForm:dtbPlanSeguimiento :principalForm:nuevaBitacora:alertanuevabitacora :principalForm:alertaEliminarBitacora" oncomplete="#{controladorPlanDesarrollo.setSeleccionado(null)}" />
+            <p:ajax event="rowSelect" listener="#{controladorPlanDesarrollo.seleccionPlan(1)}"  update=":principalForm:alertaEliminarPanel :principalForm:dtbPlanSeguimiento :principalForm:nuevaBitacora:alertanuevabitacora :principalForm:nuevaBitacora:alertaeditabitacora :principalForm:alertaEliminarBitacora :principalForm:btnElimBitacora :principalForm:btnAddBitacora :principalForm:btnElimAct"/>
+            <p:ajax event="rowUnselect" listener="#{controladorPlanDesarrollo.seleccionPlan(0)}" update=":principalForm:dtbPlanSeguimiento :principalForm:nuevaBitacora:alertaeditabitacora :principalForm:nuevaBitacora:alertanuevabitacora" oncomplete="#{controladorPlanDesarrollo.setSeleccionado(null)}" />
             <f:facet name="header">
                 <h:outputText value="Plan de desarrollo"/>
             </f:facet>
 
-            <p:column headerText="Cód." width="100" style="font-weight: bold;">
+            <p:column headerText="Cód." width="60" style="font-weight: bold;">
                 <h:outputText value="#{planes.codigo}" style="font-weight: normal !important;"/>
             </p:column>
             <p:column headerText="Actividad a Desarrollar" style="font-weight: bold;">
                 <h:outputText value="#{planes.evalActividad.descripcion}" style="font-weight: normal !important;"/>
             </p:column>            
-            <p:column headerText="Observación" style="font-weight: bold;">
+            <p:column headerText="Observación" style="font-weight: bold; width: 50%">
                 <h:outputText value="#{planes.observacion}" style="font-weight: normal !important;"/>
             </p:column>
             <p:column headerText="Profesiones" style="font-weight: bold;">
@@ -103,17 +103,16 @@
 
 
     <p:column style="margin-top: 2%; width: 80%; float: right;">  
-            <p:spacer height="40" width="20"/>
-            <p:commandButton value="Eliminar Actividad" onclick="PF('alertaEliminar').show();"
-                             process="@this" style="float: right; margin-right: 10%; font-size: 18px !important; background-color: red; color: white;" />     
+            <p:spacer height="20" width="20"/>
+            <p:commandButton id="btnElimAct" value="Eliminar Actividad" onclick="PF('alertaEliminar').show();" disabled="#{!controladorPlanDesarrollo.habilitaEliminarActividad}"
+                             process="@this" style="float: right; margin-right: 10%; font-size: 18px !important; background-color: #3388D7; color: white;" />     
     </p:column>
     
     <p:spacer height="60" width="20"/>
     
-    <p:column style="margin-top: 2%; float: left; width:80%"> 
-        <p:spacer height="40" width="20"/>
-        <p:commandButton value="Añadir bitácora"  onclick="PF('alertanuevabitacora').show();"
-                         process="@this" style="margin-left: 10%; float: left; font-size: 18px !important; background-color: #3388D7; color: white;"
+    <p:column style="margin-top: 2%; float: clear; width:80%"> 
+        <p:commandButton id="btnAddBitacora" value="Añadir Bitácora"  onclick="PF('alertanuevabitacora').show();" disabled="#{!controladorPlanDesarrollo.habilitaEliminarActividad}"
+                         process="@this" style="margin-left: 10%; float: left; font-size: 18px !important;  background-color: #00FF00; color: black;"
                          update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento" />
     </p:column>
     
@@ -125,7 +124,7 @@
                      scrollable="true"
                      scrollHeight="150"
                  style="margin-left: 10%; margin-right: 10%">
-        <p:ajax event="rowSelect" listener="#{controladorPlanDesarrollo.seleccionBitacora(1)}"  update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:dtbPlanSeguimiento, :principalForm:alertaEliminarPanelB"/>
+        <p:ajax event="rowSelect" listener="#{controladorPlanDesarrollo.seleccionBitacora(1)}"  update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:nuevaBitacora:alertaeditbitpanel :principalForm:dtbPlanSeguimiento, :principalForm:alertaEliminarPanelB :principalForm:nuevaBitacora:alertaeditabitacora :principalForm:btnElimBitacora"/>
         <p:ajax event="rowUnselect" listener="#{controladorPlanDesarrollo.seleccionBitacora(0)}" update=":principalForm:dtbPlanSeguimiento" oncomplete="#{controladorPlanDesarrollo.setSeleccionadoBitacora(null)}" />
             
                <f:facet name="header">
@@ -142,22 +141,22 @@
                     <h:outputText value="#{evalseguimiento.porcentaje}%"/>
                 </p:column>
         
-                <p:column headerText="Aprendizaje obtenido">
-                    <h:outputText value="#{evalseguimiento.comentario}"/>
-                </p:column>
+        <p:column headerText="Aprendizaje obtenido" style="width: 60%">
+             <h:outputText value="#{evalseguimiento.comentario}"/>
+        </p:column>
         
     </p:dataTable>
         
 
     
     <p:column style="margin-top: 2%; width: 80%; float: right;">  
-            <p:commandButton value="Eliminar Bitácora" onclick="PF('alertaEliminarBitacora').show();"
-                             process="@this" style="float: right; margin-right: 10%; font-size: 18px !important; background-color: red; color: white;"
-                             update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:alertaEliminarPanelB" />     
+        <p:commandButton id="btnElimBitacora" value="Eliminar Bitácora" onclick="PF('alertaEliminarBitacora').show();" disabled="#{!controladorPlanDesarrollo.habilitaEliminarBitacora}"
+                             process="@this" style="float: right; margin-right: 10%; font-size: 18px !important;background-color: #3388D7; color: white; "
+                            update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento  :principalForm:alertaEliminarPanelB" />
     </p:column>
 
     <p:column style="margin-top: 2%">
-        <p:spacer height="40" width="20"/>
+        <p:spacer height="60" width="20"/>
         <p:commandButton value="Volver" onclick="refrescarListas();"
                          process="@this" style="font-size: 18px !important; background-color: red; color: white; margin-left: 10%;"/>
     </p:column>
@@ -178,7 +177,7 @@
                 <p:commandButton value="Si" style="float: right" 
                                  actionListener="#{controladorPlanDesarrollo.eliminarPlanDesarrollo()}"
                                  onclick="PF('alertaEliminar').hide();"
-                                 update=":principalForm:dtbPlanes"
+                                 update=":principalForm:dtbPlanes :principalForm:dtbPlanSeguimiento :principalForm:alertaEliminarPanelB :principalForm:alertaEliminar :principalForm:btnElimAct :principalForm:btnElimBitacora :principalForm:btnAddBitacora"
                                  process="@this" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}"/>
             </p:column>
         </p:panelGrid>
@@ -188,6 +187,9 @@
         <p:dialog id="alertanuevaactividad" header="Añadir Actividad" widgetVar="alertanuevaactividad"  resizable="false" 
                   draggable="true" modal="true" closable="true" closeOnEscape="true">  
             <h3 style="margin-top:0;">Nueva Actividad</h3>
+            <p style="margin-top:0; width: 500px"><b>Observación: </b>Si selecciona CAPACITACION FORMAL o NO FORMAL debe seleccionar 
+                un curso correspondiente ó escribir una observación. Si selecciona otro tipo de actividad debe
+                colocar una observación.</p>
             <p:panelGrid columns="2" id="alertanewactpanel">
                 <h:outputText value="Código:" id="cod" />
                 <p:inputText value="#{controladorPlanDesarrollo.codigo}" disabled="true"/>
@@ -207,7 +209,7 @@
                     <!--<p:ajax update="@this"/>-->
                 </p:selectOneMenu>            
 
-                <h:outputText value="Observación*:" />
+                <h:outputText value="Observación (Máximo 500 carácteres):" />
                 <p:inputTextarea rows="6" cols="51" id="obs" value="#{controladorPlanDesarrollo.observacion}"
                                  maxlength="500">
                     <p:ajax update="@this"/>
@@ -249,8 +251,7 @@
                     <p:commandButton value="Guardar" 
                                      process="@this" style="font-size: 18px !important; background-color: #00FF00; color: black;"
                                      actionListener="#{controladorPlanDesarrollo.registrarPlanDesarrollo()}"
-                                     onclick="PF('alertanuevaactividad').hide();" 
-                                     update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento" />
+                                     update=":principalForm:nueva:alertanewactpanel,:principalForm:dtbPlanes, :principalForm:dtbPlanSeguimiento :principalForm:btnElimAct :principalForm:btnAddBitacora :principalForm:btnElimBitacora" />
                     <p:spacer height="20" width="20"/>
                     <p:commandButton value="Cancelar" onclick="PF('alertanuevaactividad').hide();" actionListener="#{controladorPlanDesarrollo.actualizaListas()}"
                                      process="@this" style="font-size: 18px !important; background-color: red; color: white; display: #{controladorPlanDesarrollo.secPrueba==false ? '':'none'}}"
@@ -278,7 +279,7 @@
                  <p:commandButton value="Si" style="float: right" 
                                   actionListener="#{controladorPlanDesarrollo.eliminarBitacora()}"
                                   onclick="PF('alertaEliminarBitacora').hide();" rendered="#{controladorPlanDesarrollo.isSeleccionadoBitacora}"
-                                 update=":principalForm:dtbPlanSeguimiento, :principalForm:alertaEliminarPanelB, :principalForm:nuevaBitacora:alertanewbitpanel" 
+                                 update=":principalForm:dtbPlanSeguimiento, :principalForm:alertaEliminarPanelB, :principalForm:nuevaBitacora:alertanewbitpanel :principalForm:btnElimBitacora" 
                                  process="@this" />               
             </p:column>
         </p:panelGrid>
@@ -303,10 +304,10 @@
                         <p:ajax event="dateSelect" listener="#{controladorPlanDesarrollo.onDateSelect}"/>
                     </p:calendar>                
                 <p:outputLabel value="Porcentaje obtenido:"  />
-                <p:spinner id="porcentaje" min="1" max="100" value="#{controladorPlanDesarrollo.porcent}" stepFactor="10" suffix="%">
+                <p:spinner id="porcentaje" min="0" max="100" value="#{controladorPlanDesarrollo.porcent}" stepFactor="10" suffix="%">
                     <p:ajax update="@this"/>
                 </p:spinner>
-                <h:outputText value="Aprendizaje adquirido:" />
+                <h:outputText value="Aprendizaje adquirido (Máx 500 carácteres):" />
                 <p:inputTextarea rows="6" cols="51" id="comentario" value="#{controladorPlanDesarrollo.comentario}"
                                  maxlength="500">
                     <p:ajax update="@this"/>
@@ -319,8 +320,7 @@
                     <p:commandButton value="Guardar" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}"
                                      actionListener="#{controladorPlanDesarrollo.registrarBitacora()}"                                     
                                      process="@this" style="font-size: 18px !important; background-color: #00FF00; color: black;"
-                                     onclick="PF('alertanuevabitacora').hide();" 
-                                     update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:dtbPlanSeguimiento" />
+                                     update=":principalForm:nuevaBitacora:alertanewbitpanel, :principalForm:dtbPlanSeguimiento :principalForm:btnAddBitacora :principalForm:btnElimBitacora" />
                     <p:spacer height="20" width="20"/>
                     <p:commandButton value="Cancelar" onclick="PF('alertanuevabitacora').hide();" actionListener="#{controladorPlanDesarrollo.actualizaListasBitacora()}"
                                      process="@this" rendered="#{controladorPlanDesarrollo.isSeleccionadoActividad}"
@@ -332,5 +332,36 @@
                 </center>
             </p:column>            
             </p:dialog>
+            
+            <p:dialog id="alertaeditabitacora" header="Editar Bitácora" widgetVar="alertaeditabitacora"  resizable="false" 
+                      draggable="true" modal="true" closable="true" closeOnEscape="true">  
+                <h:outputText value="Editar Bitácora" style="margin-top:0; font-weight: bold" rendered="#{controladorPlanDesarrollo.isSeleccionadoBitacora}"/>
+            <p:column>
+                <center>
+                    <h:outputText value="Seleccione la bitácora que desea editar." rendered="#{controladorPlanDesarrollo.isSeleccionadoBitacora==false}"/>
+                </center>
+            </p:column> 
+                <p:panelGrid columns="2" id="alertaeditbitpanel" rendered="#{controladorPlanDesarrollo.isSeleccionadoBitacora}">
+                <h:outputText value="Fecha de seguimiento" />
+                    <p:calendar id="efinicialdis" 
+                                value="#{controladorPlanDesarrollo.seleccionadoBitacora.fecha}" 
+                                pattern="dd/MM/yyyy" mask="true" locale="es"
+                                showOn="button"
+                                >
+                        <p:ajax event="dateSelect" listener="#{controladorPlanDesarrollo.onDateSelect}"/>
+                    </p:calendar>                
+                <p:outputLabel value="Porcentaje obtenido:"  />
+                <p:spinner id="eporcentaje" min="1" max="100" value="#{controladorPlanDesarrollo.seleccionadoBitacora.porcentaje}" stepFactor="10" suffix="%">
+                    <p:ajax update="@this"/>
+                </p:spinner>
+                <h:outputText value="Aprendizaje adquirido (max. 500 carácteres):" />
+                <p:inputTextarea rows="6" cols="51" id="ecomentario" value="#{controladorPlanDesarrollo.seleccionadoBitacora.comentario}"
+                                 maxlength="500">
+                    <p:ajax update="@this"/>
+                </p:inputTextarea>                
+            </p:panelGrid>                
+            </p:dialog>
         </h:form>
+    
+
 </ui:composition>

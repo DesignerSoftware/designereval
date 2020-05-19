@@ -39,4 +39,6 @@ public interface IAdministrarPlanDesarrollo {
            Date fecha, String comentario, String porcentaje);
     public List<EvalSeguimientosPD> obtenerBitacoras(BigInteger secPlanDesarrollo);    
     public boolean eliminarBitacora(BigInteger secBitacora);
+    public BigDecimal cantidadBitacoras(BigInteger secEvalResultadoConv);
+    public BigDecimal cantidadEvalPlanesDesarrollos(BigInteger secEvalResultadoConv);
 }

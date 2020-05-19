@@ -420,4 +420,24 @@ public class AdministrarInicio implements IAdministrarInicio, Serializable {
         }
         return lista;
     }
+    
+     @Override
+    public boolean validarJefeInmediato(BigDecimal secuenciaEvaluador, Evaluados evaluado) {
+        EntityManager em = null;
+        
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            return "S".equalsIgnoreCase(persistenciaPruebas.validarJefeInmediato(em, secuenciaEvaluador, evaluado.getSecuencia()));
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.estaConsolidado: " + e);
+            return false;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
 }
