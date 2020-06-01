@@ -62,7 +62,8 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
         try {
 //            em.getTransaction().begin();
 //            em.joinTransaction();
-            Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? WHERE A.SECUENCIA = ? ");
+            //Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? WHERE A.SECUENCIA = ? ");
+            Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? , A.ESTADOPRUEBA = 'C' WHERE A.SECUENCIA = ? ");
             q.setParameter(1, porcentaje);
             q.setParameter(2, observacion);
             q.setParameter(3, secPrueba);
