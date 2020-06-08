@@ -158,7 +158,7 @@
                             <p><strong>Puntaje: </strong>#{ev.puntajeObtenido != null ?
                                                            ev.puntajeObtenido : 0}</p>
                         </h:outputLink>
-                        <p:commandButton value="IR A PLAN DE DESARROLLO" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
+                        <p:commandButton style="display: none" value="IR A PLAN DE DESARROLLO" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
                                          />
 
                         <hr/>
@@ -359,7 +359,7 @@
                                              process="@this" style="font-size: 18px !important; background-color: #3388D7; color: white;"
                                              actionListener="#{controladorPlanDesarrollo.registrarPlanDesarrollo()}"
                                              onclick="PF('alertanuevaactividad').hide();" 
-                                             update=":principalForm:nueva:alertaNewActPanel" />
+                                             />
                             <p:spacer height="20" width="20"/>
                             <p:commandButton value="Cancelar" onclick="PF('alertanuevaactividad').hide();"
                                              process="@this" style="font-size: 18px !important; background-color: red; color: white; display: #{controladorPlanDesarrollo.secPrueba==false ? '':'none'}}" />

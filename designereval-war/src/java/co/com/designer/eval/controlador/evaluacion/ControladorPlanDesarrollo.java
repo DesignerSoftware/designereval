@@ -70,7 +70,7 @@ public class ControladorPlanDesarrollo implements Serializable {
     
     //bitacora
     private Date fechaseg;
-    private String porcent;
+    private String porcent="0";
     private String comentario;
     private EvalSeguimientosPD seleccionadoBitacora;
     private boolean isSeleccionadoBitacora=false; //si hay una bitacora seleccionada
@@ -79,6 +79,9 @@ public class ControladorPlanDesarrollo implements Serializable {
     private boolean habilitaEliminarActividad=false;
     private boolean habilitaEliminarBitacora=false;
     private int tipoActividadNueva=0; // si es formal (5), no formal(6), cualquier otra (0)
+    private String comentarioBitacoraEdit="Digite una observaciòn"; // comentarioEdit guardará el comentario de la bitacora seleccionada para mostrar en el formulario editar
+    private Date fechaBitacoraEdit=null; //guardará el valor de la fecha de la bitacora seleccionada
+    private String porcenBitacoraEdit="0"; // guardará el valor del porcentaje de la bitácora seleccionada
 
     public ControladorPlanDesarrollo() {
     }
@@ -321,9 +324,9 @@ public class ControladorPlanDesarrollo implements Serializable {
                 case 6:
                     System.out.println("Seleccionó capacitación no formal");                   
                     if ((secCurso != null && secCurso!="") || (obsPlanDes!= null && obsPlanDes!="" && obsPlanDes.length()>0 && obsPlanDes.length()<=500)) {
-                        MensajesUI.error("Seleccione un curso para capacitación no formal ó digite una observación");
-                    }else{
                         validInfo=true;
+                    }else{
+                         MensajesUI.error("Seleccione un curso para capacitación no formal ó digite una observación");                       
                     }
                     break;
                 default:
@@ -386,6 +389,9 @@ public class ControladorPlanDesarrollo implements Serializable {
         this.setPorcent(null);
         this.setComentario(null);
         setComentario(null);
+        porcent="0";
+        comentario="";
+        setearFechaActualBitacora();
     }
 
     public boolean getSecPrueba() {
@@ -511,17 +517,20 @@ public class ControladorPlanDesarrollo implements Serializable {
     }
     
     public boolean validaNumPorcentaje(String porcentaje){
+        System.out.println("Validando valor pocentaje valido...");
         try {
             int porcentajenum=Integer.parseInt(porcentaje);
             System.out.println("Porcentaje: "+porcentajenum);
             if (porcentajenum<0 || porcentajenum>100) {
-                //MensajesUI.error("El porcentaje debe ser un valor entre 0 y 100.");
+                 //MensajesUI.error("El porcentaje debe ser un valor entre 0 y 100.");
+                 System.out.println("Porcentaje no valido");
                  return false;
             }else{
+                System.out.println("Porcentaje valido");
                 return true;
             }
         } catch (Exception e) {
-            System.out.println("Error: "+e.getMessage());
+            System.out.println("Error ControladorPlanDesarrollo.validaNumPorcentaje: "+e.getMessage());
             return false;
         }
         
@@ -531,6 +540,7 @@ public class ControladorPlanDesarrollo implements Serializable {
         if (isSeleccionadoActividad == false) {
             MensajesUI.error("Seleccione la actividad del plan de desarrolla a la que se le va a añadir la bitácora.");
         } else {
+            if (fechaseg != null) {
             if (validaNumPorcentaje(porcent)) {
                 if (comentario!="" && comentario!=null) {
                     try {
@@ -546,11 +556,15 @@ public class ControladorPlanDesarrollo implements Serializable {
                             bitacoras = administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
                             isSeleccionadoBitacora = false;
                             MensajesUI.info("Bitacora creada exitosamente.");
-                            porcent = "";
+                            porcent = "0";
                             comentario = "";
+                            setearFechaActualBitacora();
                             PrimefacesContextUI.ejecutar("PF('alertanuevabitacora').hide();");
                         } else {
                             MensajesUI.error("No fue posible registrar la bitácora.");
+                            comentario="";
+                            porcent="0";
+                            setearFechaActualBitacora();
                         }
                     } catch (Exception e) {
                         System.out.println("Error ControladorPlanDesarrollo.registrarBitacora(): " + e.getMessage());
@@ -561,9 +575,57 @@ public class ControladorPlanDesarrollo implements Serializable {
             }else{
                MensajesUI.error("El valor del porcentaje debe ser un valor númerico entre 0 y 100.");
             }
+            }else{
+                MensajesUI.error("La fecha no puede ser vacía.");
+            }
         }
     }
     
+    public void editarBitacora() {
+        if (isSeleccionadoBitacora == false) {
+            MensajesUI.error("Seleccione la bitácora que va a editar.");
+        } else {
+           if (fechaBitacoraEdit != null) {
+                if (validaNumPorcentaje(porcenBitacoraEdit)) {
+                    if (comentarioBitacoraEdit != "" && comentarioBitacoraEdit != null) {
+                        try {
+                            System.out.println("edicion bitacora ");
+                            //System.out.println("sec EvalResultadoConv: " + evaluadoActual.getSecuencia());
+                            //System.out.println("secActividad: "+ evalActividad.getSecuencia());
+                            System.out.println("fecha seguimiento: " + fechaBitacoraEdit);
+                            System.out.println("porcentaje: " + porcenBitacoraEdit);
+                            System.out.println("comentario: " + comentarioBitacoraEdit);
+                            System.out.println("Secuencia plandesarrollo: " + secPlanDesarrollo);
+                            System.out.println("Secuencia bitacora: " + secuenciaBitacora);
+                            //System.out.println("secCurso: " + cursoSeleccionado.getSecuencia());
+                            System.out.println("secuencia Bitacora a actualizar: " + secuenciaBitacora);
+                            if (administrarPlanDesarrollo.editarBitacora(secuenciaBitacora, fechaBitacoraEdit, comentarioBitacoraEdit, Integer.parseInt(porcenBitacoraEdit))) {
+                                bitacoras = administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
+                                MensajesUI.info("Bitacora modificada exitosamente.");
+                                porcenBitacoraEdit = "0";
+                                comentarioBitacoraEdit = "";
+                                isSeleccionadoBitacora = false;
+                                PrimefacesContextUI.ejecutar("PF('alertaeditabitacora').hide();");
+                            } else {
+                                MensajesUI.error("No fue posible registrar la bitácora.");
+                                PrimefacesContextUI.ejecutar("PF('alertaeditabitacora').hide();");
+                                isSeleccionadoBitacora=false;
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error ControladorPlanDesarrollo.editarBitacora(): " + e.getMessage());
+                        }
+                    } else {
+                        MensajesUI.error("Debe digitar una observación en el campo de aprendizaje adquirido (Máximo 500 carácteres");
+                    }
+                } else {
+                    MensajesUI.error("El valor del porcentaje debe ser un valor númerico entre 0 y 100.");
+                }
+            } else {
+                MensajesUI.error("La fecha no puede ser vacía.");
+            }
+        }
+    }
+        
     public void prueba(){
         System.out.println("Prueba, se selecciono un registro!!!");
         //bitacoras=administrarPlanDesarrollo.obtenerBitacoras(seleccionado.getSecuencia());
@@ -631,8 +693,14 @@ public class ControladorPlanDesarrollo implements Serializable {
                 isSeleccionadoBitacora=true;
                 setIsSeleccionadoBitacora(true);
                 secuenciaBitacora=seleccionadoBitacora.getSecuencia();
-                comentario=seleccionadoBitacora.getComentario();
+                //comentario=seleccionadoBitacora.getComentario();
                 habilitaEliminarBitacora=hasBitacoras();
+                comentarioBitacoraEdit=seleccionadoBitacora.getComentario();
+                fechaBitacoraEdit=seleccionadoBitacora.getFecha();
+                porcenBitacoraEdit=seleccionadoBitacora.getPorcentaje()+"";
+                comentario="";
+                porcent="0";
+                setearFechaActualBitacora();
                 break;
             case 2:
                 //seleccionadoBitacora.setSecuencia(null);
@@ -640,6 +708,8 @@ public class ControladorPlanDesarrollo implements Serializable {
                 isSeleccionadoBitacora=false;
                 secuenciaBitacora=null;
                 comentario="";
+                porcent="0";
+                setearFechaActualBitacora();
                 break;
             default:
                 //seleccionadoBitacora.setSecuencia(null);
@@ -647,6 +717,8 @@ public class ControladorPlanDesarrollo implements Serializable {
                 isSeleccionadoBitacora=false;
                 secuenciaBitacora=null;
                 comentario="";
+                setearFechaActualBitacora();
+                porcent="0";
                 break;
         }
     }
@@ -754,5 +826,27 @@ public class ControladorPlanDesarrollo implements Serializable {
         this.habilitaEliminarBitacora = habilitaEliminarBitacora;
     }
     
-    
+    public String getComentarioBitacoraEdit() {
+        return comentarioBitacoraEdit;
+    }
+
+    public void setComentarioBitacoraEdit(String comentarioBitacoraEdit) {
+        this.comentarioBitacoraEdit = comentarioBitacoraEdit;
+    }
+
+    public Date getFechaBitacoraEdit() {
+        return fechaBitacoraEdit;
+    }
+
+    public void setFechaBitacoraEdit(Date fechaBitacoraEdit) {
+        this.fechaBitacoraEdit = fechaBitacoraEdit;
+    }
+
+    public String getPorcenBitacoraEdit() {
+        return porcenBitacoraEdit;
+    }
+
+    public void setPorcenBitacoraEdit(String porcenBitacoraEdit) {
+        this.porcenBitacoraEdit = porcenBitacoraEdit;
+    }    
 }

@@ -60,6 +60,28 @@ public class PersistenciaEvalSeguimientosPD implements IPersistenciaEvalSeguimie
     }
     
     @Override
+    public boolean editarEvalSeguimientoPD(EntityManager em, BigInteger secEvalSEguimiento,
+            Date fecha, String comentario, int porcentaje) {
+        try {
+            em.joinTransaction();
+//            em.getTransaction().begin();
+            Query q = em.createNativeQuery("UPDATE EVALSEGUIMIENTOSPD SET FECHA= ?, COMENTARIO=?, PORCENTAJE=? "
+                    + " WHERE SECUENCIA=? ");
+            q.setParameter(1, fecha, TemporalType.DATE);
+            q.setParameter(2, comentario);
+            q.setParameter(3, porcentaje);
+            q.setParameter(4, secEvalSEguimiento);
+            q.executeUpdate();
+//            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaEvalSeguimientosPD.editarEvalSeguimientoPD: " + ex);
+//            terminarTransaccionException(em);
+            return false;
+        }
+    }
+    
+    @Override
     public boolean eliminarBitacora(EntityManager em, BigInteger secBitacora) {
         try {
             em.joinTransaction();

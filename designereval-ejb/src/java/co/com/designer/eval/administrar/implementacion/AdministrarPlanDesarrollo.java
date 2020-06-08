@@ -285,6 +285,27 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
             }
         }
     }
+           @Override
+    public boolean editarBitacora(BigInteger secEvalSeguimiento, 
+             Date fecha, String comentario, int porcentaje) {
+        EntityManager em = null;
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            //return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secIndagacion, secEvalResultado, secEvalActividad, secCurso);
+//            return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secEvalResultado, secEvalActividad, observacion, secCurso);
+            return persistenciabitacoras.editarEvalSeguimientoPD(em, secEvalSeguimiento, fecha, comentario, porcentaje);
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlan.registrarBitacora: " + e);
+            return false;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
     
     @Override
     public List<EvalSeguimientosPD> obtenerBitacoras(BigInteger secPlanDesarrollo) {
