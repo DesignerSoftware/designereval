@@ -128,7 +128,7 @@
                     <p:commandButton id="planDesa" value="Abrir" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="pantallaDinamicaPlanDesa()"
-                                     disabled="#{controladorInicioEval.esJefeInmediato()}"
+                                     disabled="#{controladorInicioEval.esJefeInmediato(evaluado.secuencia)}"
                                      />
                 </p:column>                
             </p:dataTable>

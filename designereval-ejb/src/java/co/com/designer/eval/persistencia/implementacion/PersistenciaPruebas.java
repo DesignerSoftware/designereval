@@ -116,11 +116,12 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
     
     @Override
     public String validarJefeInmediato(EntityManager em, BigDecimal secEvaluador, BigInteger secEvaluado){
+        System.out.println(this.getClass().getName()+".validarJefeInmediato()");
         try {
             em.joinTransaction();
             Query q = em.createNativeQuery("select EVALCONVOCATORIAS_PKG.VALIDARJEFEINMEDIATO( ? , ? ) FROM DUAL ");
-            q.setParameter(1, secEvaluador);
-            q.setParameter(2, secEvaluado);
+            q.setParameter(1, secEvaluado);
+            q.setParameter(2, secEvaluador);
             String resul = (String) q.getSingleResult();
             return resul;
         } catch (Exception ex) {

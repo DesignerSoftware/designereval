@@ -422,7 +422,7 @@ public class AdministrarInicio implements IAdministrarInicio, Serializable {
     }
     
      @Override
-    public boolean validarJefeInmediato(BigDecimal secuenciaEvaluador, Evaluados evaluado) {
+    public boolean validarJefeInmediato(BigDecimal secuenciaEvaluador, BigDecimal evaluado) {
         EntityManager em = null;
         
         try {
@@ -430,9 +430,13 @@ public class AdministrarInicio implements IAdministrarInicio, Serializable {
             } else {
                 em = obtenerConexion();
             }
-            return "S".equalsIgnoreCase(persistenciaPruebas.validarJefeInmediato(em, secuenciaEvaluador, evaluado.getSecuencia()));
+            System.out.println("secuenciaEvaluador: "+secuenciaEvaluador);
+            System.out.println("evaluado: "+evaluado);
+            System.out.println("persistenciaPruebas: "+persistenciaPruebas);
+            return "S".equalsIgnoreCase(persistenciaPruebas.validarJefeInmediato(em, secuenciaEvaluador, new BigInteger(evaluado.toString())));
         } catch (Exception e) {
-            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.estaConsolidado: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.validarJefeInmediato: " + e);
+            e.printStackTrace();
             return false;
         } finally {
             if (em != null && em.isOpen()) {

@@ -46,5 +46,5 @@ public interface IAdministrarInicio {
 
     public String estaConsolidado(BigInteger secConvocatoria, BigInteger secEmplConvo);
     
-    public boolean validarJefeInmediato(BigDecimal secuenciaEvaluador, Evaluados evaluado);
+    public boolean validarJefeInmediato(BigDecimal secuenciaEvaluador, BigDecimal evaluado);
 }

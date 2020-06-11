@@ -55,7 +55,6 @@ public class ControladorInicioEval implements Serializable {
     private Evaluados evaluado;
     private Pruebas prueba;
 
-
     //módulo evaluaciones
     private List<EvalPlanesDesarrollos> evalPlanesDesarrollos;
     @EJB
@@ -82,10 +81,10 @@ public class ControladorInicioEval implements Serializable {
         }
     }
 
-    public String getPruebaTh(){
+    public String getPruebaTh() {
         return "Hola";
     }
-    
+
     //EVENTOS
     public void seleccionConvocatoria(int tipo) {
         //1 Si - 0 No
@@ -184,8 +183,10 @@ public class ControladorInicioEval implements Serializable {
             evaluado = evaluados.get(index);
             PrimefacesContextUI.ejecutar("seleccionEvaluado();");
         } else if (i.equals("2")) {
-            prueba = pruebas.get(index);
-            PrimefacesContextUI.ejecutar("seleccionPrueba();");
+            if (estadoConvocatoria == 2) {
+                prueba = pruebas.get(index);
+                PrimefacesContextUI.ejecutar("seleccionPrueba();");
+            }
         } else if (i.equals("3")) {
             secConvocatoria = new BigDecimal(convocatorias.get(index).getSecuencia());
             PrimefacesContextUI.ejecutar("PF('alertaCC').show();");
@@ -240,8 +241,9 @@ public class ControladorInicioEval implements Serializable {
         pruebas = null;
     }
 
-    public boolean esJefeInmediato() {
-        return !administrarInicio.validarJefeInmediato(secuenciaEvaluador, evaluado);
+    public boolean esJefeInmediato(BigDecimal sec) {
+//        return !administrarInicio.validarJefeInmediato(secuenciaEvaluador, evaluado);
+        return !administrarInicio.validarJefeInmediato(secuenciaEvaluador, sec);
         // return false;
     }
 
@@ -552,7 +554,5 @@ public class ControladorInicioEval implements Serializable {
     public void setSecEvaluado(BigDecimal secEvaluado) {
         this.secEvaluado = secEvaluado;
     }
-    
-    
 
 }
