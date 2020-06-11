@@ -55,8 +55,6 @@ public class ControladorInicioEval implements Serializable {
     private Evaluados evaluado;
     private Pruebas prueba;
 
-    //private Convocatorias convocatoria;
-    private String pruebastr = "Hello world";
 
     //módulo evaluaciones
     private List<EvalPlanesDesarrollos> evalPlanesDesarrollos;
@@ -76,9 +74,6 @@ public class ControladorInicioEval implements Serializable {
             usuario = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getUsuario();
             convocatorias = administrarInicio.obtenerConvocatorias(usuario);
             secuenciaEvaluador = administrarInicio.obtenerSecuenciaEvaluador(usuario);
-            if (secuenciaEvaluador != null) {
-                totalEmpleadosAsignados = administrarInicio.totalEmpleadosEvaluador(secuenciaEvaluador.toBigInteger());
-            }
             nitEmpresa = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getNit();
             email = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getPersona().getEmail();
             System.out.println("INICIALIZADO!!!!  " + ses.getId());
@@ -87,6 +82,10 @@ public class ControladorInicioEval implements Serializable {
         }
     }
 
+    public String getPruebaTh(){
+        return "Hola";
+    }
+    
     //EVENTOS
     public void seleccionConvocatoria(int tipo) {
         //1 Si - 0 No
@@ -138,7 +137,7 @@ public class ControladorInicioEval implements Serializable {
         //secConvocatoria = new BigDecimal(convocatoria.getSecuencia());
         //pruebas = administrarInicio.obtenerPruebasEvaluado(usuario, evaluado.getSecuencia());
         //evaluado.setConsolidado(administrarInicio.estaConsolidado(evaluado.getEvalConvocatoria(), evaluado.getSecuencia()));
-        evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluado.getSecuencia());
+        //evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluado.getSecuencia());
         System.out.println("evaluado.getSecuencia() " + evaluado.getSecuencia());
         this.secEvaluado = new BigDecimal(evaluado.getSecuencia());
         System.out.println("ControladorInicioEval.seleccionPlanDesa()");
@@ -203,7 +202,7 @@ public class ControladorInicioEval implements Serializable {
             PrimefacesContextUI.ejecutar("PF('opcionesReporteEvaluado').show();");
         } else if (i.equals("6")) {
             evaluado = evaluados.get(index);
-            //System.out.println("evaluado para abrir plan de desarrollo: " + evaluado.getNombrePersona());
+            System.out.println("evaluado para abrir plan de desarrollo: " + evaluado.getNombrePersona());
             //prueba = pruebas.get(index);
             secConvocatoria = new BigDecimal(convocatorias.get(index).getSecuencia());
             secEvaluado = new BigDecimal(evaluado.getSecuencia());
@@ -243,7 +242,7 @@ public class ControladorInicioEval implements Serializable {
 
     public boolean esJefeInmediato() {
         return !administrarInicio.validarJefeInmediato(secuenciaEvaluador, evaluado);
-         // return false;
+        //return false;
     }
 
     public void cerrarEvaluaciones() {
@@ -533,14 +532,6 @@ public class ControladorInicioEval implements Serializable {
         this.estadoConvocatoria = estadoConvocatoria;
     }
 
-    public String getPruebastr() {
-        return this.pruebastr;
-    }
-
-    public void setPruebastr(String str) {
-        this.pruebastr = str;
-    }
-
     public BigDecimal getSecConvocatoria() {
         return secConvocatoria;
     }
@@ -553,5 +544,15 @@ public class ControladorInicioEval implements Serializable {
     public List<EvalPlanesDesarrollos> getPlanes() {
         return evalPlanesDesarrollos;
     }
+
+    public BigDecimal getSecEvaluado() {
+        return secEvaluado;
+    }
+
+    public void setSecEvaluado(BigDecimal secEvaluado) {
+        this.secEvaluado = secEvaluado;
+    }
+    
+    
 
 }

@@ -1,6 +1,7 @@
 package co.com.designer.eval.controlador.evaluacion;
 
 import co.com.designer.eval.administrar.interfaz.IAdministrarInicio;
+import co.com.designer.eval.administrar.interfaz.IAdministrarInicioEval;
 import co.com.designer.eval.administrar.interfaz.IAdministrarPlanDesarrollo;
 import co.com.designer.eval.controlador.ingreso.ControladorIngreso;
 import co.com.designer.eval.entidades.Convocatorias;
@@ -37,7 +38,10 @@ import org.primefaces.event.SelectEvent;
 public class ControladorPlanDesarrollo implements Serializable {
 
     @EJB
+    private IAdministrarInicioEval administrarInicioEval; //200610
+    @EJB
     private IAdministrarPlanDesarrollo administrarPlanDesarrollo;
+    @EJB
     private IAdministrarInicio administrarInicio;
     private List<EvalActividades> evalactividades;
     private List<Cursos> cursos;
@@ -45,6 +49,7 @@ public class ControladorPlanDesarrollo implements Serializable {
     private List<Convocatorias> convocatorias;
     private List<EvalPlanesDesarrollos> evalPlanesDesarrollos;
     private List<EvalSeguimientosPD> bitacoras;
+    private List<Evaluados> evaluados; // lo estoy usando para la versión móvil
     private EvalActividades evalActividad;
     private Cursos cursoSeleccionado;
     private Evaluados evaluadoActual;
@@ -99,7 +104,7 @@ public class ControladorPlanDesarrollo implements Serializable {
             //evaluadoActualPersona = ((ControladorInicioEval) x.getApplication().evaluateExpressionGet(x, "#{controladorInicioEval}", ControladorInicioEval.class)).getPruebaString();
             //evaluado = evaluadoActual.getNombrePersona();
             //System.out.println(evaluado);
-            convocatorias = administrarPlanDesarrollo.obtenerConvocatorias(usuario);
+            convocatorias = administrarPlanDesarrollo.obtenerConvocatoriasAlcance(usuario);
             convocatoriaActualBigDecimal = ((ControladorInicioEval) x.getApplication().evaluateExpressionGet(x, "#{controladorInicioEval}", ControladorInicioEval.class)).getSecConvocatoria();
             System.out.println("Convocatoria actual" + convocatoriaActualBigDecimal);
             //System.out.println("evaluado desde el post construct: "+ evaluado);
@@ -111,6 +116,7 @@ public class ControladorPlanDesarrollo implements Serializable {
             listaProfesiones = administrarPlanDesarrollo.obtenerProfesiones();
             evalactividades = administrarPlanDesarrollo.obtenerActividades();
             //evalPlanesDesarrollos=administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
+            //evalPlanesDesarrollos=administrarPlanDesarrollo.obtenerPlanesDesarrollos(new BigInteger("69658600"));
             //System.out.println("EmpleadoActual: "+evaluadoActual.getEmpleado() + " convocatoria: "+convocatoriaActual.getSecuencia());
             deshabiProfesiones = true;
             deshabiCursos = true;
@@ -474,22 +480,48 @@ public class ControladorPlanDesarrollo implements Serializable {
         this.secProfesion = secProfesion;
     }
 
-    public void seleccion() {
-        int index = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("valor"));
-        String i = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("tipo");
-        if (i.equals("6")) {
-            //evaluado = evaluados.get(index);
-            //System.out.println("evaluado para abrir plan de desarrollo: " + evaluadoActual.getNombrePersona());
-            System.out.println("Navegando a PLAN DE DESARROLLO...");
-            PrimefacesContextUI.ejecutar("seleccionPlan()");
-            System.out.println("El valor recibido es: " + index);
-            System.out.println("tipo: " + i);
+    public void seleccion() { // Cargar la pantalla en la versión Móvil
+        try {
+            int index = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("valor"));
+            String i = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("tipo");
+            if (i.equals("6")) {
+                //evaluado = evaluados.get(index);
+                //System.out.println("evaluado para abrir plan de desarrollo: " + evaluadoActual.getNombrePersona());
+                System.out.println("Navegando a PLAN DE DESARROLLO...");
+                System.out.println("Evaluador: "+evaluador);
+                convocatoriaActual = convocatorias.get(index);
+                System.out.println("Convocatoria: "+convocatoriaActual.getEnfoque()+" - "+convocatoriaActual.getCodigo()+" secuencia: "+convocatoriaActual.getSecuencia());
+                System.out.println("Parametros= usuario: "+usuario+ " - convocatoria: "+convocatoriaActual.getSecuencia());
+                evaluados = administrarInicio.obtenerEvaluados(usuario, convocatoriaActual.getSecuencia());
+                //evaluados = administrarInicio.obtenerEvaluados("1061711366", new BigInteger("1061711366"));
+                //evaluadoActual = evaluados.get(index);
+                //System.out.println("Total evaluados: "+evaluados.isEmpty());
+                //System.out.println("Evaluado: "+evaluadoActual.getSecuencia()+" - "+evaluadoActual.getNombrePersona());
+                System.out.println("El valor recibido es: " + index);
+                System.out.println("tipo: " + i);
+                PrimefacesContextUI.ejecutar("seleccionPlan()");                
+            }
+        } catch (Exception e) {
+            System.out.println("Error en ControladorPlanDesarrollo.seleccion(): "+e.getMessage());
         }
     }
-
-    public void seleccionPlanDesa() {
-        System.out.println("ControladorPlanDesarrollo.seleccionPlanDesa()");
-        System.out.println("Usuario: " + usuario);
+    
+    public void seleccionPlanDesa() { //Validar si este metodo debe ir en ControladorPlanDesarrollo
+        if (evaluadoActual != null) {
+        evaluadoActual = evaluados.get(0);   
+        }else{
+            System.out.println("EvaluadoActual es nulo");
+        }
+        //empleadosConvocados = administrarInicio.cantidadEvaluadosConvocatoria(convocatoria.getSecuencia());
+        //empleadosAsignados = administrarInicio.totalEmpleadosEvaluadorConvocatoria(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
+        //empleadosEvaluados = administrarInicio.cantidadEvaluados(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
+        //secConvocatoria = new BigDecimal(convocatoria.getSecuencia());
+        //pruebas = administrarInicio.obtenerPruebasEvaluado(usuario, evaluado.getSecuencia());
+        //evaluado.setConsolidado(administrarInicio.estaConsolidado(evaluado.getEvalConvocatoria(), evaluado.getSecuencia()));
+        //evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
+        //System.out.println("evaluado.getSecuencia() " + evaluadoActual.getSecuencia());
+        //this.secEvaluado = new BigDecimal(evaluado.getSecuencia());
+        System.out.println("ControladorInicioEval.seleccionPlanDesa()");
     }
 
     public Date getFechaseg() {
@@ -561,6 +593,7 @@ public class ControladorPlanDesarrollo implements Serializable {
                             setearFechaActualBitacora();
                             PrimefacesContextUI.ejecutar("PF('alertanuevabitacora').hide();");
                         } else {
+                            isSeleccionadoBitacora=false;
                             MensajesUI.error("No fue posible registrar la bitácora.");
                             comentario="";
                             porcent="0";
@@ -848,5 +881,15 @@ public class ControladorPlanDesarrollo implements Serializable {
 
     public void setPorcenBitacoraEdit(String porcenBitacoraEdit) {
         this.porcenBitacoraEdit = porcenBitacoraEdit;
-    }    
+    } 
+
+    public List<Evaluados> getEvaluados() { // 200609
+        return evaluados;
+    }
+
+    public void setEvaluados(List<Evaluados> evaluados) {
+        this.evaluados = evaluados;
+    }
+    
+    
 }

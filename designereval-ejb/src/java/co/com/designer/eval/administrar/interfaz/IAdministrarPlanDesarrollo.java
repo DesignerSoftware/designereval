@@ -35,6 +35,7 @@ public interface IAdministrarPlanDesarrollo {
     public BigDecimal obtenerUltimoCodigo(BigInteger secEvalResultadoConv);
     public EvalActividades consultarEvalActividad(BigDecimal secuencia);
     public List<Convocatorias> obtenerConvocatorias(String usuario);
+    public List<Convocatorias> obtenerConvocatoriasAlcance(String usuario);
     public boolean registrarBitacora(BigInteger secPlanDesarrollo, 
            Date fecha, String comentario, String porcentaje);
     public boolean editarBitacora(BigInteger secEvalSeguimiento, 

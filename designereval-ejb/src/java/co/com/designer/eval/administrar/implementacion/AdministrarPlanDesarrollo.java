@@ -264,6 +264,25 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
         }
     }
     
+    // 200609
+    @Override
+    public List<Convocatorias> obtenerConvocatoriasAlcance(String usuario) {
+        EntityManager em = null;
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            return persistenciaConvocatorias.obtenerConvocatoriasAlcance(em, usuario);
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.obtenerConvocatoriasAlcance: " + e);
+            return null;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
        @Override
     public boolean registrarBitacora(BigInteger secPlanDesarrollo, 
              Date fecha, String comentario, String porcentaje) {

@@ -23,8 +23,8 @@
             <p:remoteCommand name="seleccionPrueba" actionListener="#{controladorEvaluacion.cargarPreguntas()}"
                              update="preguntas"
                              oncomplete="PrimeFaces.Mobile.navigate('#preguntas', {transition: 'flip'}); return false;"/>
-            <p:remoteCommand name="seleccion" actionListener="#{controladorInicioEval.seleccion}"/>
-            <p:remoteCommand name="seleccionPd" actionListener="#{controladorPlanDesarrollo.seleccion()}"/>
+            <p:remoteCommand name="seleccion" actionListener="#{controladorInicioEval.seleccion()}"/>
+            <p:remoteCommand name="seleccionPd" actionListener="#{controladorInicioEval.seleccion()}"/>
             <p:remoteCommand name="cerrarSesion" actionListener="#{controladorIngreso.ingresar()}"/>
 
             <p:commandButton id="descargarReporte" actionListener="#{controladorInicioEval.descarga()}"
@@ -32,8 +32,8 @@
             <p:remoteCommand name="pantallaDinamicaPlanDesa"
                              actionListener="#{controlNavegacion.pantallaDinamica('./Evaluador/planDesa.xhtml')}"
                              process="@this" update=":principalForm"/>
-            <p:remoteCommand name="seleccionPlan" actionListener="#{controladorInicioEval.seleccionPlanDesa()}"
-                             update="planDesa"
+            <p:remoteCommand name="seleccionPlan" actionListener="#{controladorPlanDesarrollo.seleccionPlanDesa()}"
+                             update="planDesa, planDesa:formulario2"
                              oncomplete="PrimeFaces.Mobile.navigate('#planDesa', {transition: 'flip'}); return false;"/>
         </h:form>
         <pm:page id="uno">
@@ -82,7 +82,7 @@
                 <pm:content>
                     <p:dataList value="#{controladorInicioEval.convocatorias}" var="cv" rowIndexVar="indexC">
                         <h:outputLink value="#"
-                                      onclick="seleccion([{name: 'valor', value:#{indexC}}, {name: 'tipo', value: '0'}]);">
+                                          onclick="seleccion([{name: 'valor', value:#{indexC}}, {name: 'tipo', value: '0'}]);">
                             <p>#{cv.codigo}</p>
                             <p><strong>Enfoque:</strong> #{cv.enfoque}</p>
                         </h:outputLink>
@@ -158,16 +158,14 @@
                             <p><strong>Puntaje: </strong>#{ev.puntajeObtenido != null ?
                                                            ev.puntajeObtenido : 0}</p>
                         </h:outputLink>
-                        <p:commandButton style="display: none" value="IR A PLAN DE DESARROLLO" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
+                        <p:commandButton value="Plan de desarrollo" style="display:none" onclick="seleccionPd([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
                                          />
-
-                        <hr/>
+        
                         <p:commandButton value="Reporte" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '5'}]);"
                                          />
-                        <p:commandButton value="Plan de desarrollo" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
-                                         disabled="#{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'true'}" style="display: #{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'none'}"             />
-                         <p:commandButton value="Plan de desarrollo2" onclick="PF('opcionesPlanPruebas').show()"
-                                         disabled="#{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'true'}" style="display: #{controladorInicioEval.estadoConvocatoria == 1 ? '' : 'none'}"             />
+                    <hr/>
+
+
                     </p:dataList>
 
                     <p:dialog id="opcionesReporteEvaluado" header="Información" widgetVar="opcionesReporteEvaluado"  resizable="false" 
@@ -277,18 +275,18 @@
                 <pm:content>
                         <center><h3>PLAN DE DESARROLLO</h3></center>
                            
-                    <p:dataList value="#{controladorPlanDesarrollo.actividades}" var="act" rowIndexVar="indexP">
-                        <h:outputLink value="#">
-                            <p>#{act.descripcion}</p>
-                        </h:outputLink>
-                    </p:dataList>  
+                        <p:dataList value="#{controladorInicioEval.planes}" var="act" rowIndexVar="indexP">
+                            <h:outputLink value="#">
+                                <p>#{act.codigo}</p>
+                            </h:outputLink>
+                        </p:dataList>  
                         <hr/>
                         <p:dataList value="#{controladorInicioEval.planes}" var="epd" rowIndexVar="indexP">
-                        <h:outputLink value="#">
-                            <p>#{epd.codigo}</p>asdf
-                            <p>#{epd.evalActividad.descripcion}</p>
-                        </h:outputLink>
-                    </p:dataList> 
+                            <h:outputLink value="#">
+                                <p>#{epd.codigo}</p>asdf
+                                <p>#{epd.evalActividad.descripcion}</p>
+                            </h:outputLink>
+                        </p:dataList> 
                         <hr/>
                     <p:dataList value="#{controladorInicioEval.evaluados}" var="ev" rowIndexVar="indexE">
                     <p>#{ev.nombrePersona}</p>

@@ -97,11 +97,11 @@
                 <p:column headerText="Nombre">
                     <h:outputText value="#{evaluado.nombrePersona}"/>
                 </p:column>
-                <p:column headerText="Puntaje" width="75">
+                <p:column headerText="Puntaje" width="60" priority="6">
                     <h:outputText value="#{evaluado.puntajeObtenido != null ?
                                            evaluado.puntajeObtenido : 0}"/>
                 </p:column>
-                <p:column headerText="Resumido" width="90" style="padding: 4px 0px;">
+                <p:column headerText="Resumido" style="padding: 4px 0px;" priority="2">
                     <p:commandButton id="represumido" value="Reporte" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="PF('opcionesReporteResumido').show()"
@@ -109,7 +109,7 @@
                                      disabled="#{!evaluado.esConsolidado}"
                                      />
                 </p:column>
-                <p:column headerText="Consolidado" width="90" style="padding: 4px 0px;">
+                <p:column headerText="Consolidado" style="padding: 4px 0px;" priority="3">
                     <p:commandButton id="repconsolidado" value="Reporte" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="PF('opcionesReporteConsolidado').show()"
@@ -117,14 +117,14 @@
                                      disabled="#{!evaluado.esConsolidado}"
                                      />
                 </p:column>
-                <p:column headerText="Evaluador" width="80">
+                <p:column headerText="Evaluador" priority="4">
                     <p:commandButton id="repevaluado" value="Reporte" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="PF('opcionesReporteEvaluador').show()"
                                      onstart="PF('dtbEvaluados').selectRow(#{indice});"
                                      />
                 </p:column>
-                <p:column headerText="Plan de Desarrollo" width="80" rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}">
+                <p:column headerText="Plan de Desarrollo" rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}" priority="5">
                     <p:commandButton id="planDesa" value="Abrir" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="pantallaDinamicaPlanDesa()"
@@ -142,6 +142,7 @@
                 <f:facet name="header">
                     <h:outputText value="Pruebas"/>
                 </f:facet>
+
                 <p:column headerText="Nombre">
                     <h:outputText value="#{prueba.prueba}"/>
                     <br/>
@@ -150,7 +151,7 @@
                     <h:outputText value="#{prueba.obsEvaluador != null ? 
                                            prueba.obsEvaluador.length() > 30 ? prueba.obsEvaluador.substring(0, 30).concat('...') : 
                                            prueba.obsEvaluador.substring(0, prueba.obsEvaluador.length()) : ''}"/>
-                </p:column>
+                </p:column>         
 
                 <p:column headerText="Factor" width="150">
                     <h:outputText value="#{prueba.factor}"/>
@@ -174,6 +175,7 @@
                                              PF('cargarConvocatoria').show();"
                                      disabled="#{prueba.estado == 'A' ? false : true}"/>
                 </p:column>
+
             </p:dataTable>
         </p:column>
     </p:panelGrid>

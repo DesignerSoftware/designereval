@@ -48,7 +48,7 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.obtenerEvaluados: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaEvaluados.obtenerEvaluados: " + ex.getMessage());
 //            terminarTransaccionException(em);
             return null;
         }
