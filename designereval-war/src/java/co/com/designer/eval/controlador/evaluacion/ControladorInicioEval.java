@@ -242,7 +242,7 @@ public class ControladorInicioEval implements Serializable {
 
     public boolean esJefeInmediato() {
         return !administrarInicio.validarJefeInmediato(secuenciaEvaluador, evaluado);
-        //return false;
+        // return false;
     }
 
     public void cerrarEvaluaciones() {
