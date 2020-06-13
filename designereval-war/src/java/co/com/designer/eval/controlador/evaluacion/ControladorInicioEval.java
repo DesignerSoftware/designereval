@@ -119,6 +119,7 @@ public class ControladorInicioEval implements Serializable {
     public void seleccionEvaluado(int tipo) {
         //1 Si - 0 No
         if (tipo == 1 && evaluado != null) {
+            System.out.println("Se seleccionó evaluado secuencia: "+evaluado.getSecuencia());
             pruebas = administrarInicio.obtenerPruebasEvaluado(usuario, evaluado.getSecuencia());
             //evaluado.setConsolidado(administrarInicio.estaConsolidado(evaluado.getEvalConvocatoria(), evaluado.getSecuencia()));
             this.secEvaluado = new BigDecimal(evaluado.getSecuencia());

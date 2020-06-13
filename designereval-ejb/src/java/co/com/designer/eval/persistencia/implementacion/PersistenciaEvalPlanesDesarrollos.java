@@ -61,12 +61,12 @@ public class PersistenciaEvalPlanesDesarrollos implements IPersistenciaEvalPlane
     @Override
     public boolean registrarPlanDesarrollo(EntityManager em, BigDecimal secCodigo, //BigInteger secIndagacion,
             //BigInteger secEvalResultado, BigInteger secEvalActividad, String observacion, BigInteger secCurso) {
-            BigInteger secEvalResultado, String secEvalActividad, String observacion, String secCurso, String secProfesion) {
+            BigInteger secEvalResultado, String secEvalActividad, String observacion, String secCurso, String secProfesion, String periodicidad) {
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
-            Query q = em.createNativeQuery("INSERT INTO EVALPLANESDESARROLLOS (CODIGO, EVALRESULTADOCONV, EVALACTIVIDAD, OBSERVACION, CURSO, PROFESION) " +
-                " VALUES (?, ?, ?, ?, ?, ?) ");
+            Query q = em.createNativeQuery("INSERT INTO EVALPLANESDESARROLLOS (CODIGO, EVALRESULTADOCONV, EVALACTIVIDAD, OBSERVACION, CURSO, PROFESION, PERIODICIDADSEGUIMIENTO) " +
+                " VALUES (?, ?, ?, ?, ?, ?, ?) ");
             q.setParameter(1, secCodigo);
             //q.setParameter(2, secIndagacion);
             q.setParameter(2, secEvalResultado);
@@ -74,6 +74,7 @@ public class PersistenciaEvalPlanesDesarrollos implements IPersistenciaEvalPlane
             q.setParameter(4, observacion);
             q.setParameter(5, secCurso);
             q.setParameter(6, secProfesion);
+            q.setParameter(7, periodicidad);
             q.executeUpdate();
 //            em.getTransaction().commit();
             return true;

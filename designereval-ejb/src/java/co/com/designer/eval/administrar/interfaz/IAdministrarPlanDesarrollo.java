@@ -31,7 +31,7 @@ public interface IAdministrarPlanDesarrollo {
     public List<EvalPlanesDesarrollos> obtenerPlanesDesarrollos(BigInteger secEvalResultadoConv);
     public boolean eliminarPlanDesarrollo(BigInteger secPlanDesarrollo);
     public boolean registrarPlanDesarrollo(BigDecimal secCodigo, //BigInteger secIndagacion,
-            BigInteger secEvalResultado, String secEvalActividad, String observacion, String secCurso, String secProfesion);
+            BigInteger secEvalResultado, String secEvalActividad, String observacion, String secCurso, String secProfesion, String periodicidad);
     public BigDecimal obtenerUltimoCodigo(BigInteger secEvalResultadoConv);
     public EvalActividades consultarEvalActividad(BigDecimal secuencia);
     public List<Convocatorias> obtenerConvocatorias(String usuario);

@@ -109,7 +109,7 @@
                                      disabled="#{!evaluado.esConsolidado}"
                                      />
                 </p:column>
-                <p:column headerText="Consolidado" style="padding: 4px 0px;" priority="3">
+                <p:column headerText="Consolidado" style="padding: 4px 0px;" priority="5">
                     <p:commandButton id="repconsolidado" value="Reporte" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="PF('opcionesReporteConsolidado').show()"
@@ -124,7 +124,7 @@
                                      onstart="PF('dtbEvaluados').selectRow(#{indice});"
                                      />
                 </p:column>
-                <p:column headerText="Plan de Desarrollo" rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}" priority="5">
+                <p:column headerText="Plan de Desarrollo" rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}" priority="3">
                     <p:commandButton id="planDesa" value="Abrir" 
                                      actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
                                      onclick="pantallaDinamicaPlanDesa()"

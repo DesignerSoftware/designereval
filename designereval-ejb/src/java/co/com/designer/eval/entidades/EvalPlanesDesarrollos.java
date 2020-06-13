@@ -44,6 +44,8 @@ public class EvalPlanesDesarrollos implements Serializable {
     @JoinColumn(name = "PROFESION", referencedColumnName = "SECUENCIA")
     @ManyToOne(optional = true)
     private Profesiones profesion;
+    @Column(name = "PERIODICIDADSEGUIMIENTO")
+    private String periodicidad;
 
     public BigInteger getSecuencia() {
         return secuencia;
@@ -116,7 +118,14 @@ public class EvalPlanesDesarrollos implements Serializable {
     public void setProfesion(Profesiones profesion) {
         this.profesion = profesion;
     }
-    
+
+    public String getPeriodicidad() {
+        return periodicidad;
+    }
+
+    public void setPeriodicidad(String periodicidad) {
+        this.periodicidad = periodicidad;
+    }
 
     @Override
     public int hashCode() {

@@ -131,7 +131,7 @@ public class AdministrarInicio implements IAdministrarInicio, Serializable {
             //consultaConsolidado(lista);
             return lista;
         } catch (Exception e) {
-            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.obtenerEvaluados: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.obtenerEvaluados: " + e.getMessage());
             return null;
         } finally {
             if (em != null && em.isOpen()) {

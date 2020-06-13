@@ -186,7 +186,7 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
 
     @Override
     public boolean registrarPlanDesarrollo(BigDecimal secCodigo, //BigInteger secIndagacion,
-            BigInteger secEvalResultado, String secEvalActividad, String observacion, String secCurso, String secProfesion) {
+            BigInteger secEvalResultado, String secEvalActividad, String observacion, String secCurso, String secProfesion, String periodicidad) {
         EntityManager em = null;
         try {
             if (em != null && em.isOpen()) {
@@ -195,7 +195,7 @@ public class AdministrarPlanDesarrollo implements IAdministrarPlanDesarrollo, Se
             }
             //return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secIndagacion, secEvalResultado, secEvalActividad, secCurso);
 //            return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secEvalResultado, secEvalActividad, observacion, secCurso);
-            return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secEvalResultado, secEvalActividad, observacion, secCurso, secProfesion);
+            return persistenciaEvalPlanesDesarrollos.registrarPlanDesarrollo(em, secCodigo, secEvalResultado, secEvalActividad, observacion, secCurso, secProfesion, periodicidad);
         } catch (Exception e) {
             System.out.println(this.getClass().getName() + ": " + "Error AdministrarPlanDesarrollo.registrarPlanDesarrollo: " + e);
             return false;

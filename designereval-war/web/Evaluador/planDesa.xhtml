@@ -11,18 +11,12 @@
     <p:remoteCommand name="refrescarListas" actionListener="#{controladorPlanDesarrollo.refrescaListas()}"
                      process="@this" oncomplete="pantallaDinamica();" update=":principalForm:dtbPlanes"/>    
     <p:remoteCommand name="refrescarPlanes" actionListener="#{controladorPlanDesarrollo.cargarPlanesDesarrollo()}"
-                     process="@this" autoRun="true" update=":principalForm:dtbPlanes :principalForm:btnElimAct :principalForm:btnAddBitacora :principalForm:btnElimBitacora"/>  
+                     process="@this" autoRun="true" update=":principalForm:dtbPlanes :principalForm:btnElimAct :principalForm:btnAddBitacora :principalForm:btnElimBitacora :principalForm:planDes"/>  
 
     <center><h3>PLAN DE DESARROLLO</h3></center>
 
     <p:panelGrid id="planDes" columns="1" styleClass="noBorders" style="margin-left: 10%; margin-right: 10%">
-        <!--<center>
-            <p:column>
-                <h:outputText value="Convocatoria: " style="font-weight: bold; color: #122AB5"/> 
-                <h:outputText value="#{controladorPlanDesarrollo.convocatoria}"
-                              style="font-weight: bold;"/>
-            </p:column>
-        </center>-->
+        
         <p:column>
             <center>
                 <p:panelGrid columns="6" styleClass="noBorders">
@@ -97,6 +91,9 @@
             <p:column headerText="Cursos" style="font-weight: bold;">
                 <h:outputText value="#{planes.curso.nombre == null ? '' : planes.curso.nombre}" style="font-weight: normal !important;"/>
             </p:column>
+            <p:column headerText="Seguimiento" style="font-weight: bold;">
+                <h:outputText value="#{planes.periodicidad == null ? '' : planes.periodicidad}" style="font-weight: normal !important;"/>
+            </p:column>
 
         </p:dataTable>
 
@@ -112,7 +109,7 @@
     <p:spacer height="20" width="20"/>
     
     <p:panelGrid columns="1" style="margin-left: 10%; width: 80%" styleClass="noBorders">
-        <p:column style=" float: clear; width:80%"> 
+        <p:column style=" float: clear; width:80%;"> 
             <p:commandButton id="btnAddBitacora" value="Añadir Bitácora" actionListener="#{controladorPlanDesarrollo.actualizaListasBitacora()}" onclick="PF('alertanuevabitacora').show();" disabled="#{!controladorPlanDesarrollo.habilitaEliminarActividad}"
                              process="@this" update=":principalForm:nueva:alertanewactpanel :principalForm:nueva:alertanuevaactividad" style="float: left; font-size: 18px !important;  background-color: #00FF00; color: black;"
                              />
@@ -249,7 +246,14 @@
                         <h:outputText value="#{curso.nombre}" />
                     </p:column>
                     <p:ajax update="@this"/>
-                </p:selectOneMenu>           
+                </p:selectOneMenu>
+                <h:outputText value="Periodicidad seguimiento:" />
+                <p:selectOneMenu value="#{controladorPlanDesarrollo.periodicidad}">
+                <f:selectItem itemLabel="TRES MESES" itemValue="TRES MESES"/>
+                <f:selectItem itemLabel="SEIS MESES" itemValue="SEIS MESES" />
+                <f:selectItem itemLabel="1 AÑO" itemValue="1 AÑO" />
+                <p:ajax update="@this"/>
+                </p:selectOneMenu>
             </p:panelGrid>
 
             <p:spacer height="30" width="20"/>
