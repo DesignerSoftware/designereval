@@ -75,6 +75,7 @@ public class ControladorInicioEval implements Serializable {
             secuenciaEvaluador = administrarInicio.obtenerSecuenciaEvaluador(usuario);
             nitEmpresa = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getNit();
             email = ((ControladorIngreso) x.getApplication().evaluateExpressionGet(x, "#{controladorIngreso}", ControladorIngreso.class)).getPersona().getEmail();
+            totalEmpleadosAsignados = administrarInicio.totalEmpleadosEvaluador(secuenciaEvaluador.toBigInteger());
             System.out.println("INICIALIZADO!!!!  " + ses.getId());
         } catch (ELException e) {
             System.out.println(this.getClass().getName() + ".inicializarAdministrador" + ": " + e);
@@ -90,6 +91,7 @@ public class ControladorInicioEval implements Serializable {
         //1 Si - 0 No
         switch (tipo) {
             case 1:
+                totalEmpleadosAsignados = administrarInicio.totalEmpleadosEvaluador(secuenciaEvaluador.toBigInteger());
                 evaluados = administrarInicio.obtenerEvaluados(usuario, convocatoria.getSecuencia());
                 empleadosConvocados = administrarInicio.cantidadEvaluadosConvocatoria(convocatoria.getSecuencia());
                 empleadosAsignados = administrarInicio.totalEmpleadosEvaluadorConvocatoria(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
@@ -98,6 +100,7 @@ public class ControladorInicioEval implements Serializable {
                 secConvocatoria = new BigDecimal(convocatoria.getSecuencia());
                 break;
             case 2:
+                totalEmpleadosAsignados = administrarInicio.totalEmpleadosEvaluador(secuenciaEvaluador.toBigInteger());
                 evaluados = administrarInicio.obtenerEvaluados(usuario, convocatoria.getSecuencia());
                 empleadosConvocados = administrarInicio.cantidadEvaluadosConvocatoria(convocatoria.getSecuencia());
                 empleadosAsignados = administrarInicio.totalEmpleadosEvaluadorConvocatoria(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
