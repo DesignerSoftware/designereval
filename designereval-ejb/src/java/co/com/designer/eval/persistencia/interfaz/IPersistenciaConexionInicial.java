@@ -29,7 +29,7 @@ public interface IPersistenciaConexionInicial {
     
     public void setearUsuario(EntityManager eManager, String rol, String pwd);
 
-    public Personas obtenerPersona(EntityManager eManager, String usuarioBD);
+    public Personas obtenerPersona(EntityManager eManager, String usuarioBD, String pass);
 
     public Conexiones conexionUsuario(EntityManager eManager, String usuario);
 

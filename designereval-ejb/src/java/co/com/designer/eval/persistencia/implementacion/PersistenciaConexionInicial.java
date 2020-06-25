@@ -91,13 +91,15 @@ public class PersistenciaConexionInicial implements IPersistenciaConexionInicial
     }
 
     @Override
-    public Personas obtenerPersona(EntityManager eManager, String usuarioBD) {
+    public Personas obtenerPersona(EntityManager eManager, String usuarioBD, String pass) {
         try {
 //            eManager.getTransaction().begin();
             eManager.joinTransaction();
 //            Query query = eManager.createNativeQuery("SELECT p.* FROM Usuarios u, Personas p WHERE u.alias = ? AND u.persona = p.secuencia ", Personas.class);
-            Query query = eManager.createNativeQuery("SELECT p.* FROM ConexionesEval u, Personas p WHERE u.seudonimo = ? AND u.persona = p.secuencia ", Personas.class);
+//            Query query = eManager.createNativeQuery("SELECT p.* FROM ConexionesEval u, Personas p WHERE u.seudonimo = ? AND u.persona = p.secuencia ", Personas.class);
+            Query query = eManager.createNativeQuery("SELECT p.* FROM ConexionesEval u, Personas p WHERE u.seudonimo = ? AND u.persona = p.secuencia and generales_pkg.encrypt( ? ) = u.pwd ", Personas.class);
             query.setParameter(1, usuarioBD);
+            query.setParameter(2, pass);
             Personas resultado = (Personas) query.getSingleResult();
 //            eManager.getTransaction().commit();
             return resultado;

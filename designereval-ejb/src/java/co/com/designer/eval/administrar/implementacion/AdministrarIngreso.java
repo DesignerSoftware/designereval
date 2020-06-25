@@ -56,7 +56,7 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
             if (emf != null) {
                 resul = true;
             } else {
-                System.out.println(this.getClass().getName()+": "+"Error la unidad de persistencia no existe, revisar el archivo XML de persistencia.");
+                System.out.println(this.getClass().getName() + ": " + "Error la unidad de persistencia no existe, revisar el archivo XML de persistencia.");
                 resul = false;
             }
             if (resul) {
@@ -65,10 +65,10 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
                     EntityManager em = emf.createEntityManager();
                     em.close();
                 }
-                System.out.println(this.getClass().getName()+": "+"Unid. Pesistencia asignada.");
+                System.out.println(this.getClass().getName() + ": " + "Unid. Pesistencia asignada.");
             }
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error general: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error general: " + e);
             resul = false;
 //            emf = null;
         }
@@ -89,23 +89,23 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
 //                    cerrarConexiones();
                     em = sessionEMF.crearFactoryUsuario(usuario, clave, baseDatos).createEntityManager();
                     if (setearRol()) {
-                        persona = persistenciaConexionInicial.obtenerPersona(em, usuario);
+                        persona = persistenciaConexionInicial.obtenerPersona(em, usuario, clave);
                     } else {
-                        System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: Error seteando el rol.");
+                        System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: Error seteando el rol.");
 //                        cerrarConexiones();
                     }
                 } else {
-                    System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: perfilUsuario es nulo.");
+                    System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: perfilUsuario es nulo.");
 //                    cerrarConexiones();
                 }
             } else {
-                System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: secPerfil es nulo.");
+                System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: secPerfil es nulo.");
 //                cerrarConexiones();
             }
             em.close();
             return persona;
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: " + e);
 //            cerrarConexiones();
             return null;
         }
@@ -123,25 +123,29 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
                     perfilUsuario = persistenciaConexionInicial.perfilUsuario(em, secPerfil);
                     if (perfilUsuario != null) {
                         cerrarConexiones();
-                        EntityManagerFactory emf = sessionEMF.crearFactoryUsuario(usuario, clave, baseDatos);
+//                        EntityManagerFactory emf = sessionEMF.crearFactoryUsuario(usuario, clave, baseDatos);
+                        EntityManagerFactory emf = sessionEMF.crearConexionUsuario(unidadPersistencia);
                         em = emf.createEntityManager();
                         if (setearRol()) {
-                            persona = persistenciaConexionInicial.obtenerPersona(em, usuario);
+                            persona = persistenciaConexionInicial.obtenerPersona(em, usuario, clave);
+                            if (persona == null){
+                                System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: Error obteniendo la persona.");
+                            }
                         } else {
-                            System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: Error seteando el rol.");
+                            System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: Error seteando el rol.");
 //                            cerrarConexiones();
                         }
                     } else {
-                        System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: perfilUsuario es nulo.");
+                        System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: perfilUsuario es nulo.");
 //                        cerrarConexiones();
                     }
                 } else {
-                    System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: secPerfil es nulo.");
+                    System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: secPerfil es nulo.");
 //                    cerrarConexiones();
                 }
                 return persona;
             } catch (Exception e) {
-                System.out.println(this.getClass().getName()+": "+"Error creando EMF AdministrarIngreso.conexionUsuario: " + e);
+                System.out.println(this.getClass().getName() + ": " + "Error creando EMF AdministrarIngreso.conexionUsuario: " + e);
 //                cerrarConexiones();
                 return null;
             }
@@ -161,7 +165,7 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
             }
             return false;
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error AdministrarIngreso.validarConexionUsuario: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarIngreso.validarConexionUsuario: " + e);
             return false;
         }
     }
@@ -177,7 +181,7 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
             }
             return null;
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error AdministrarIngreso.ultimaConexionUsuario: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarIngreso.ultimaConexionUsuario: " + e);
             return null;
         }
     }
@@ -193,8 +197,8 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
                 }
             }
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error consultando el SID del usuario");
-            System.out.println(this.getClass().getName()+": "+"exc: " + e.getMessage());
+            System.out.println(this.getClass().getName() + ": " + "Error consultando el SID del usuario");
+            System.out.println(this.getClass().getName() + ": " + "exc: " + e.getMessage());
         }
         try {
             if (em != null) {
@@ -204,7 +208,7 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
             }
             return false;
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error AdministrarIngreso.insertarUltimaConexion: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarIngreso.insertarUltimaConexion: " + e);
             return false;
         }
     }
@@ -219,7 +223,7 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
             administrarSessiones.adicionarSesion(sem);
             resul = true;
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error general: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error general: " + e);
             resul = false;
         }
         return resul;
@@ -232,7 +236,7 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
             administrarSessiones.borrarSesion(idSesion);
             //emf.close();
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error general " + "cerrarSession" + ": " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error general " + "cerrarSession" + ": " + e);
         }
     }
 
@@ -252,7 +256,7 @@ public class AdministrarIngreso implements IAdministrarIngreso, Serializable {
                 em.close();
             }
         } catch (Exception e) {
-            System.out.println(this.getClass().getName()+": "+"Error AdministrarIngreso:cambiarPassword: " + e);
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarIngreso:cambiarPassword: " + e);
             res = ExtraeCausaExcepcion.obtenerMensajeSQLException(e);
             if (em == null || !em.isOpen()) {
                 em = sessionEMF.crearConexionUsuario(unidadPersistencia).createEntityManager();

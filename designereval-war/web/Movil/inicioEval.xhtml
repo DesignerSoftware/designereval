@@ -33,11 +33,15 @@
                              actionListener="#{controlNavegacion.pantallaDinamica('./Evaluador/planDesa.xhtml')}"
                              process="@this" update=":principalForm"/>
             <p:remoteCommand name="seleccionPlan" actionListener="#{controladorPlanDesarrollo.seleccionPlanDesa()}"
-                             update="planDesa, planDesa:formulario2, bitacoras:formulario3"
+                             update="planDesa, planDesa:formulario2, bitacoras:formulario3, pageNuevaActividad:formNuevaActividad"
                              oncomplete="PrimeFaces.Mobile.navigate('#planDesa', {transition: 'flip'}); return false;"/>
             <p:remoteCommand name="seleccionBitacora" actionListener="#{controladorPlanDesarrollo.seleccionBitacoraMovil()}"
-                             update="planDesa, planDesa:formulario2, bitacoras:formulario3"
+                             update="planDesa, planDesa:formulario2, bitacoras:formulario3, pageNuevaBitacora:formNuevaBitacora"
                              oncomplete="PrimeFaces.Mobile.navigate('#bitacoras', {transition: 'flip'}); return false;"/>
+            <p:remoteCommand name="pantallaNuevaActividad"
+                             oncomplete="PrimeFaces.Mobile.navigate('#pageNuevaActividad', {transition: 'flip'}); return false;"/>
+            <p:remoteCommand name="pantallaNuevaBitacora"
+                             oncomplete="PrimeFaces.Mobile.navigate('#pageNuevaBitacora', {transition: 'flip'}); return false;"/>
         </h:form>
         <pm:page id="uno">
             <h:form>
@@ -162,7 +166,7 @@
                                                            ev.puntajeObtenido : 0}</p>
                         </h:outputLink>
                         <p:commandButton value="Plan de desarrollo" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
-                                         disabled="#{controladorInicioEval.esJefeInmediato(ev.secuencia)}"  rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}"              />
+                                         disabled="#{controladorInicioEval.esJefeInmediato(ev.secuencia)}"  rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}"/>
                         <p:commandButton value="Reporte" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '5'}]);"
                                          />
                         <hr/>
@@ -244,23 +248,6 @@
                         </p:panelGrid>
                     </p:dialog>
                     
-                    <p:dialog id="opcionesPlanPruebas" header="Opcion" widgetVar="opcionesPlanPruebas"  resizable="false" 
-                              draggable="false" modal="true" closable="true" closeOnEscape="true">  
-                        <p:panelGrid columns="1" styleClass="noBorders">
-                            <p:column>
-                                <center><h:outputText value="Por favor seleccione la opción que desea abrir."/></center>
-                                <br/>
-                            </p:column>
-                            <p:column>
-                                <p:commandButton value="PRUEBAS" style="float: right;" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
-                                                 process="@this"/>
-                                <p:commandButton value="PLAN DE DESARROLLO" style="float: right;" onclick="seleccion([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '6'}]);"
-                                                 process="@this"/>
-                                    
-                            </p:column>
-                        </p:panelGrid>
-                    </p:dialog>
-                    
                 </pm:content>
             </h:form>
         </pm:page>
@@ -269,16 +256,16 @@
             <pm:header title="Plan de desarrollo" swatch="b"
                        styleClass="ui-header">
                 <p:button styleClass="ui-btn-right ui-btn-inline" value="Salir" onclick="cerrarSesion();"/>
-                <p:button styleClass="ui-btn-left ui-btn-inline" value="Volver" icon="ui-icon-arrow-l" outcome="pm:evaluados?transition=flip"/>
+                <p:button styleClass="ui-btn-left ui-btn-inline" value="Volver" icon="ui-icon-arrow-l" outcome="pm:evaluados?transition=flip" />
             </pm:header>
+            <pm:content>
+                <h:form id="formulario2">
+                    <p:remoteCommand name="actualizaPlanes"
+                                     process="@this" update="planDesa:formulario2" actionListener="#{controladorPlanDesarrollo.actualizaActividades()}"/>
+                    <p:remoteCommand name="eliminarPlan" actionListener="#{controladorPlanDesarrollo.seleccionEliminarPlanMovil()}"
+                                     process="@this" update="bitacoras:formulario3, panelInfoElimActividad, alertaInfoElimActividad"/>
 
-            <h:form id="formulario2">
-                <p:remoteCommand name="eliminarPlan" actionListener="#{controladorPlanDesarrollo.eliminarPlanDesarrolloMovil()}"
-                                 process="@this" update="planDesa:formulario2"/>
-                <p:remoteCommand name="actualizaPlanes"
-                                 process="@this" update="planDesa:formulario2" actionListener="#{controladorPlanDesarrollo.actualizaActividades()}"/>
-                <pm:content>
-                        <center><h3>PLAN DE DESARROLLO</h3></center>
+                    <center><h3>PLAN DE DESARROLLO</h3></center>
                     <hr/>       
                     <p:panelGrid columns="2" styleClass="noBorders">
                         <h:outputText value="Nombre: " style="font-weight: bold; color: #122AB5"/>
@@ -288,8 +275,16 @@
                         <h:outputText value="Puntaje obtenido: " style="font-weight: bold; color: #122AB5"/>
                         <h:outputText value="#{controladorPlanDesarrollo.evaluadoActual.puntajeObtenido==null?0:controladorPlanDesarrollo.evaluadoActual.puntajeObtenido}%" />                    
                     </p:panelGrid>
-                        <hr/>
-                        <p:dataList value="#{controladorPlanDesarrollo.planesDesarrollos}" var="ev" rowIndexVar="indexE">       
+                    <hr/>
+                    <p:column style="margin-top: 2%">      
+                        <center>
+                            <p:spacer height="20" width="20"/>
+                            <p:commandButton value="Añadir Actividad" onclick="pantallaNuevaActividad()" actionListener="#{controladorPlanDesarrollo.actualizaListasMovil()}"
+                                             style="font-size: 18px !important; background-color: #00FF00; color: black;" update="pageNuevaActividad:formNuevaActividad, planDesa"/>
+                        </center>     
+
+                    </p:column>
+                    <p:dataList value="#{controladorPlanDesarrollo.planesDesarrollos}" var="ev" rowIndexVar="indexE">       
                         <h:outputLink value="#" onclick="seleccionPd([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '7'}]);">
                             <p><strong>Cod: </strong>#{ev.codigo != null ?
                                                        ev.codigo : 0}</p>
@@ -301,62 +296,44 @@
                                                              ev.profesion.descripcion : 'N/A'}</p>
                             <p><strong>Curso: </strong>#{ev.curso.nombre != null ?
                                                             ev.curso.nombre : 'N/A'}</p>
-                            <p:panelGrid columns="2" styleClass="noBor  ders"> 
-                                <p:commandButton value="Eliminar" onclick="eliminarPlan([{name: 'valor', value:#{indexP}}, {name: 'tipo', value: '8'}])"/>
-                            </p:panelGrid>
+                            <p><strong>Periodicidad seguimiento: </strong>#{ev.periodicidad != null ? ev.periodicidad : ''}</p>
                         </h:outputLink>
+                        <p:commandButton value="Eliminar" onclick="eliminarPlan([{name: 'valor', value:#{indexE}}, {name: 'tipo', value: '8'}]);" />
+                        <hr/>
                     </p:dataList>
 
-                </pm:content>
-                    <p:column style="margin-top: 2%">      
-                        <center>
-                            <p:spacer height="20" width="20"/>
-                            <p:commandButton value="Añadir Actividad" onclick="PF('alertaNuevaActividad').show();"
-                                              style="font-size: 18px !important; background-color: #00FF00; color: black;"/>
-                        </center>     
-                            
-                    </p:column>
-            </h:form>
-                <h:form id="nuevaMovil">
-                    <p:dialog id="alertaNuevaActividadMovil" header="Nueva Actividad" widgetVar="alertaNuevaActividad"  resizable="false" 
-                              draggable="false" modal="true" closable="true" closeOnEscape="true">  
-                        <p style="margin-top:0;"><b>Observación: </b>Si selecciona CAPACITACION FORMAL o NO FORMAL debe seleccionar un curso 
-                            correspondiente ó escribir una observación. Si selecciona otro tipo de actividad debe colocar una observación.</p>
-                        <p:panelGrid columns="2" styleClass="noBorders" id="alertaNewActPanelMovil">
-                        <h:outputText value="Código:" id="codMovil" />
-                        <p:inputText value="#{controladorPlanDesarrollo.codigo}" disabled="true"/>
-                        <h:outputText value="Actividad a desarrollar" id="selectActividadMovil" />
-                        <p:selectOneMenu value="#{controladorPlanDesarrollo.actividadSelec}" >
-                            <f:selectItem itemLabel="Seleccione una actividad" itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItems value="#{controladorPlanDesarrollo.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.secuencia}" />
-                        </p:selectOneMenu>
-                        <h:outputText value="Observación" />
-                         <p:inputTextarea rows="6" cols="51" id="obsMovil" value="#{controladorPlanDesarrollo.observacion}"
-                                         maxlength="500">
-                            <p:ajax update="@this"/>
-                        </p:inputTextarea> 
-                        <h:outputText value="Educación Formal:" id="selectprofesionesMovil" />
-                        <p:selectOneMenu value="#{controladorPlanDesarrollo.secProfesion}" >
-                            <f:selectItem itemLabel="Seleccione una profesion" itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItems value="#{controladorPlanDesarrollo.listaProfesiones}" var="profesion" itemLabel="#{profesion.descripcion}" itemValue="#{profesion.secuencia}" />
-                        </p:selectOneMenu>
-                        <h:outputText value="Educación No Formal:" id="selectcursosMovil" />
-                        <p:selectOneMenu value="#{controladorPlanDesarrollo.secCurso}" >
-                            <f:selectItem itemLabel="Seleccione un curso" itemValue="#{null}"/>
-                            <f:selectItems value="#{controladorPlanDesarrollo.cursos}" var="curso" itemLabel="#{curso.nombre}" itemValue="#{curso.secuencia}" />
-                        </p:selectOneMenu>
-         
-                        </p:panelGrid>
-                        <p:panelGrid columns="2" styleClass="noBorders">     
-                            <p:commandButton value="Guardar" 
-                                             process="@this" style="font-size: 18px !important;background-color: #00FF00; color: black;"
-                                             actionListener="#{controladorPlanDesarrollo.registrarPlanDesarrollo()}"
-                                             onclick="PF('alertanuevaactividadMovil').hide();" />
-                            <p:commandButton value="Cancelar" onclick="PF('alertanuevaactividadMovil').hide();"
-                                             process="@this" style="font-size: 18px !important; background-color: #3388D7; color: white; display: #{controladorPlanDesarrollo.secPrueba==false ? '':'none'}}" />
+                    <p:dialog id="alertaInfoElimActividad" header="Información" widgetVar="alertaInfoElimActividad"  resizable="false" style="width: 100%"
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">
+                         <h:outputText id="valid1" rendered="#{controladorPlanDesarrollo.hasBitacoras()}" value="No es posible eliminar una actividad con bitácoras asignadas." style="width: 100%"/>
+                          <h:outputText rendered="#{!controladorPlanDesarrollo.hasBitacoras()}" value="¿Está seguro que desea eliminar la actividad?" style="width: 100%"/>
+                        <p:panelGrid columns="1" styleClass="noBorders" id="panelInfoElimActividad">
+                            <p:commandButton value="Aceptar" rendered="#{controladorPlanDesarrollo.hasBitacoras()}"
+                                             onclick="PF('alertaInfoElimActividad').hide();"
+                                             process="@this"/>
+                            <p:panelGrid columns="2" styleClass="noBorders">
+                                <p:commandButton value="Si" rendered="#{!controladorPlanDesarrollo.hasBitacoras()}"
+                                                 actionListener="#{controladorPlanDesarrollo.eliminarPlanDesarrolloMovil()}" process="@this"/>
+                                <p:commandButton value="No" rendered="#{!controladorPlanDesarrollo.hasBitacoras()}"
+                                                 onclick="PF('alertaInfoElimActividad').hide();" process="@this"/>
+                            </p:panelGrid>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:dialog id="alertaActividadEliminada" header="Información" widgetVar="alertaActividadEliminada"  resizable="false" 
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">
+                        <h:outputText value="Actividad de plan de desarrollo eliminada exitosamente!"/>
+                        <p:commandButton value="Aceptar"
+                                         onclick="seleccionPlan()"
+                                         process="@this"/>        
+                    </p:dialog>
+                    <p:dialog id="alertaActividadElimError" header="Información" widgetVar="alertaActividadElimError"  resizable="false" 
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">
+                        <h:outputText value="No fue posible eliminar la actividad de plan de desarrollo. Inténtelo nuevamente."/>
+                        <p:commandButton value="Aceptar"
+                                         onclick="seleccionPlan()"
+                                         process="@this"/>        
+                    </p:dialog>
                 </h:form>
+            </pm:content>
         </pm:page>        
         
         <pm:page id="pruebas">
@@ -562,15 +539,23 @@
             <pm:header title="Bitácoras" swatch="b"
                        styleClass="ui-header">
                 <p:button styleClass="ui-btn-right ui-btn-inline" value="Salir" onclick="cerrarSesion();"/>
-                <p:button styleClass="ui-btn-left ui-btn-inline" value="Volver" icon="ui-icon-arrow-l" outcome="pm:evaluados?transition=flip"/>
+                <p:button styleClass="ui-btn-left ui-btn-inline" value="Volver" icon="ui-icon-arrow-l" outcome="pm:planDesa?transition=flip"/>
             </pm:header>
 
             <h:form id="formulario3">
-                <p:remoteCommand name="eliminarBitacora" actionListener="#{controladorPlanDesarrollo.eliminarBitacoraMovil()}"
+                <p:remoteCommand name="eliminarBitacora" actionListener="#{controladorPlanDesarrollo.seleccionaBitacoraMovil()}"
                                  process="@this" update="bitacoras:formulario3"/>
                 <p:remoteCommand name="actualizaBitacoras"
                                  process="@this" update="bitacoras:formulario3" actionListener="#{controladorPlanDesarrollo.actualizaListasBitacora()}"/>
                 <pm:content>
+                    <p:column>      
+                        <center>
+                            <p:spacer height="20" width="20"/>
+                            <p:commandButton value="Añadir Bitácora" onclick="pantallaNuevaBitacora()" actionListener="#{controladorPlanDesarrollo.actualizaListasBitacora()}"
+                                             style="font-size: 18px !important; background-color: #00FF00; color: black;" update="pageNuevaBitacora:formNuevaBitacora"/>
+                        </center>     
+
+                    </p:column>
                     <p:dataList value="#{controladorPlanDesarrollo.bitacoras}" var="bit" rowIndexVar="indexP">
                         <h:outputLink value="#">
                             <p><strong>Fecha seguimiento: </strong>
@@ -582,89 +567,178 @@
                             <p><strong>Aprendizaje obtenido: </strong>#{bit.comentario != null ?
                                                                         bit.comentario : ''}</p>
                             <p:panelGrid columns="2" styleClass="noBorders"> 
-                                <p:commandButton value="Eliminar" onclick="eliminarBitacora([{name: 'valor', value:#{indexP}}, {name: 'tipo', value: '8'}])"/>
+                                <p:commandButton value="Eliminar" onclick="eliminarBitacora([{name: 'valor', value:#{indexP}}, {name: 'tipo', value: '9'}])"/>
                             </p:panelGrid>
 
                         </h:outputLink>
                     </p:dataList>
-                    <p:column style="margin-top: 2%">      
-                        <center>
-                            <p:spacer height="20" width="20"/>
-                            <p:commandButton value="Añadir Bitácora" onclick="PF('alertanuevabitacoraMovil').show();"
-                                             style="font-size: 18px !important; background-color: #00FF00; color: black;"/>
-                        </center>     
-
-                    </p:column>
+                    <p:dialog id="alertaInfoElimBitacora" header="Información" widgetVar="alertaInfoElimBitacora"  resizable="false" style="width: 100%"
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">
+                        <h:outputText value="¿Está seguro que desea eliminar la bitácora?" style="width: 100%"/>
+                        <p:panelGrid columns="2" styleClass="noBorders">
+                                <p:commandButton value="Si"
+                                                 actionListener="#{controladorPlanDesarrollo.eliminarBitacoraMovil()}" process="@this"/>
+                                <p:commandButton value="No"
+                                                 onclick="PF('alertaInfoElimBitacora').hide();" process="@this"/>
+                        </p:panelGrid>
+                    </p:dialog>
                 </pm:content>
                 
-                <p:dialog id="alertanuevabitacoraMovil" header="Nueva Bitácora" widgetVar="alertanuevabitacoraMovil"  resizable="false" 
-                              draggable="false" modal="true" closable="false" closeOnEscape="true" width="100%">  
-                <p:panelGrid columns="2" id="alertanewbitpanelMovil">
-                    <h:outputText value="Fecha de seguimiento" />
-                    <p:calendar id="finicialdisMovil" style="width: 120px" size="10"
-                                value="#{controladorPlanDesarrollo.fechaseg}" 
-                                pattern="dd/MM/yyyy" mask="true" locale="es"
-                                showOn="button"
-                                >
-                        <p:ajax event="dateSelect" listener="#{controladorPlanDesarrollo.onDateSelect}"/>
-                        <p:ajax update="@this"/>
-                    </p:calendar>                
-                    <p:outputLabel value="Porcentaje obtenido:"  />
-                    <p:spinner id="porcentajeMovil" min="0" max="100" value="#{controladorPlanDesarrollo.porcent}" stepFactor="10" suffix="%" size="3">
-                        <p:ajax update="@this"/>
-                    </p:spinner>
-                    <h:outputText value="Aprendizaje adquirido (Máx 500 carácteres):" />
-                    <p:inputTextarea rows="6" cols="41" id="comentarioMovil" value="#{controladorPlanDesarrollo.comentario}"
-                                     maxlength="500">
-                        <p:ajax update="@this"/>
-                    </p:inputTextarea>                
-                </p:panelGrid>
-                        <p:panelGrid columns="2" styleClass="noBorders">     
-                            <p:commandButton value="Guardar" 
-                                             process="@this" style="font-size: 18px !important;background-color: #00FF00; color: black;"
-                                             actionListener="#{controladorPlanDesarrollo.registrarBitacoraMovil()}"
-                                             oncomplete="PF('alertanuevabitacoraMovil2').show();" />
-                            <p:commandButton value="Cancelar" onclick="PF('alertaEliminarPru').hide();"
-                                             process="@this" style="font-size: 18px !important; background-color: #3388D7; color: white; display: #{controladorPlanDesarrollo.secPrueba==false ? '':'none'}}" />
-                        </p:panelGrid>
+                <p:dialog id="alertaBitacoraEliminada" header="Información" widgetVar="alertaBitacoraEliminada"  resizable="false" 
+                          draggable="false" modal="true" closable="true" closeOnEscape="true">
+                    <h:outputText value="Bitácora eliminada exitosamente!"/>
+                    <p:commandButton value="Aceptar" onclick="seleccionBitacora()" process="@this"/>        
                 </p:dialog>
-                                <p:dialog id="alertanuevabitacoraMovil2" header="Prueba" widgetVar="alertanuevabitacoraMovil2"  resizable="false" 
-                              draggable="false" modal="true" closable="false" closeOnEscape="true" width="100%">  
-                <p:panelGrid columns="2" id="alertanewbitpanelMovil2">
-                    <h:outputText value="Fecha de seguimiento" />
-                    <p:calendar id="finicialdisMovil2" style="width: 120px" size="10"
-                                value="#{controladorPlanDesarrollo.fechaseg}" 
-                                pattern="dd/MM/yyyy" mask="true" locale="es"
-                                showOn="button"
-                                >
-                        <p:ajax event="dateSelect" listener="#{controladorPlanDesarrollo.onDateSelect}"/>
-                        <p:ajax update="@this"/>
-                    </p:calendar>                
-                    <p:outputLabel value="Porcentaje obtenido:"  />
-                    <p:spinner id="porcentajeMovil2" min="0" max="100" value="#{controladorPlanDesarrollo.porcent}" stepFactor="10" suffix="%" size="3">
-                        <p:ajax update="@this"/>
-                    </p:spinner>
-                    <h:outputText value="Aprendizaje adquirido (Máx 500 carácteres):" />
-                    <p:inputTextarea rows="6" cols="41" id="comentarioMovil2" value="#{controladorPlanDesarrollo.comentario}"
-                                     maxlength="500">
-                        <p:ajax update="@this"/>
-                    </p:inputTextarea>                
-                </p:panelGrid>
-                        <p:panelGrid columns="2" styleClass="noBorders">     
-                            <p:commandButton value="Guardar" 
-                                             process="@this" style="font-size: 18px !important;background-color: #00FF00; color: black;"
-                                             actionListener="#{controladorPlanDesarrollo.registrarBitacoraMovil()}"
-                                             onclick="PF('alertanuevaactividadMovil').hide();" />
-                            <p:commandButton value="Cancelar" onclick="PF('alertaEliminarPru').hide();"
-                                             process="@this" style="font-size: 18px !important; background-color: #3388D7; color: white; display: #{controladorPlanDesarrollo.secPrueba==false ? '':'none'}}" />
-                        </p:panelGrid>
+                <p:dialog id="alertaBitacoraElimError" header="Información" widgetVar="alertaActividadElimError"  resizable="false" 
+                          draggable="false" modal="true" closable="true" closeOnEscape="true">
+                    <h:outputText value="No fue posible eliminar la bitácora. Inténtelo nuevamente."/>
+                    <p:commandButton value="Aceptar" onclick="seleccionBitacora()" process="@this"/>        
                 </p:dialog>
+            </h:form>   
+        </pm:page>
+        
+        <pm:page id="pageNuevaBitacora">
+            <pm:header title="Nueva Bitácora" swatch="b"
+                       styleClass="ui-header">
+                <p:button styleClass="ui-btn-right ui-btn-inline" value="Salir" onclick="cerrarSesion();"/>
+                <p:button styleClass="ui-btn-left ui-btn-inline" value="Volver" icon="ui-icon-arrow-l" outcome="pm:bitacoras?transition=flip"/>
+            </pm:header>
+            <pm:content>
+                <h:form id="formNuevaBitacora">
+                    <p:panelGrid columns="2">
+                        <h:outputText value="Fecha de seguimiento" />
+                        <p:calendar id="finicialdisMovil" style="width: 120px" size="10"
+                                    value="#{controladorPlanDesarrollo.fechaseg}" readonlyInput="true" 
+                                    pattern="dd/MM/yyyy" mask="true" locale="es" showOn="button"    >
+                            <p:ajax event="dateSelect" listener="#{controladorPlanDesarrollo.onDateSelect}"/>
+                        </p:calendar>                
+                        <p:outputLabel value="Porcentaje obtenido:"  />
+                        <p:spinner id="porcentajeMovil" min="0" max="100" value="#{controladorPlanDesarrollo.porcent}" stepFactor="10" suffix="%" size="3">
+                            <p:ajax process="@this"/>
+                        </p:spinner>   
+                        <h:outputText value="Aprendizaje adquirido (Máx 500 carácteres):" />
+                        <p:inputTextarea rows="6" cols="41" id="comentarioMovil" value="#{controladorPlanDesarrollo.comentario}"
+                                         maxlength="500">
+                            <p:ajax process="@this"/>
+                        </p:inputTextarea>                
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" styleClass="noBorders">     
+                    <p:commandButton value="Guardar" 
+                                     process="@this"
+                                     onclick="PF('alertaInfoBitacora').show();" update="panelNuevaBitacoraMovil" />
+                  <!--  <p:commandButton value="Cancelar" onclick="seleccionBitacora()"
+                                         process="@this" style="font-size: 18px !important; background-color: #3388D7; color: white;" />-->
+                    </p:panelGrid>
+                    <p:dialog id="alertaInfoBitacora" header="Información" widgetVar="alertaInfoBitacora"  resizable="false" style="width: 100%"
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">
+                        <p:panelGrid columns="1" styleClass="noBorders" id="panelNuevaBitacoraMovil">
+                            <h:outputText rendered="#{!controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="#{controladorPlanDesarrollo.msj}" style="width: 100%"/>
+                             <h:outputText rendered="#{controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="Se dispone a registrar una nueva bitácora." style="width: 100%"/>
+                            <p:commandButton value="Aceptar" id="btnNBitAcep" rendered="#{!controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}"
+                                             onclick="PF('alertaInfoBitacora').hide();"
+                                             process="@this"/>
+                            <p:commandButton value="Guardar" id="btnNBitG" rendered="#{controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}"
+                                             actionListener="#{controladorPlanDesarrollo.registrarBitacoraMovil()}"
+                                             process="@this"/>
+                        </p:panelGrid>
+                    </p:dialog>
+                    <p:dialog id="alertaBitacoraCreada" header="Información" widgetVar="alertaBitacoraCreada"  resizable="false" 
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">
+                        <h:outputText value="Bitácora creada exitosamente!"/>
+                        <p:commandButton value="Aceptar"
+                                         onclick="seleccionBitacora()"
+                                         process="@this"/>        
+                    </p:dialog>
+                    <p:dialog id="alertaBitacoraError" header="Información" widgetVar="alertaBitacoraError"  resizable="false" 
+                              draggable="false" modal="true" closable="true" closeOnEscape="true">
+                        <h:outputText value="No fue posible crear la bitácora. Inténtelo nuevamente."/>
+                        <p:commandButton value="Aceptar"
+                                         onclick="seleccionBitacora()"
+                                         process="@this"/>        
+                    </p:dialog>
+                </h:form>
+            </pm:content>
+        </pm:page>
+        
+        <pm:page id="pageNuevaActividad">
+            <pm:header title="Nueva Actividad" swatch="b"
+                       styleClass="ui-header">
+                <p:button styleClass="ui-btn-right ui-btn-inline" value="Salir" onclick="cerrarSesion();"/>
+                <p:button styleClass="ui-btn-left ui-btn-inline" value="Volver" icon="ui-icon-arrow-l" outcome="pm:planDesa?transition=flip"/>
+            </pm:header>
+        <pm:content>
+            <h:form id="formNuevaActividad">
+                <p style="margin-top:0;"><b>Observación: </b>Si selecciona CAPACITACION FORMAL o NO FORMAL debe seleccionar un curso 
+                    correspondiente ó escribir una observación. Si selecciona otro tipo de actividad debe colocar una observación.</p>
+                <p:panelGrid columns="2" styleClass="noBorders" id="alertaNewActPanelMovil">
+                    <h:outputText value="Código:" id="codMovil" />
+                    <p:inputText value="#{controladorPlanDesarrollo.codigo}" disabled="true"/>
+                    <h:outputText value="Actividad a desarrollar:*" id="selectActividadMovil" />
+                    <p:selectOneMenu value="#{controladorPlanDesarrollo.actividadSelec}" >
+                        <f:selectItem itemLabel="Seleccione una actividad" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{controladorPlanDesarrollo.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.secuencia}" />
+                        <p:ajax event="change" listener="#{controladorPlanDesarrollo.procesarActividadSelecMovil()}" update="selectprofesionesMovil, selectcursosMovil"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Observación" />
+                    <p:inputTextarea rows="6" cols="51" id="obsMovil" value="#{controladorPlanDesarrollo.observacion}" maxlength="500">
+                        <p:ajax process="@this"/>
+                    </p:inputTextarea> 
+                    <h:outputText value="Educación Formal:" id="selectprofesionesMovil" />
+                    <p:selectOneMenu value="#{controladorPlanDesarrollo.secProfesion}">
+                        <f:selectItem itemLabel="Seleccione una profesion:" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{controladorPlanDesarrollo.listaProfesiones}" var="profesion" itemLabel="#{profesion.descripcion}" itemValue="#{profesion.secuencia}" />
+                        <p:ajax process="@this"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Educación No Formal:" id="selectcursosMovil" />
+                    <p:selectOneMenu value="#{controladorPlanDesarrollo.secCurso}">
+                        <f:selectItem itemLabel="Seleccione un curso" itemValue="#{null}"/>
+                        <f:selectItems value="#{controladorPlanDesarrollo.cursos}" var="curso" itemLabel="#{curso.nombre}" itemValue="#{curso.secuencia}" />
+                        <p:ajax process="@this"/>
+                    </p:selectOneMenu>
+                    <h:outputText value="Periodicidad seguimiento:" />
+                    <p:selectOneMenu value="#{controladorPlanDesarrollo.periodicidad}">
+                        <f:selectItem itemLabel="TRES MESES" itemValue="TRES MESES"/>
+                        <f:selectItem itemLabel="SEIS MESES" itemValue="SEIS MESES" />
+                        <f:selectItem itemLabel="1 AÑO" itemValue="1 AÑO" />
+                        <p:ajax process="@this"/>
+                    </p:selectOneMenu>
 
-
+                </p:panelGrid>
+                <p:panelGrid columns="1" styleClass="noBorders">     
+                    <p:commandButton value="Guardar" 
+                                     process="@this"
+                                     onclick="PF('alertaInfoActividad').show();" update="panelNuevaActividadMovil" />
+                <!--    <p:commandButton value="Cancelar" onclick="seleccionPlan()"
+                                     process="@this" />-->
+                </p:panelGrid>
+                <p:dialog id="alertaInfoActividad" header="Información" widgetVar="alertaInfoActividad"  resizable="false" style="width: 100%"
+                          draggable="false" modal="true" closable="true" closeOnEscape="true">
+                    <p:panelGrid columns="1" styleClass="noBorders" id="panelNuevaActividadMovil">
+                        <h:outputText rendered="#{controladorPlanDesarrollo.actividadSelec==null || controladorPlanDesarrollo.actividadSelec==''}" value="Seleccione una actividad" style="width: 100%"/>
+                        <h:outputText rendered="#{controladorPlanDesarrollo.validacionNuevaActividadMovil()}" value="Se dispone a añadir una nueva actividad para #{controladorPlanDesarrollo.evaluadoActual.nombrePersona}" style="width: 100%"/>
+                        <h:outputText rendered="#{controladorPlanDesarrollo.actividadSelec!=null}" value="#{controladorPlanDesarrollo.msj}" style="width: 100%"/>
+                        <p:commandButton value="Aceptar" rendered="#{!controladorPlanDesarrollo.validacionNuevaActividadMovil()}"
+                                         onclick="PF('alertaInfoActividad').hide();"
+                                         process="@this"/>
+                        <p:commandButton value="Guardar" rendered="#{controladorPlanDesarrollo.validacionNuevaActividadMovil()}"
+                                         actionListener="#{controladorPlanDesarrollo.registrarPlanDesarrolloMovil()}"
+                                         process="@this"/>
+                    </p:panelGrid>
+                </p:dialog>
+                <p:dialog id="alertaActividadCreada" header="Información" widgetVar="alertaActividadCreada"  resizable="false" 
+                          draggable="false" modal="true" closable="true" closeOnEscape="true">
+                    <h:outputText value="Actividad de plan de desarrollo creada exitosamente"/>
+                    <p:commandButton value="Aceptar" onclick="seleccionPlan()" process="@this"/>        
+                </p:dialog>
+                <p:dialog id="alertaActividadError" header="Información" widgetVar="alertaActividadError"  resizable="false" 
+                          draggable="false" modal="true" closable="true" closeOnEscape="true">
+                    <h:outputText value="No fue posible crear la actividad de plan de desarrollo. Inténtelo nuevamente."/>
+                    <p:commandButton value="Aceptar" onclick="seleccionPlan()" process="@this"/>        
+                </p:dialog>
+                
             </h:form>
-  
 
-            
+        </pm:content>
         </pm:page>
                     
 

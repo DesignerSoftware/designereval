@@ -37,6 +37,14 @@
             </center>
 
         </p:column>
+        <p:column>
+            <h:form>
+                <p:poll interval="3" update="votes" />
+                <p:chart id="votes" type="pie" model="#{controladorPlanDesarrollo.model}" style="width:400px;height:300px"/>
+                <p:chart type="pie" model="#{controladorPlanDesarrollo.model}" />
+
+            </h:form>
+        </p:column>
     </p:panelGrid>
 
 
@@ -58,7 +66,7 @@
     <p:column >  
             <p:commandButton value="Añadir Actividad"  actionListener="#{controladorPlanDesarrollo.actualizaListas()}"
                              process="@this" style="font-size: 18px !important; background-color: #00FF00; color: black;" onclick="PF('alertanuevaactividad').show();"
-                             update=":principalForm:nueva:alertanewactpanel, :principalForm:dtbPlanes  :principalForm:alertaEliminarBitacora :principalForm:alertaEliminarPanelB :principalForm:nueva:selectActividad :principalForm:alertaEliminarPanel"/>
+                             update=":principalForm:nueva:alertanewactpanel, :principalForm:dtbPlanes  :principalForm:alertaEliminarBitacora :principalForm:alertaEliminarPanelB :principalForm:nueva:selectActividad :principalForm:alertaEliminarPanel, :principalForm:nueva:selectprofesiones :principalForm:nueva:selectcursos"/>
     </p:column>
     </p:panelGrid>
             
@@ -201,7 +209,7 @@
                 <p:outputLabel value="Actividad a desarrollar*:"  />
                 <p:selectOneMenu id="selectActividad" value="#{controladorPlanDesarrollo.actividadSelec}" panelStyle="width:260px;"
                                  style="width:260px" filter="true" filterMatchMode="contains">
-                    <f:selectItem itemLabel="Seleccione una actividad" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="Seleccione una actividad" itemValue="#{null}" noSelectionOption="true" />
                     <f:selectItems value="#{controladorPlanDesarrollo.actividades}" var="actividad" itemLabel="#{actividad.descripcion}" itemValue="#{actividad.secuencia}" />
                     <p:column>
                         <f:facet name="header">
@@ -210,7 +218,7 @@
                         <h:outputText value="#{actividad.descripcion}" />
                     </p:column>
                     <p:ajax event="change" listener="#{controladorPlanDesarrollo.procesarActividadSelec(event)}" update=":principalForm:nueva:selectprofesiones :principalForm:nueva:selectcursos"/>
-                    <!--<p:ajax update="@this"/>-->
+                    <p:ajax update="@this"/>
                 </p:selectOneMenu>            
 
                 <h:outputText value="Observación (Máximo 500 carácteres):" />
