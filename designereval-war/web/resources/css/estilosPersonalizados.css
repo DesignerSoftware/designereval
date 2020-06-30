@@ -22,6 +22,10 @@ html {
     left:30%;
 }
 
+.width100{
+    width: 100%;
+}
+
 /*.ui-fileupload{
     border: none;
 }

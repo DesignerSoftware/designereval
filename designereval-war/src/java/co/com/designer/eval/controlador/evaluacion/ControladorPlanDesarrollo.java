@@ -90,6 +90,7 @@ public class ControladorPlanDesarrollo implements Serializable {
     private String porcenBitacoraEdit="0"; // guardará el valor del porcentaje de la bitácora seleccionada
     private String periodicidad="TRES MESES"; // Por defecto 3 meses
     private String msj=""; 
+    public int opcBitacora = 0; // 0 = Nueva bitácora, 1 = Editar Bitácora
     
     public ControladorPlanDesarrollo() {
     }
@@ -499,6 +500,10 @@ public class ControladorPlanDesarrollo implements Serializable {
         this.msj = msj;
     }
 
+    public int getOpcBitacora() {
+        return opcBitacora;
+    }
+
     public void seleccion() { // Cargar la pantalla en la versión Móvil
         try {
             inicializarAdministrador();
@@ -528,6 +533,10 @@ public class ControladorPlanDesarrollo implements Serializable {
                 System.out.println("Se dispone a eliminar: "+ seleccionadoBitacora.getComentario());
                 //PrimefacesContextUI.ejecutar("PF('opcionesReporteEvaluado').show();");
 
+            } else if (i.equals("10")){
+                seleccionadoBitacora=bitacoras.get(index);
+                System.out.println("Se dispone a editar bitácora: "+ seleccionadoBitacora.getComentario());
+                //PrimefacesContextUI.ejecutar("pantallaNuevaBitacora()"); 
             }
         } catch (Exception e) {
             System.out.println("Error en ControladorPlanDesarrollo.seleccion(): "+e.getMessage());
@@ -647,18 +656,42 @@ public class ControladorPlanDesarrollo implements Serializable {
         }  
     }
     
+        public void editarBitacoraMovil() {
+        System.out.println("editarBitacoraMovil() ");
+        try {
+            System.out.println("fecha seguimiento: " + fechaseg + "porcentaje: "+porcent+ " comentario: "+comentario+ "secuencia bitácora: "+secuenciaBitacora);
+            if (administrarPlanDesarrollo.editarBitacora(secuenciaBitacora, fechaseg, comentario, Integer.parseInt(porcent))) {
+                bitacoras = administrarPlanDesarrollo.obtenerBitacoras(secPlanDesarrollo);
+                isSeleccionadoBitacora = false;
+                System.out.println("Bitacora editada exitosamente");
+                PrimefacesContextUI.ejecutar("PF('alertaInfoEditarBitacora').hide();"); 
+                PrimefacesContextUI.ejecutar("PF('alertaBitacoraEditada').show();"); 
+            } else {
+                isSeleccionadoBitacora = false;
+                setearFechaActualBitacora();
+                PrimefacesContextUI.ejecutar("PF('alertaInfoEditarBitacora').hide();"); 
+                PrimefacesContextUI.ejecutar("PF('alertaBitacoraEditadaError').show();"); 
+            }
+        } catch (Exception e) {
+            System.out.println("Error ControladorPlanDesarrollo.editarBitacora(): " + e.getMessage());
+        }  
+    }
+    
     public boolean validacionNuevaBitacoraMovil() {
         System.out.println("validacionNuevaBitacoraMovil");
         boolean validInfo = false;
         this.msj = "";
-        System.out.println("comentario: "+this.comentario);
+        System.out.println("comentario : "+this.comentario);
         if (fechaseg != null) {
             if (validaNumPorcentaje(porcent)) {
                 if (comentario != "" && comentario != null && comentario.length()>0 && comentario.length()<=500) {
                     System.out.println("Comentario: "+comentario);
                     validInfo=true;
                 } else {
-                    this.msj+="Debe digitar una observación en el campo de aprendizaje adquirido (Máximo 500 carácteres)";
+                    this.msj+="Debe digitar una observación en el campo de aprendizaje adquirido (Máximo 500 carácteres). ";
+                    if (comentario!=null && comentario.length()>0 && comentario.length() > 500) {
+                        this.msj += "Ha digitado " + comentario.length() + " carácteres.";
+                    }
                     System.out.println("Comentario: "+comentario);  
                     validInfo=false;
                 }
@@ -990,11 +1023,21 @@ public class ControladorPlanDesarrollo implements Serializable {
         int index = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("valor"));
         String i = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("tipo");
         System.out.println("Recibido valor: " + index + " - tipo: " + i);
-        System.out.println("seleccionEliminarBitacoraMovil");
         seleccionadoBitacora = bitacoras.get(index);
         secuenciaBitacora = seleccionadoBitacora.getSecuencia();
-        System.out.println("bitacora seleccionada: " + seleccionadoBitacora.getComentario());
-        PrimefacesContextUI.ejecutar("PF('alertaInfoElimBitacora').show();");
+        if (i.equals("9")) {
+            System.out.println("seleccionEliminarBitacoraMovil");
+            PrimefacesContextUI.ejecutar("PF('alertaInfoElimBitacora').show();");
+        } else if (i.equals("10")) {
+            opcBitacora = 1;
+            System.out.println("editar bitácora");
+            fechaseg = seleccionadoBitacora.getFecha();
+            comentario = seleccionadoBitacora.getComentario();
+            porcent = seleccionadoBitacora.getPorcentaje()+"";
+            PrimefacesContextUI.ejecutar("pantallaNuevaBitacora()"); 
+        }
+        System.out.println("bitacora seleccionada: " +comentario);
+
     }
     
     public void registrarPlanDesarrolloMovil(){
@@ -1144,6 +1187,7 @@ public class ControladorPlanDesarrollo implements Serializable {
         porcent="0";
         comentario=null;
         setearFechaActualBitacora();
+        opcBitacora = 0;
     }
     
     public void actualizaListasMovil(){
@@ -1155,23 +1199,5 @@ public class ControladorPlanDesarrollo implements Serializable {
         cargarPlanesDesarrollo();
         //PrimefacesContextUI.ejecutar("seleccionPlan()");
     }
-    
-    private PieChartModel model;
-
-    public void Bean() {
-        model = new PieChartModel();
-        model.set("Brand 1", 540);
-        model.set("Brand 2", 325);
-        model.set("Brand 3", 702);
-        model.set("Brand 4", 421);
-        model.setTitle("Evaluados");
-        model.setLegendPosition("w");
-    }
-
-    public PieChartModel getModel() {
-        Bean();
-        return model;
-    }
-
-      
+     
 }
