@@ -637,9 +637,9 @@
                   <!--  <p:commandButton value="Cancelar" onclick="seleccionBitacora()"
                                          process="@this" style="font-size: 18px !important; background-color: #3388D7; color: white;" />-->
                     </p:panelGrid>
-                    <p:dialog id="alertaInfoBitacora" header="Información" widgetVar="alertaInfoBitacora"  resizable="false" style="width: 100%" styleClass="width100"
+                    <p:dialog id="alertaInfoBitacora" header="Información" widgetVar="alertaInfoBitacora"  resizable="false" style="width: 100%; text-align: center" styleClass="width100"
                               draggable="false" modal="true" closable="true" closeOnEscape="true">
-                        <p:panelGrid columns="1" styleClass="noBorders, width100" id="panelNuevaBitacoraMovil" style="width: 100%">
+                        <p:panelGrid columns="1" styleClass="noBorders, width100" id="panelNuevaBitacoraMovil" style="width: 100%; text-align: center;">
                             <h:outputText rendered="#{!controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="#{controladorPlanDesarrollo.msj}" style="width: 100%; text-align: center;" styleClass="width100"/>
                             <h:outputText rendered="#{controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="Se dispone a registrar una nueva bitácora." style="width: 100%; text-align: center;" />
                             <p:commandButton value="Aceptar" id="btnNBitAcep" rendered="#{!controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}"
@@ -650,11 +650,11 @@
                                              process="@this"/>
                         </p:panelGrid>
                     </p:dialog>
-                    <p:dialog id="alertaInfoEditarBitacora" header="Información" widgetVar="alertaInfoEditarBitacora"  resizable="false" style="width: 100%" styleClass="width100"
+                    <p:dialog id="alertaInfoEditarBitacora" header="Información" widgetVar="alertaInfoEditarBitacora"  resizable="false" style="width: 100%; text-align: center" styleClass="width100"
                               draggable="false" modal="true" closable="true" closeOnEscape="true">
                         <p:panelGrid columns="1" styleClass="noBorders" id="panelEditarBitacoraMovil">
-                            <h:outputText rendered="#{!controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="#{controladorPlanDesarrollo.msj}" style="width: 100%"/>
-                            <h:outputText rendered="#{controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="Se dispone a guardar cambios en una bitácora." style="width: 100%"/>
+                            <h:outputText rendered="#{!controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="#{controladorPlanDesarrollo.msj}" style="width: 100%; text-align: center"/>
+                            <h:outputText rendered="#{controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}" value="Se dispone a guardar cambios en una bitácora." style="width: 100%; text-align: center"/>
                             <p:commandButton value="Aceptar" id="btnEBitAcep" rendered="#{!controladorPlanDesarrollo.validacionNuevaBitacoraMovil()}"
                                              onclick="PF('alertaInfoEditarBitacora').hide();"
                                              process="@this"/>
@@ -747,12 +747,12 @@
                 <!--    <p:commandButton value="Cancelar" onclick="seleccionPlan()"
                                      process="@this" />-->
                 </p:panelGrid>
-                <p:dialog id="alertaInfoActividad" header="Información" widgetVar="alertaInfoActividad"  resizable="false" style="width: 100%"
+                <p:dialog id="alertaInfoActividad" header="Información" widgetVar="alertaInfoActividad"  resizable="false" style="width: 100%; text-align: center"
                           draggable="false" modal="true" closable="true" closeOnEscape="true">
                     <p:panelGrid columns="1" styleClass="noBorders" id="panelNuevaActividadMovil">
-                        <h:outputText rendered="#{controladorPlanDesarrollo.actividadSelec==null || controladorPlanDesarrollo.actividadSelec==''}" value="Seleccione una actividad" style="width: 100%"/>
-                        <h:outputText rendered="#{controladorPlanDesarrollo.validacionNuevaActividadMovil()}" value="Se dispone a añadir una nueva actividad para #{controladorPlanDesarrollo.evaluadoActual.nombrePersona}" style="width: 100%"/>
-                        <h:outputText rendered="#{controladorPlanDesarrollo.actividadSelec!=null}" value="#{controladorPlanDesarrollo.msj}" style="width: 100%"/>
+                        <h:outputText rendered="#{controladorPlanDesarrollo.actividadSelec==null || controladorPlanDesarrollo.actividadSelec==''}" value="Seleccione una actividad" style="width: 100%; text-align: center"/>
+                        <h:outputText rendered="#{controladorPlanDesarrollo.validacionNuevaActividadMovil()}" value="Se dispone a añadir una nueva actividad para #{controladorPlanDesarrollo.evaluadoActual.nombrePersona}" style="width: 100%; text-align: center"/>
+                        <h:outputText rendered="#{controladorPlanDesarrollo.actividadSelec!=null}" value="#{controladorPlanDesarrollo.msj}" style="width: 100%; text-align: center"/>
                         <p:commandButton value="Aceptar" rendered="#{!controladorPlanDesarrollo.validacionNuevaActividadMovil()}"
                                          onclick="PF('alertaInfoActividad').hide();"
                                          process="@this"/>

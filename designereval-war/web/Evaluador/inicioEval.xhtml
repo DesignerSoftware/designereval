@@ -126,9 +126,9 @@
                 </p:column>
                 <p:column headerText="Plan de Desarrollo" rendered="#{controladorInicioEval.estadoConvocatoria == 1 ? 'true' : 'false'}" priority="3">
                     <p:commandButton id="planDesa" value="Abrir" 
-                                     actionListener="#{controladorInicioEval.obtenerSecuenciaEvaluado(evaluado.secuencia)}"
-                                     onclick="pantallaDinamicaPlanDesa()"
+                                     actionListener="#{controladorInicioEval.setEvaluado(evaluado)}"
                                      disabled="#{controladorInicioEval.esJefeInmediato(evaluado.secuencia)}"
+                                     oncomplete="setTimeout(pantallaDinamicaPlanDesa(), 10000);"
                                      />
                 </p:column>                
             </p:dataTable>

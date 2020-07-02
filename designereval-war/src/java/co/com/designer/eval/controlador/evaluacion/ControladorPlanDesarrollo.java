@@ -28,7 +28,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.servlet.http.HttpSession;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.chart.PieChartModel;
 
 /**
  *
@@ -90,7 +89,8 @@ public class ControladorPlanDesarrollo implements Serializable {
     private String porcenBitacoraEdit="0"; // guardará el valor del porcentaje de la bitácora seleccionada
     private String periodicidad="TRES MESES"; // Por defecto 3 meses
     private String msj=""; 
-    public int opcBitacora = 0; // 0 = Nueva bitácora, 1 = Editar Bitácora
+    public int opcBitacora = 0; // 0 = Nueva bitácora, 1 = Editar Bitácora versión móvil
+    
     
     public ControladorPlanDesarrollo() {
     }
@@ -108,6 +108,7 @@ public class ControladorPlanDesarrollo implements Serializable {
             convocatorias = administrarPlanDesarrollo.obtenerConvocatoriasAlcance(usuario);
             convocatoriaActualBigDecimal = ((ControladorInicioEval) x.getApplication().evaluateExpressionGet(x, "#{controladorInicioEval}", ControladorInicioEval.class)).getSecConvocatoria();
             System.out.println("Convocatoria actual: " + convocatoriaActualBigDecimal);
+            convocatoriaActual = (Convocatorias)((ControladorInicioEval) x.getApplication().evaluateExpressionGet(x, "#{controladorInicioEval}", ControladorInicioEval.class)).getConvocatoria();
             evaluador = (String) ((ControladorInicioEval) x.getApplication().evaluateExpressionGet(x, "#{controladorInicioEval}", ControladorInicioEval.class)).obtenerInformacion(1);
             cursos = administrarPlanDesarrollo.obtenerCursos();
             listaProfesiones = administrarPlanDesarrollo.obtenerProfesiones();
@@ -135,6 +136,7 @@ public class ControladorPlanDesarrollo implements Serializable {
         evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluadoActual.getSecuencia());
         setCodigo(administrarPlanDesarrollo.obtenerUltimoCodigo(this.evaluadoActual.getSecuencia()));
         //System.out.println("ultimo codigo plandesarrollo: " + this.codigoNuevo);
+        System.out.println("Convocatoria seleccionada: "+convocatoriaActual.getCodigo()+"-"+convocatoriaActual.getEnfoque());
         evalactividades = administrarPlanDesarrollo.obtenerActividades();
         habilitaEliminarActividad=hasEvalPlanesDesarrollos();
         habilitaEliminarBitacora=hasBitacoras();

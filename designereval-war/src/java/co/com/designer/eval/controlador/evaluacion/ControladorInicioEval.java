@@ -55,11 +55,6 @@ public class ControladorInicioEval implements Serializable {
     private Evaluados evaluado;
     private Pruebas prueba;
 
-    //módulo evaluaciones
-    private List<EvalPlanesDesarrollos> evalPlanesDesarrollos;
-    @EJB
-    private IAdministrarPlanDesarrollo administrarPlanDesarrollo;
-
     public ControladorInicioEval() {
     }
 
@@ -132,15 +127,7 @@ public class ControladorInicioEval implements Serializable {
         }
     }
 
-    public void seleccionPlanDesa() { //Validar si este metodo debe ir en ControladorPlanDesarrollo
-        //evaluados = administrarInicio.obtenerEvaluados(usuario, convocatoria.getSecuencia());
-        //empleadosConvocados = administrarInicio.cantidadEvaluadosConvocatoria(convocatoria.getSecuencia());
-        //empleadosAsignados = administrarInicio.totalEmpleadosEvaluadorConvocatoria(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
-        //empleadosEvaluados = administrarInicio.cantidadEvaluados(secuenciaEvaluador.toBigInteger(), convocatoria.getSecuencia());
-        //secConvocatoria = new BigDecimal(convocatoria.getSecuencia());
-        //pruebas = administrarInicio.obtenerPruebasEvaluado(usuario, evaluado.getSecuencia());
-        //evaluado.setConsolidado(administrarInicio.estaConsolidado(evaluado.getEvalConvocatoria(), evaluado.getSecuencia()));
-        //evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluado.getSecuencia());
+    public void seleccionPlanDesa() {
         System.out.println("evaluado.getSecuencia() " + evaluado.getSecuencia());
         this.secEvaluado = new BigDecimal(evaluado.getSecuencia());
         System.out.println("ControladorInicioEval.seleccionPlanDesa()");
@@ -207,11 +194,8 @@ public class ControladorInicioEval implements Serializable {
             PrimefacesContextUI.ejecutar("PF('opcionesReporteEvaluado').show();");
         } else if (i.equals("6")) {
             evaluado = evaluados.get(index);
-            System.out.println("evaluado para abrir plan de desarrollo: " + evaluado.getNombrePersona());
-            //prueba = pruebas.get(index);
-            secConvocatoria = new BigDecimal(convocatorias.get(index).getSecuencia());
+            System.out.println("Evaluado para abrir plan de desarrollo Móvil: " + evaluado.getNombrePersona()); 
             secEvaluado = new BigDecimal(evaluado.getSecuencia());
-            evalPlanesDesarrollos = administrarPlanDesarrollo.obtenerPlanesDesarrollos(evaluado.getSecuencia());
             PrimefacesContextUI.ejecutar("seleccionPlan()");
         } else {
             prueba = pruebas.get(index);
@@ -227,7 +211,7 @@ public class ControladorInicioEval implements Serializable {
     }
 
     public void obtenerSecuenciaEvaluado(BigDecimal sec) {
-        System.out.println("obtenerSecuenciaEvaluado");
+        System.out.println("obtenerSecuenciaEvaluado(): "+ sec);
         secConvocatoria = new BigDecimal(convocatoria.getSecuencia());
         secEvaluado = sec;
         System.out.println("convocatoria: " + secConvocatoria);
@@ -544,11 +528,6 @@ public class ControladorInicioEval implements Serializable {
 
     public void setSecConvocatoria(BigDecimal secConvocatoria) {
         this.secConvocatoria = secConvocatoria;
-    }
-
-    //Modulo plan de desarrollo
-    public List<EvalPlanesDesarrollos> getPlanes() {
-        return evalPlanesDesarrollos;
     }
 
     public BigDecimal getSecEvaluado() {
