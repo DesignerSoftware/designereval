@@ -9,7 +9,7 @@
                      process="@this" update=":principalForm"/>
     <p:commandButton id="descargarReporte" actionListener="#{controladorInicioEval.descarga()}"
                      process="@this" ajax="false" style="visibility: hidden;" onclick="PF('estadoReporte').hide();"/>
-    
+
     <p:remoteCommand name="pantallaDinamicaPlanDesa" actionListener="#{controlNavegacion.pantallaDinamica('/Evaluador/planDesa.xhtml')}"
                      process="@this" update=":principalForm"/>
     <p:panelGrid columns="2" columnClasses="rp3,rp4" styleClass="noBorders2">
@@ -40,8 +40,8 @@
                 <p:column headerText="Convocatoria">
                     <h:outputText value="#{convocatoria.codigo}"/>
                 </p:column>
-                <p:column headerText="Fecha finalización">
-                    <h:outputText value="#{convocatoria.fechaLimite}">
+                <p:column headerText="Fecha de convocatoria">
+                    <h:outputText value="#{convocatoria.evalVigConvocatoria}">
                         <f:convertDateTime pattern="dd/MM/yyyy" />
                     </h:outputText>
                 </p:column>
@@ -342,5 +342,5 @@
             <h:outputText value="Generando reporte, por favor espere." style="width: 240px; text-align: justify; font-weight:bold;" />
         </p:panelGrid>
     </p:dialog>
-    
+
 </ui:composition>

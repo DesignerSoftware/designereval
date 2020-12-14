@@ -90,6 +90,7 @@
                     <p:dataList value="#{controladorInicioEval.convocatorias}" var="cv" rowIndexVar="indexC">
                         <h:outputLink value="#"
                                           onclick="seleccion([{name: 'valor', value:#{indexC}}, {name: 'tipo', value: '0'}]);">
+                            <p>#{cv.dtVigConvocatoria}</p>
                             <p>#{cv.codigo}</p>
                             <p><strong>Enfoque:</strong> #{cv.enfoque}</p>
                         </h:outputLink>
@@ -137,7 +138,7 @@
                                 <br/>
                             </p:column>
                             <p:column>
-                                <p:commandButton value="Enviar por correo" style="float: right"
+                                <p:commandButton value="Enviar por correo" style="float: right;"
                                                  actionListener="#{controladorInicioEval.envioCorreoCierreConvocatoria(1)}"
                                                  process="@this" onclick="PF('opcionesReporteCerrar').hide()"/>
                                 <p:commandButton value="Descargar" style="float: right" 

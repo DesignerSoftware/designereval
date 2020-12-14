@@ -3,6 +3,7 @@ package co.com.designer.eval.persistencia.implementacion;
 import co.com.designer.eval.entidades.Convocatorias;
 import co.com.designer.eval.persistencia.interfaz.IPersistenciaConvocatorias;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -18,17 +19,45 @@ import javax.persistence.StoredProcedureQuery;
 public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
 
     @Override
+    public List<Date> obtenerVigenciasConvocatorias(EntityManager em, String usuario) {
+        try {
+//            em.getTransaction().begin();
+            em.joinTransaction();
+            Query q = em.createNativeQuery("SELECT EVC.FECHAVIGENCIA \n"
+                    + "FROM EVALVIGCONVOCATORIAS EVC \n"
+                    + "WHERE EXISTS ( \n"
+                    + "SELECT EC.SECUENCIA \n"
+                    + "FROM CONEXIONESEVAL U, EVALINDAGACIONES EI, EVALRESULTADOSCONV ERC, EVALCONVOCATORIAS EC \n"
+                    + "WHERE U.SEUDONIMO = ? \n"
+                    + "AND EI.EMPLEADOEVALUADOR = U.PERSONA \n"
+                    + "AND ERC.SECUENCIA = EI.EVALRESULTADOCONV \n"
+                    + "AND EC.SECUENCIA = ERC.EVALCONVOCATORIA \n"
+                    + "AND EC.EVALVIGCONVOCATORIA = EVC.SECUENCIA \n"
+                    + ")");
+            q.setParameter(1, usuario);
+            List<Date> lst = q.getResultList();
+//            em.getTransaction().commit();
+            return lst;
+        } catch (Exception ex) {
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.obtenerConvocatorias: " + ex);
+//            terminarTransaccionException(em);
+            return null;
+        }
+    }
+
+    @Override
     public List<Convocatorias> obtenerConvocatorias(EntityManager em, String usuario) {
         try {
 //            em.getTransaction().begin();
             em.joinTransaction();
             Query q = em.createNativeQuery("SELECT C.SECUENCIA, "
-                    + "(SELECT FECHAVIGENCIA FROM EVALVIGCONVOCATORIAS WHERE SECUENCIA = C.EVALVIGCONVOCATORIA) EVALVIGCONVOCATORIA, "
+                    + "E.FECHAVIGENCIA EVALVIGCONVOCATORIA, "
                     + "C.ESTADO, C.CODIGO, "
                     + "(SELECT DESCRIPCION FROM EVALENFOQUES WHERE SECUENCIA = C.ENFOQUE) ENFOQUE, "
                     + "C.AGRUPADO, C.FECHAINICIO, C.OBJETIVOS "
-                    + "FROM EVALCONVOCATORIAS C "
-                    + "WHERE C.ENFOQUE=(SELECT SECUENCIA FROM EVALENFOQUES WHERE CODIGO=1) "
+                    + "FROM EVALCONVOCATORIAS C, EVALVIGCONVOCATORIAS E "
+                    + "WHERE E.SECUENCIA = C.EVALVIGCONVOCATORIA "
+                    + "AND C.ENFOQUE=(SELECT SECUENCIA FROM EVALENFOQUES WHERE CODIGO=1) "
                     + "AND C.ESTADO = 'PROCESAR' "
                     + "AND ( EXISTS ( SELECT 1 "
                     + " FROM EVALINDAGACIONES I, EVALRESULTADOSCONV R "
@@ -47,7 +76,7 @@ public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.obtenerConvocatorias: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.obtenerConvocatorias: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -59,12 +88,13 @@ public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
 //            em.getTransaction().begin();
             em.joinTransaction();
             Query q = em.createNativeQuery("SELECT C.SECUENCIA, "
-                    + "(SELECT FECHAVIGENCIA FROM EVALVIGCONVOCATORIAS WHERE SECUENCIA = C.EVALVIGCONVOCATORIA) EVALVIGCONVOCATORIA, "
+                    + "E.FECHAVIGENCIA EVALVIGCONVOCATORIA, "
                     + "C.ESTADO, C.CODIGO, "
                     + "(SELECT DESCRIPCION FROM EVALENFOQUES WHERE SECUENCIA = C.ENFOQUE) ENFOQUE, "
                     + "C.AGRUPADO, C.FECHAINICIO, C.OBJETIVOS "
-                    + "FROM EVALCONVOCATORIAS C "
-                    + "WHERE C.ENFOQUE=(SELECT SECUENCIA FROM EVALENFOQUES WHERE CODIGO=1) "
+                    + "FROM EVALCONVOCATORIAS C, EVALVIGCONVOCATORIAS E "
+                    + "WHERE E.SECUENCIA = C.EVALVIGCONVOCATORIA "
+                    + "AND C.ENFOQUE=(SELECT SECUENCIA FROM EVALENFOQUES WHERE CODIGO=1) "
                     + "AND C.ESTADO = 'ALCANCE' "
                     + "AND ( EXISTS ( SELECT 1 "
                     + "               FROM EVALINDAGACIONES I, EVALRESULTADOSCONV R "
@@ -83,7 +113,7 @@ public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.obtenerConvocatoriasAlcance: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.obtenerConvocatoriasAlcance: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -101,7 +131,7 @@ public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
 //            em.getTransaction().commit();
             return resultado;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.obtenerSecuenciaEvaluador: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.obtenerSecuenciaEvaluador: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -123,7 +153,7 @@ public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
             //System.out.println("co.com.designer.eval.persistencia.implementacion.PersistenciaConvocatorias.cerrarConvocatoria() YA COMMIT");
             return true;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.cerrarEvaluaciones: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.cerrarEvaluaciones: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -152,7 +182,7 @@ public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
             //System.out.println("co.com.designer.eval.persistencia.implementacion.PersistenciaConvocatorias.cerrarConvocatoria() YA COMMIT");
             return resultado;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.cerrarConvocatoria: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.cerrarConvocatoria: " + ex);
 //            terminarTransaccionException(em);
             return ex.getMessage();
         }
@@ -162,10 +192,10 @@ public class PersistenciaConvocatorias implements IPersistenciaConvocatorias {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
 //        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
         if (em != null && em.isOpen()) {
-            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
+            System.out.println(this.getClass().getName() + ": " + "Antes de hacer rollback");
 //            em.getTransaction().rollback();
             em.close();
-            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
+            System.out.println(this.getClass().getName() + ": " + "Despues de hacer rollback");
         }
     }
 }

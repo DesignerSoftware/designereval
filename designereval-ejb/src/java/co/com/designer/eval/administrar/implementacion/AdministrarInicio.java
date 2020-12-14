@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
@@ -88,6 +89,10 @@ public class AdministrarInicio implements IAdministrarInicio, Serializable {
             } else {
                 em = obtenerConexion();
             }
+//            List<Date> fechas = persistenciaConvocatorias.obtenerVigenciasConvocatorias(em, usuario);
+//            for(Date fecha : fechas){
+//                System.out.println("vigenciaConvocatoria: "+fecha);
+//            }
             return persistenciaConvocatorias.obtenerConvocatorias(em, usuario);
         } catch (Exception e) {
             System.out.println(this.getClass().getName() + ": " + "Error AdministrarInicio.obtenerConvocatorias: " + e);

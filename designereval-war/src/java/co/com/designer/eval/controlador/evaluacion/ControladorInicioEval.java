@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 //import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,7 @@ public class ControladorInicioEval implements Serializable {
     private int estadoConvocatoria = 2;
 
     //SELECCION
+    private String[] fechasVigConvocatorias;
     private Convocatorias convocatoria;
     private Evaluados evaluado;
     private Pruebas prueba;
@@ -536,6 +538,14 @@ public class ControladorInicioEval implements Serializable {
 
     public void setSecEvaluado(BigDecimal secEvaluado) {
         this.secEvaluado = secEvaluado;
+    }
+
+    public String[] getFechasVigConvocatorias() {
+        return fechasVigConvocatorias;
+    }
+
+    public void setFechasVigConvocatorias(String[] dtVigConvoca) {
+        this.fechasVigConvocatorias = dtVigConvoca;
     }
 
 }
