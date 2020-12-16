@@ -173,7 +173,7 @@
                                      oncomplete="PF('cargarConvocatoria').hide(); pantallaDinamica();"
                                      onclick="PF('dtbPruebas').unselectAllRows(); PF('dtbPruebas').selectRow(#{i}, true);
                                              PF('cargarConvocatoria').show();"
-                                     disabled="#{prueba.estado == 'A' ? false : true}"/>
+                                     disabled="#{prueba.estado == 'C' ? true : false}"/>
                 </p:column>
 
             </p:dataTable>

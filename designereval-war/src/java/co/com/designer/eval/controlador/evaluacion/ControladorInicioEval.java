@@ -314,16 +314,20 @@ public class ControladorInicioEval implements Serializable {
                     if (pathReporteGenerado != null) {
                         String resul = "";
                         boolean resbl1 = false;
-                        boolean resbl2 = false;
-                        resbl1 = administrarInicio.enviarCorreo(nitEmpresa, email,
-                                "Reporte Evaluación Competencias - " + c.getCodigo(), "Mensaje enviado automáticamente, por favor no responda a este correo.",
-                                pathReporteGenerado);
-                        if (resbl1) {
-                            resul = resul + "Se ha enviado un reporte con los resultados de la convocatoria a la dirección de correo del usuario conectado.";
-                        } else {
-                            resul = resul + "No fue posible enviar el reporte consolidado de la convocatoria seleccionada a la dirección de correo del usuario conectado.";
+                        // boolean resbl2 = false;
+                        try {
+                            resbl1 = administrarInicio.enviarCorreo(nitEmpresa, email,
+                                    "Reporte Evaluación Competencias - " + c.getCodigo(), "Mensaje enviado automáticamente, por favor no responda a este correo.",
+                                    pathReporteGenerado);
+                            if (resbl1) {
+                                resul = resul + "Se ha enviado un reporte con los resultados de la convocatoria a la dirección de correo del usuario conectado.";
+                            } else {
+                                resul = resul + "No fue posible enviar el reporte consolidado de la convocatoria seleccionada a la dirección de correo del usuario conectado.";
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Error: Se ha presentado un error al enviar el correo. " + e.getMessage());
                         }
-                        resbl2 = administrarInicio.enviarCorreo(nitEmpresa, this.evaluado.geteMail(),
+                        /*resbl2 = administrarInicio.enviarCorreo(nitEmpresa, this.evaluado.geteMail(),
                                 "Reporte Evaluación Competencias - " + c.getCodigo(), "Mensaje enviado automáticamente, por favor no responda a este correo.",
                                 pathReporteGenerado);
                         if (resbl2) {
@@ -332,6 +336,12 @@ public class ControladorInicioEval implements Serializable {
                             resul = resul + " No fue posible enviar el reporte consolidado de la convocatoria seleccionada a la dirección de correo del empleado evaluado.";
                         }
                         if (resbl1 && resbl2) {
+                            MensajesUI.info(resul);
+                        } else {
+                            MensajesUI.error(resul + " Comuníquese con soporte.");
+                        }*/
+                        
+                        if (resbl1) {
                             MensajesUI.info(resul);
                         } else {
                             MensajesUI.error(resul + " Comuníquese con soporte.");

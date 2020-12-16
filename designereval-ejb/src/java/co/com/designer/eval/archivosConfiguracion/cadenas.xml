@@ -45,4 +45,13 @@
         <observacion>true</observacion>
         <esquema>TRONEX</esquema>
     </cadenas>
+    <cadenas id="6">
+        <descripcion>DELIPAVO</descripcion>
+        <cadena>DEFAULT8</cadena>
+        <nit>860353447</nit>
+        <fondo>fondoMenu.png</fondo>
+        <grupo>GrupoEmpresarial6</grupo>
+        <observacion>true</observacion>
+        <esquema></esquema>
+    </cadenas>
 </conexiones>
