@@ -228,7 +228,7 @@ public class PersistenciaConexionInicial implements IPersistenciaConexionInicial
         System.out.println(this.getClass().getName()+": "+"cambiarPassword:usuario: " + usuario);
         System.out.println(this.getClass().getName()+": "+"cambiarPassword:password: " + password);
 //        String consulta = "alter user " + usuario + " identified by " + password + " ";
-        String consulta = "update conexioneseval set pwd=generales_pkg.encrypt(" + password + ") where seudonimo = " + usuario + " ";
+        String consulta = "update conexioneseval set pwd=generales_pkg.encrypt('" + password + "') where seudonimo = " + usuario + " ";
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();

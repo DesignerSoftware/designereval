@@ -60,7 +60,8 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
 //            em.getTransaction().begin();
 //            em.joinTransaction();
             Query q;
-            Integer total;
+            /*
+			Integer total;
             if (agrupado == 1) {
                 q = em.createNativeQuery("SELECT COUNT(*) FROM EVALPRUEBAS WHERE CONVOCATORIA = ? GROUP BY PLANILLA ");
                 q.setParameter(1, secConvocatoria);
@@ -72,20 +73,21 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
             }
 
             if (total != null && total != 0) {
-                /*q = em.createNativeQuery("SELECT sum(nvl(a.puntoobtenido,0)*b.puntos)/100/? "
+             */
+ /*q = em.createNativeQuery("SELECT sum(nvl(a.puntoobtenido,0)*b.puntos)/100/? "
                         + "FROM evalindagaciones a, evalpruebas b "
                         + "WHERE a.evalprueba = b.secuencia "
                         + "AND a.evalresultadoconv = ? ");*/
-                q = em.createNativeQuery("select sum(t.puntos) "
-                        + " from ( "
-                        + " select c.descripcion, sum(nvl(a.puntoobtenido,0)*b.puntos)/100*c.pesocompetencia/100 puntos "
-                        + " from evalindagaciones a, evalpruebas b, evalplanillas c "
-                        + " where a.evalprueba = b.secuencia "
-                        + " and c.secuencia = b.planilla "
-                        + " and a.evalresultadoconv = ? "
-                        + " group by c.descripcion, c.pesocompetencia "
-                        + " ) T ");
-                /*q = em.createNativeQuery("select sum(te.x) puntaje from ( \n"
+            q = em.createNativeQuery("select sum(t.puntos) "
+                    + " from ( "
+                    + " select c.descripcion, sum(nvl(a.puntoobtenido,0)*b.puntos)/100*c.pesocompetencia/100 puntos "
+                    + " from evalindagaciones a, evalpruebas b, evalplanillas c "
+                    + " where a.evalprueba = b.secuencia "
+                    + " and c.secuencia = b.planilla "
+                    + " and a.evalresultadoconv = ? "
+                    + " group by c.descripcion, c.pesocompetencia "
+                    + " ) T ");
+            /*q = em.createNativeQuery("select sum(te.x) puntaje from ( \n"
                         + "select \n"
                         + "t.descripcion, t.puntosevlr, t.puntosevlr*t.puntosm/100 x,  t.pesocompetencia \n"
                         + "from ( \n"
@@ -117,16 +119,22 @@ public class PersistenciaEvaluados implements IPersistenciaEvaluados {
                         + ") te ");*/
 //                q.setParameter(1, total);
 //                q.setParameter(2, total);
-                q.setParameter(1, secEvaluado);
-                BigDecimal porcentaje = (BigDecimal) q.getSingleResult();
-                if (porcentaje != null) {
-                    q = em.createNativeQuery("UPDATE EVALRESULTADOSCONV A SET A.PUNTAJEOBTENIDO = ? WHERE A.SECUENCIA = ? ");
-                    q.setParameter(1, porcentaje);
-                    q.setParameter(2, secEvaluado);
-                    q.executeUpdate();
-                }
-//                em.getTransaction().commit();
+            q.setParameter(1, secEvaluado);
+            BigDecimal porcentaje = (BigDecimal) q.getSingleResult();
+            if (porcentaje != null) {
+                q = em.createNativeQuery("UPDATE EVALRESULTADOSCONV A SET A.PUNTAJEOBTENIDO = ? WHERE A.SECUENCIA = ? ");
+                q.setParameter(1, porcentaje);
+                q.setParameter(2, secEvaluado);
+                q.executeUpdate();
+            } else {
+                System.out.println(this.getClass().getName() + ": " + "Error PersistenciaEvaluados.actualizarPorcentaje: " + "porcentaje es nulo");
+                return false;
             }
+//                em.getTransaction().commit();
+            /*
+			} else { 
+			  return false;
+			}*/
             return true;
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + ": " + "Error PersistenciaEvaluados.actualizarPorcentaje: " + ex);
