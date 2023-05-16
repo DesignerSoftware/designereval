@@ -10,6 +10,7 @@ import co.com.designer.eval.entidades.Respuestas;
 import co.com.designer.eval.utilidadesUI.MensajesUI;
 import co.com.designer.eval.utilidadesUI.PrimefacesContextUI;
 import java.io.Serializable;
+import java.math.BigDecimal;
 //import java.io.*;
 import java.math.BigInteger;
 import java.util.List;
@@ -35,13 +36,14 @@ public class ControladorEvaluacion implements Serializable {
 
     //Informacion general
     private String evaluado, evaluador, convocatoria, prueba, observacionEvaluador;
-    private BigInteger nroPreguntas, puntajeMaximo, secIndigacion, secPrueba, secConvocatoria, secEvaluado;
+    private BigInteger nroPreguntas, secIndigacion, secPrueba, secConvocatoria, secEvaluado;
+    private BigDecimal puntajeMaximo;
     private Pruebas pruebaActual;
     private Convocatorias convocatoriaActual;
     private Evaluados evaluadoActual;
     private Integer agrupado;
     private boolean tieneRespuestas, observacionObligatoria;
-    private int puntaje;
+    private double puntaje;
     private double porcentaje;
 
     public ControladorEvaluacion() {
@@ -159,9 +161,9 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void obtenerPuntajeMaximo() {
-        puntajeMaximo = BigInteger.ZERO;
+        puntajeMaximo = BigDecimal.ZERO;
         for (Preguntas pregunta : preguntas) {
-            BigInteger inicio = BigInteger.ZERO;
+            BigDecimal inicio = BigDecimal.ZERO;
             for (Respuestas respuesta : pregunta.getRespuestas()) {
                 if (respuesta.getCuantitativo().compareTo(inicio) == 1) {
                     inicio = respuesta.getCuantitativo();
@@ -172,19 +174,19 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void calcularPuntajePorcentaje() {
-        puntaje = 0;
+        puntaje = 0l;
         porcentaje = 0;
         for (Preguntas pregunta : preguntas) {
             if (pregunta.getRespuesta() != null) {
                 for (Respuestas respuesta : pregunta.getRespuestas()) {
                     if (respuesta.getSecuencia().compareTo(pregunta.getRespuesta()) == 0) {
-                        puntaje = puntaje + respuesta.getCuantitativo().intValue();
+                        puntaje = puntaje + respuesta.getCuantitativo().doubleValue();
                         break;
                     }
                 }
             }
         }
-        porcentaje = (puntaje * 100) / puntajeMaximo.intValue();
+        porcentaje = (puntaje/puntajeMaximo.doubleValue())*100;
     }
 
     //GETTER AND SETTER
@@ -208,7 +210,7 @@ public class ControladorEvaluacion implements Serializable {
         return nroPreguntas;
     }
 
-    public BigInteger getPuntajeMaximo() {
+    public BigDecimal getPuntajeMaximo() {
         return puntajeMaximo;
     }
 
@@ -228,7 +230,7 @@ public class ControladorEvaluacion implements Serializable {
         return tieneRespuestas;
     }
 
-    public int getPuntaje() {
+    public double getPuntaje() {
         return puntaje;
     }
 

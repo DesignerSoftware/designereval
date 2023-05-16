@@ -9,49 +9,4 @@
         <observacion>true</observacion>
         <esquema>DESIGNER</esquema>
     </cadenas>
-    <cadenas id="2">
-        <descripcion>REMEO MEDICAL</descripcion>
-        <cadena>DEFAULT3</cadena>
-        <nit>900715721</nit>
-        <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial2</grupo>
-        <observacion>true</observacion>
-        <esquema>REMEO</esquema>
-    </cadenas>
-    <cadenas id="3">
-        <descripcion>SKYNET</descripcion>
-        <cadena>DEFAULT2</cadena>
-        <nit>830059734</nit>
-        <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial3</grupo>
-        <observacion>true</observacion>
-        <esquema>SKYNET</esquema>
-    </cadenas>
-    <cadenas id="4">
-        <descripcion>TRONEX</descripcion>
-        <cadena>DEFAULT6</cadena>
-        <nit>811025446</nit>
-        <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial4</grupo>
-        <observacion>true</observacion>
-        <esquema></esquema>
-    </cadenas>
-    <cadenas id="5">
-        <descripcion>TRONEX</descripcion>
-        <cadena>DEFAULT7</cadena>
-        <nit>811025446</nit>
-        <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial5</grupo>
-        <observacion>true</observacion>
-        <esquema>TRONEX</esquema>
-    </cadenas>
-    <cadenas id="6">
-        <descripcion>DELIPAVO</descripcion>
-        <cadena>DEFAULT8</cadena>
-        <nit>860353447</nit>
-        <fondo>fondoMenu.png</fondo>
-        <grupo>GrupoEmpresarial6</grupo>
-        <observacion>true</observacion>
-        <esquema></esquema>
-    </cadenas>
 </conexiones>

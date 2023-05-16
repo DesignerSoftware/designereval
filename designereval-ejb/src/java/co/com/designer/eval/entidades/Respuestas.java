@@ -1,6 +1,7 @@
 package co.com.designer.eval.entidades;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,7 +22,7 @@ public class Respuestas implements Serializable {
     @Column(name = "CUALITATIVO")
     private String cualitativo;
     @Column(name = "CUANTITATIVO")
-    private BigInteger cuantitativo;
+    private BigDecimal cuantitativo;
     @Column(name = "DESCRIPCION")
     private String descripcion;
 
@@ -52,11 +53,11 @@ public class Respuestas implements Serializable {
         this.cualitativo = cualitativo;
     }
 
-    public BigInteger getCuantitativo() {
+    public BigDecimal getCuantitativo() {
         return cuantitativo;
     }
 
-    public void setCuantitativo(BigInteger cuantitativo) {
+    public void setCuantitativo(BigDecimal cuantitativo) {
         this.cuantitativo = cuantitativo;
     }
 
