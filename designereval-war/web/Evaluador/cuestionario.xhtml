@@ -59,12 +59,13 @@
                     </p:selectOneRadio>
                     <br/>
                 </div>
-            </ui:repeat>
-            <center>
-                <p:commandButton value="Seleccionar evaluación" onclick="PF('evaluaciones').show();"
+                <center>
+                    <p:commandButton value="Seleccionar evaluación" onclick="PF('evaluaciones').show();"
                                      process="@this"
                                      style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? '' : 'none'}"/>
-            </center>
+                </center>
+            </ui:repeat>
+
         </p:column>
 
         <p:column>
@@ -158,7 +159,7 @@
             </p:column>
         </p:panelGrid>
     </p:dialog>
-    
+
     <p:dialog id="evaluaciones" header="Atención" widgetVar="evaluaciones"  resizable="false" 
               draggable="false" modal="true" closable="false" closeOnEscape="true">  
         <p:panelGrid columns="1" styleClass="noBorders">
