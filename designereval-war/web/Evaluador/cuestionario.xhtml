@@ -46,24 +46,26 @@
         <p:column>
             <ui:repeat var="pregunta" value="#{controladorEvaluacion.preguntas}" varStatus="status">
                 <div style="background-color: #{pregunta.respuesta == null ? '' : '#D1D7FA'}>
-                    <ui:repeat var="despreg" value="#{pregunta.arDescripcion}" varStatus="desstatus">
-                        <h:outputText value="#{despreg}"
-                                      style="font-weight: bold;"/>
-                        <br/>
-                    </ui:repeat>
-                    <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}" style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? 'none' : ''}">
-                        <f:selectItems value="#{pregunta.respuestas}" var="r" 
-                                       itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
-                                       itemValue="#{r.secuencia}"/> 
-                        <p:ajax update=":principalForm:cuestionario" oncomplete="actualizarScore();"/> 
-                    </p:selectOneRadio>
+                     <ui:repeat var="despreg" value="#{pregunta.arDescripcion}" varStatus="desstatus">
+                    <h:outputText value="#{despreg}"
+                                  style="font-weight: bold;"/>
                     <br/>
-                </div>
-                <center>
-                    <p:commandButton value="Seleccionar evaluación" onclick="PF('evaluaciones').show();"
-                                     process="@this"
-                                     style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? '' : 'none'}"/>
-                </center>
+            </ui:repeat>
+            <div style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? 'none' : ''}">
+                <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}" >
+                    <f:selectItems value="#{pregunta.respuestas}" var="r" 
+                                   itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
+                                   itemValue="#{r.secuencia}"/> 
+                    <p:ajax update=":principalForm:cuestionario" oncomplete="actualizarScore();"/> 
+                </p:selectOneRadio>
+                <br/>
+            </div>
+            </div>
+            <center>
+                <p:commandButton value="Seleccionar evaluación" onclick="PF('evaluaciones').show();"
+                                 process="@this"
+                                 style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? '' : 'none'}"/>
+            </center>
             </ui:repeat>
 
         </p:column>
