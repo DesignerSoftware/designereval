@@ -238,6 +238,11 @@ public class ControladorEvaluacion implements Serializable {
     
     public boolean isHistorica(String tipo){
         System.out.println("ControladorEvaluacion.isHistorica()"+" tipo: "+tipo);
+        for (Preguntas preg: preguntas){
+            int cont =1;
+            System.out.println(cont+": "+preg.getTipo());
+            cont++;
+        }
         return "HISTORICA".equalsIgnoreCase(tipo);
     }
 
