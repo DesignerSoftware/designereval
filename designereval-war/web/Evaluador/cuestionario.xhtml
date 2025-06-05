@@ -45,13 +45,13 @@
         </p:column>
         <p:column>
             <ui:repeat var="pregunta" value="#{controladorEvaluacion.preguntas}" varStatus="status">
-                <div style="background-color: #{pregunta.respuesta == null ? '' : '#D1D7FA'}; display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? 'none' : ''}">
+                <div style="background-color: #{pregunta.respuesta == null ? '' : '#D1D7FA'}>
                     <ui:repeat var="despreg" value="#{pregunta.arDescripcion}" varStatus="desstatus">
                         <h:outputText value="#{despreg}"
                                       style="font-weight: bold;"/>
                         <br/>
                     </ui:repeat>
-                    <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}">
+                    <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}" style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? 'none' : ''}">
                         <f:selectItems value="#{pregunta.respuestas}" var="r" 
                                        itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
                                        itemValue="#{r.secuencia}"/> 
