@@ -37,6 +37,8 @@ public class Pruebas implements Serializable {
     private BigInteger secPrueba;
     @Column(name = "ESTADOPRUEBA")
     private String estado;
+    @Column(name = "IDEAL")
+    private BigDecimal ideal;
 
     public Pruebas() {
     }
@@ -148,6 +150,15 @@ public class Pruebas implements Serializable {
     public void setEstado(String estado) {
         this.estado = estado;
     }
+
+    public BigDecimal getIdeal() {
+        return ideal;
+    }
+
+    public void setIdeal(BigDecimal ideal) {
+        this.ideal = ideal;
+    }
+    
 
     @Override
     public String toString() {

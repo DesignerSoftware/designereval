@@ -31,7 +31,31 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.obtenerRespuestas: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.obtenerRespuestas: " + ex);
+//            terminarTransaccionException(em);
+            return null;
+        }
+    }
+
+    @Override
+    public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta, String Historica) {
+        try {
+            em.joinTransaction();
+//            em.getTransaction().begin();
+            Query q = em.createNativeQuery("SELECT RES.SECUENCIA \n"
+                    + ", NVL(ERI.CUALITATIVOASIGNADO, RES.CUALITATIVO) CUALITATIVO, NVL(ERI.PUNTAJEMANUAL, RES.CUANTITATIVO) CUANTITATIVO \n"
+                    + ", RES.DESCRIPCION \n"
+                    + "FROM EVALRESPUESTAS RES, EvalRespuestasIndagaciones ERI \n"
+                    + "WHERE RES.SECUENCIA = ERI.EVALRESPUESTA(+) \n"
+                    + "AND RES.EVALPREGUNTAS = ERI.EVALPREGUNTA(+) \n"
+                    + "AND RES.EVALPREGUNTAS = ? \n"
+                    + "ORDER BY CUANTITATIVO ASC", Respuestas.class);
+            q.setParameter(1, secPregunta);
+            List<Respuestas> lst = q.getResultList();
+//            em.getTransaction().commit();
+            return lst;
+        } catch (Exception ex) {
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.obtenerRespuestas-2: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -57,7 +81,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.registrarRespuesta: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.registrarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -84,7 +108,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.actualizarRespuesta: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.actualizarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -121,7 +145,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.registrarActualizarRespuesta: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.registrarActualizarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -143,7 +167,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return resultado.toBigInteger();
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.consultarRespuesta: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.consultarRespuesta: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -161,7 +185,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaRespuestas.eliminarRespuestas: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.eliminarRespuestas: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -171,10 +195,10 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
 //        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
         if (em != null && em.isOpen()) {
-            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
+            System.out.println(this.getClass().getName() + ": " + "Antes de hacer rollback");
 //            em.getTransaction().rollback();
             em.close();
-            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
+            System.out.println(this.getClass().getName() + ": " + "Despues de hacer rollback");
         }
     }
 }

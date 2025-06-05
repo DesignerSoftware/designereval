@@ -25,6 +25,8 @@ public class Respuestas implements Serializable {
     private BigDecimal cuantitativo;
     @Column(name = "DESCRIPCION")
     private String descripcion;
+//    @Transient
+//    private BigDecimal puntajeManual;
 
     public Respuestas() {
     }
@@ -69,6 +71,14 @@ public class Respuestas implements Serializable {
         this.descripcion = descripcion;
     }
 
+//    public BigDecimal getPuntajeManual() {
+//        return puntajeManual;
+//    }
+//
+//    public void setPuntajeManual(BigDecimal puntajeManual) {
+//        this.puntajeManual = puntajeManual;
+//    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

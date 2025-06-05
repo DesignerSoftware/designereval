@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSession;
 /**
  *
  * @author Felipe Triviño
+ * @author Edwin Hastamorir
  */
 @ManagedBean
 @SessionScoped
@@ -161,6 +162,7 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void obtenerPuntajeMaximo() {
+        /*
         puntajeMaximo = BigDecimal.ZERO;
         for (Preguntas pregunta : preguntas) {
             BigDecimal inicio = BigDecimal.ZERO;
@@ -171,22 +173,26 @@ public class ControladorEvaluacion implements Serializable {
             }
             puntajeMaximo = puntajeMaximo.add(inicio);
         }
+        */
+        this.puntajeMaximo = pruebaActual.getIdeal();
     }
 
     public void calcularPuntajePorcentaje() {
-        puntaje = 0l;
+        double puntajeInt = 0l;
         porcentaje = 0;
         for (Preguntas pregunta : preguntas) {
             if (pregunta.getRespuesta() != null) {
                 for (Respuestas respuesta : pregunta.getRespuestas()) {
                     if (respuesta.getSecuencia().compareTo(pregunta.getRespuesta()) == 0) {
-                        puntaje = puntaje + respuesta.getCuantitativo().doubleValue();
+                        puntajeInt = puntajeInt + respuesta.getCuantitativo().doubleValue();
                         break;
                     }
                 }
             }
         }
-        porcentaje = (puntaje/puntajeMaximo.doubleValue())*100;
+        this.puntaje = (double) Math.round( (puntajeInt*10000) )/10000;
+        porcentaje = (puntajeInt/puntajeMaximo.doubleValue())*100;
+        porcentaje = (double) Math.round( (porcentaje*10000) )/10000;
     }
 
     //GETTER AND SETTER
@@ -228,6 +234,11 @@ public class ControladorEvaluacion implements Serializable {
 
     public boolean isTieneRespuestas() {
         return tieneRespuestas;
+    }
+    
+    public boolean isHistorica(String tipo){
+        System.out.println("ControladorEvaluacion.isHistorica()"+" tipo: "+tipo);
+        return "HISTORICA".equalsIgnoreCase(tipo);
     }
 
     public double getPuntaje() {

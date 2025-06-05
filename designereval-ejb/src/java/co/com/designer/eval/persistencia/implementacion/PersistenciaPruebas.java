@@ -34,7 +34,11 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
                     + "(SELECT PR.SECUENCIA \n"
                     + "FROM EVALPRUEBAS PR \n"
                     + "WHERE PR.SECUENCIA = EI.EVALPRUEBA) SECPRUEBA, \n"
-                    + "EI.ESTADOPRUEBA \n"
+                    + "EI.ESTADOPRUEBA, \n"
+                    + "(SELECT PL.IDEAL \n"
+                    + "FROM EVALPRUEBAS PR, EVALPLANILLAS PL \n"
+                    + "WHERE PR.PLANILLA = PL.SECUENCIA \n"
+                    + "AND PR.SECUENCIA = EI.EVALPRUEBA) IDEAL -- Usa evalpruebas para llegar a los campos de evalplanillas \n"
                     + "FROM EVALINDAGACIONES EI \n"
                     + "WHERE EI.EMPLEADOEVALUADOR=( \n"
                     + "           SELECT P.SECUENCIA \n"
@@ -51,7 +55,7 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
 //            em.getTransaction().commit();
             return lst;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPruebas.obtenerPruebasEvalaudo: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaPruebas.obtenerPruebasEvalaudo: " + ex);
 //            terminarTransaccionException(em);
             return null;
         }
@@ -71,7 +75,7 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPruebas.actualizarPorcentaje: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaPruebas.actualizarPorcentaje: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -90,7 +94,7 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
 //            em.getTransaction().commit();
             return true;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaPruebas.actualizarEstado: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaPruebas.actualizarEstado: " + ex);
 //            terminarTransaccionException(em);
             return false;
         }
@@ -108,15 +112,15 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
 //            em.getTransaction().commit();
             return resul;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.cerrarEvaluaciones: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.cerrarEvaluaciones: " + ex);
 //            terminarTransaccionException(em);
             return "N";
         }
     }
-    
+
     @Override
-    public String validarJefeInmediato(EntityManager em, BigDecimal secEvaluador, BigInteger secEvaluado){
-        System.out.println(this.getClass().getName()+".validarJefeInmediato()");
+    public String validarJefeInmediato(EntityManager em, BigDecimal secEvaluador, BigInteger secEvaluado) {
+        System.out.println(this.getClass().getName() + ".validarJefeInmediato()");
         try {
             em.joinTransaction();
             Query q = em.createNativeQuery("select EVALCONVOCATORIAS_PKG.VALIDARJEFEINMEDIATO( ? , ? ) FROM DUAL ");
@@ -125,19 +129,19 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
             String resul = (String) q.getSingleResult();
             return resul;
         } catch (Exception ex) {
-            System.out.println(this.getClass().getName()+": "+"Error PersistenciaConvocatorias.validarJefeInmediato: " + ex);
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaConvocatorias.validarJefeInmediato: " + ex);
             return "N";
         }
     }
-    
+
     private void terminarTransaccionException(EntityManager em) {
         System.out.println(this.getClass().getName() + ".terminarTransaccionException");
 //        if (em != null && em.isOpen() && em.getTransaction().isActive()) {
         if (em != null && em.isOpen()) {
-            System.out.println(this.getClass().getName()+": "+"Antes de hacer rollback");
+            System.out.println(this.getClass().getName() + ": " + "Antes de hacer rollback");
 //            em.getTransaction().rollback();
             em.close();
-            System.out.println(this.getClass().getName()+": "+"Despues de hacer rollback");
+            System.out.println(this.getClass().getName() + ": " + "Despues de hacer rollback");
         }
     }
 }

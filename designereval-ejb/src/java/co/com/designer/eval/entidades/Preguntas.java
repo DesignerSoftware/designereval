@@ -26,6 +26,8 @@ public class Preguntas implements Serializable {
     private String descripcion;
     @Column(name = "OBSERVACIONES")
     private String observacion;
+    @Column(name = "TIPO")
+    private String tipo;
     @Transient
     private List<Respuestas> respuestas;
     @Transient
@@ -77,6 +79,14 @@ public class Preguntas implements Serializable {
 
     public void setObservacion(String observacion) {
         this.observacion = observacion;
+    }
+    
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public List<Respuestas> getRespuestas() {

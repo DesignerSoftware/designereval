@@ -60,6 +60,11 @@
                     <br/>
                 </div>
             </ui:repeat>
+            <center>
+                <p:commandButton value="Seleccionar evaluación" onclick="PF('evaluaciones').show();"
+                                     process="@this"
+                                     style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? '' : 'none'}"/>
+            </center>
         </p:column>
 
         <p:column>
@@ -79,7 +84,7 @@
                                   style="font-weight: bold;"/>
                     <h:outputText value="Porcentaje: " style="font-weight: bold; color: #122AB5"/>
                     <h:outputText value="#{controladorEvaluacion.porcentaje}%"
-                                  style="font-weight: bold;"/>
+                                  style="font-weight: bold;" />
                 </p:panelGrid>
             </center>
         </p:column>
@@ -150,6 +155,26 @@
                                              refrescarListas();"
                                      process="@this"/>
                 </center>
+            </p:column>
+        </p:panelGrid>
+    </p:dialog>
+    
+    <p:dialog id="evaluaciones" header="Atención" widgetVar="evaluaciones"  resizable="false" 
+              draggable="false" modal="true" closable="false" closeOnEscape="true">  
+        <p:panelGrid columns="1" styleClass="noBorders">
+            <p:column>
+                <center>
+                    <h:outputText value="En construcción"/>
+                </center>
+            </p:column>
+            <p:column>
+                <p:commandButton value="No" style="float: right"
+                                 onclick="PF('evaluaciones').hide();"
+                                 process="@this"/>
+                <p:commandButton value="Si" style="float: right;" 
+                                 onclick="PF('evaluaciones').hide();"
+                                 update=":principalForm:cuestionario"
+                                 process="@this" />
             </p:column>
         </p:panelGrid>
     </p:dialog>

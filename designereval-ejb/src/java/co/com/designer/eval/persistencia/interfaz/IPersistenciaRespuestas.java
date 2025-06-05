@@ -13,6 +13,8 @@ import javax.persistence.EntityManager;
 public interface IPersistenciaRespuestas {
 
     public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta);
+    
+    public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta, String Historica);
 
     public boolean registrarRespuesta(EntityManager em, BigInteger secIndagacion, BigInteger secPregunta, BigInteger secRespuesta);
 
