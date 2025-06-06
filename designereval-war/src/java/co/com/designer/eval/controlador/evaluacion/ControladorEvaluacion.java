@@ -141,8 +141,8 @@ public class ControladorEvaluacion implements Serializable {
         /*if (administrarEvaluacion.eliminarRespuestas(secIndigacion)
                 && administrarEvaluacion.actualizarPorcentaje(secIndigacion, observacionEvaluador, 0)
                 && administrarEvaluacion.actualizarPorcentaje(secConvocatoria, secEvaluado, agrupado)) {*/
-        if (administrarEvaluacion.reiniciarEvaluacion(secIndigacion, observacionEvaluador, 0, 
-                secConvocatoria, secEvaluado, agrupado)){
+        if (administrarEvaluacion.reiniciarEvaluacion(secIndigacion, observacionEvaluador, 0,
+                secConvocatoria, secEvaluado, agrupado)) {
             MensajesUI.info("Respuestas eliminadas exitosamente.");
         } else {
             MensajesUI.error("No fue posible eliminar las respuestas.");
@@ -173,7 +173,7 @@ public class ControladorEvaluacion implements Serializable {
             }
             puntajeMaximo = puntajeMaximo.add(inicio);
         }
-        */
+         */
         this.puntajeMaximo = pruebaActual.getIdeal();
     }
 
@@ -190,9 +190,9 @@ public class ControladorEvaluacion implements Serializable {
                 }
             }
         }
-        this.puntaje = (double) Math.round( (puntajeInt*10000) )/10000;
-        porcentaje = (puntajeInt/puntajeMaximo.doubleValue())*100;
-        porcentaje = (double) Math.round( (porcentaje*10000) )/10000;
+        this.puntaje = (double) Math.round((puntajeInt * 10000)) / 10000;
+        porcentaje = (puntajeInt / puntajeMaximo.doubleValue()) * 100;
+        porcentaje = (double) Math.round((porcentaje * 10000)) / 10000;
     }
 
     //GETTER AND SETTER
@@ -235,23 +235,33 @@ public class ControladorEvaluacion implements Serializable {
     public boolean isTieneRespuestas() {
         return tieneRespuestas;
     }
-    
-    public boolean isHistorica(String tipo){
-        System.out.println("ControladorEvaluacion.isHistorica()"+" tipo: "+tipo);
-        for (Preguntas preg: preguntas){
-            int cont =1;
-            System.out.println(cont+": "+preg.getTipo());
+
+    public boolean isHistorica(String tipo) {
+        System.out.println("ControladorEvaluacion.isHistorica()" + " tipo: " + tipo);
+        for (Preguntas preg : preguntas) {
+            int cont = 1;
+            System.out.println(cont + ": " + preg.getTipo());
             cont++;
         }
         return "HISTORICA".equalsIgnoreCase(tipo);
     }
-    
-    public boolean mostrarRespuestaHistorica(String tipo){
-        System.out.println("ControladorEvaluacion.mostrarRespuestaHistorica()"+" tipo: "+tipo);
-        return "HISTORICA".equalsIgnoreCase(tipo);
+
+    public boolean mostrarPosiblesRespuestas(Preguntas pregunta) {
+        System.out.println("ControladorEvaluacion.mostrarPosiblesRespuestas()" + " respuesta: " + pregunta.getRespuesta());
+        boolean isMostrar = true;
+        if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo()) ) {
+            if (pregunta.getRespuesta() != null && !pregunta.getRespuesta().equals(BigInteger.ZERO)) {
+                isMostrar = true;
+            } else {
+                isMostrar = false;
+            }
+        } else {
+            isMostrar = true;
+        }
+        return isMostrar;
     }
-    
-    public void asignarPuntajeHistorico(){
+
+    public void asignarPuntajeHistorico() {
         System.out.println("ControladorEvaluacion.asignarPuntajeHistorico()");
     }
 

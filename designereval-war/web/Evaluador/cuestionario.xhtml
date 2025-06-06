@@ -51,7 +51,7 @@
                                   style="font-weight: bold;"/>
                     <br/>
             </ui:repeat>
-            <div style="display: #{controladorEvaluacion.mostrarRespuestaHistorica(pregunta.tipo) ? '' : 'none'}">
+            <div style="display: #{controladorEvaluacion.mostrarPosiblesRespuestas(pregunta) ? '' : 'none'}">
                 <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}" >
                     <f:selectItems value="#{pregunta.respuestas}" var="r" 
                                    itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
