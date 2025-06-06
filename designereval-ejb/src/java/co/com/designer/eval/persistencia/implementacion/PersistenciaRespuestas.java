@@ -229,8 +229,8 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + " AND EVCI.FECHAVIGENCIA < TRUNC(TO_DATE( ? , 'DD-MM-YYYY'), 'MM')) \n"
                     + "AND EC.ESTADO IN ('ALCANCE') \n"
                     + "AND ERC.EMPLEADO = ? ");
-            q.setParameter(1, dtFechaCorte);
-            q.setParameter(2, vcFechaCorte);
+            q.setParameter(1, vcFechaCorte);
+            q.setParameter(2, secEmpleado);
             BigDecimal resultado = (BigDecimal) q.getSingleResult();
             return resultado;
         } catch (Exception ex) {
