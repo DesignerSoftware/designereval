@@ -250,6 +250,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                 q = em.createNativeQuery("INSERT INTO EVALRESPUESTASINDAGACIONES (EVALINDAGACION, EVALPREGUNTA, EVALRESPUESTA, CUALITATIVOASIGNADO, CUANTITATIVOASIGNADO, PUNTAJEMANUAL ) "
                         + "VALUES ( ?, ?, ?, "
                         + "(SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?), "
+                        + "? ,"
                         + "? "
                         + ") ");
                 q.setParameter(1, secIndagacion);
