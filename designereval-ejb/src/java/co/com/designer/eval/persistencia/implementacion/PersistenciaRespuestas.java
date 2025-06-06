@@ -5,6 +5,8 @@ import co.com.designer.eval.entidades.Respuestas;
 import co.com.designer.eval.persistencia.interfaz.IPersistenciaRespuestas;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -199,6 +201,87 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 //            em.getTransaction().rollback();
             em.close();
             System.out.println(this.getClass().getName() + ": " + "Despues de hacer rollback");
+        }
+    }
+
+    @Override
+    public BigDecimal consultarPuntajeEvalAnterior(EntityManager em, BigInteger secEmpleado, Date dtFechaCorte) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String vcFechaCorte = sdf.format(dtFechaCorte);
+        try {
+            em.joinTransaction();
+            Query q = em.createNativeQuery("SELECT \n"
+                    + "ERC.PUNTAJEOBTENIDO \n"
+                    + "FROM EMPRESAS EM, EVALVIGCONVOCATORIAS EVC \n"
+                    + ", EVALCONVOCATORIAS EC, EVALRESULTADOSCONV ERC \n"
+                    + "WHERE EVC.EMPRESA = EM.SECUENCIA \n"
+                    + "AND EC.EVALVIGCONVOCATORIA = EVC.SECUENCIA \n"
+                    + "AND ERC.EVALCONVOCATORIA = EC.SECUENCIA \n"
+                    + "AND EVC.FECHAVIGENCIA = ( \n"
+                    + " SELECT MAX(EVCI.FECHAVIGENCIA) \n"
+                    + " FROM EVALVIGCONVOCATORIAS EVCI, EVALCONVOCATORIAS ECI \n"
+                    + " , EVALRESULTADOSCONV ERCI \n"
+                    + " WHERE EVC.EMPRESA = EVCI.EMPRESA \n"
+                    + " AND ECI.EVALVIGCONVOCATORIA = EVCI.SECUENCIA \n"
+                    + " AND ERCI.EVALCONVOCATORIA = ECI.SECUENCIA \n"
+                    + " AND ERCI.EMPLEADO = ERC.EMPLEADO \n"
+                    + " AND ECI.ESTADO =EC.ESTADO \n"
+                    + " AND EVCI.FECHAVIGENCIA < TRUNC(TO_DATE( ? , 'DD-MM-YYYY'), 'MM')) \n"
+                    + "AND EC.ESTADO IN ('ALCANCE') \n"
+                    + "AND ERC.EMPLEADO = ? ");
+            q.setParameter(1, dtFechaCorte);
+            q.setParameter(2, vcFechaCorte);
+            BigDecimal resultado = (BigDecimal) q.getSingleResult();
+            return resultado;
+        } catch (Exception ex) {
+            System.out.println("Error PersistenciaRespuestas.consultarPuntajeEvalAnterior: " + ex);
+            return null;
+        }
+    }
+
+    @Override
+    public boolean registrarActualizarRespuestaHistorica(EntityManager em, Preguntas pregunta, BigInteger secIndagacion, BigDecimal resAnterior) {
+        try {
+            em.joinTransaction();
+//            em.getTransaction().begin();
+//            for (Preguntas pregunta : preguntas) {
+            Query q = null;
+            if (pregunta.isNuevo()) {
+                q = em.createNativeQuery("INSERT INTO EVALRESPUESTASINDAGACIONES (EVALINDAGACION, EVALPREGUNTA, EVALRESPUESTA, CUALITATIVOASIGNADO, CUANTITATIVOASIGNADO, PUNTAJEMANUAL ) "
+                        + "VALUES ( ?, ?, ?, "
+                        + "(SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?), "
+                        + "? "
+                        + ") ");
+                q.setParameter(1, secIndagacion);
+                q.setParameter(2, pregunta.getSecuencia());
+                q.setParameter(3, pregunta.getRespuesta());
+                q.setParameter(4, pregunta.getRespuesta());
+                q.setParameter(5, resAnterior);
+                q.setParameter(6, resAnterior);
+            } else {
+                q = em.createNativeQuery("UPDATE EVALRESPUESTASINDAGACIONES "
+                        + "SET CUALITATIVOASIGNADO = (SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) , "
+                        + "CUANTITATIVOASIGNADO = ? , "
+                        + "PUNTAJEMANUAL = ? "
+                        + "EVALRESPUESTA = ? "
+                        + "WHERE EVALINDAGACION = ? "
+                        + "AND EVALPREGUNTA = ? ");
+                q.setParameter(1, pregunta.getRespuesta());
+                q.setParameter(2, resAnterior);
+                q.setParameter(3, resAnterior);
+                q.setParameter(4, pregunta.getRespuesta());
+                q.setParameter(5, secIndagacion);
+                q.setParameter(6, pregunta.getSecuencia());
+            }
+
+            q.executeUpdate();
+//            }
+//            em.getTransaction().commit();
+            return true;
+        } catch (Exception ex) {
+            System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.registrarActualizarRespuesta: " + ex);
+//            terminarTransaccionException(em);
+            return false;
         }
     }
 }

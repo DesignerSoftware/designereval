@@ -9,7 +9,9 @@ import co.com.designer.eval.persistencia.interfaz.IPersistenciaPreguntas;
 import co.com.designer.eval.persistencia.interfaz.IPersistenciaPruebas;
 import co.com.designer.eval.persistencia.interfaz.IPersistenciaRespuestas;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -263,7 +265,7 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             } else {
                 em = obtenerConexion();
             }
-            return persistenciaPruebas.actualizarPorcentaje(em, secPrueba, observacion, porcentaje);
+            return persistenciaPruebas.actualizarPorcentaje(em, secPrueba, observacion, porcentaje, "C");
         } catch (Exception e) {
             System.out.println(this.getClass().getName() + ": " + "Error AdministrarEvaluacion.actualizarPorcentaje: " + e);
             return false;
@@ -306,7 +308,7 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             }
             res = persistenciaRespuestas.eliminarRespuestas(em, secIndagacion);
             if (res) {
-                res = persistenciaPruebas.actualizarPorcentaje(em, secIndagacion, observacion, porcentaje);
+                res = persistenciaPruebas.actualizarPorcentaje(em, secIndagacion, observacion, porcentaje, "A");
                 if (res) {
                     res = persistenciaEvaluados.actualizarPorcentaje(em, secConvocatoria, secEvaluado, agrupado);
                 }
@@ -337,7 +339,7 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             if (res) {
                 res = persistenciaRespuestas.registrarActualizarRespuesta(em, preguntas, secIndagacion);
                 if (res) {
-                    res = persistenciaPruebas.actualizarPorcentaje(em, secIndagacion, observacionEvaluador, porcentaje);
+                    res = persistenciaPruebas.actualizarPorcentaje(em, secIndagacion, observacionEvaluador, porcentaje, "C");
                     if (res) {
                         res = persistenciaEvaluados.actualizarPorcentaje(em, secConvocatoria, secEvaluado, agrupado);
                     }
@@ -347,6 +349,34 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             return res;
         } catch (Exception e) {
             System.out.println(this.getClass().getName() + ": " + "Error AdministrarEvaluacion.registrarActualizarRespuesta: " + e);
+            return false;
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+    
+    @Override
+    public boolean consultarEvaluacionHistorica(BigInteger secEmpleado, Date fechaCorte, BigInteger secIndagacion, Preguntas pregunta) {
+        EntityManager em = null;
+        boolean res;
+        try {
+            if (em != null && em.isOpen()) {
+            } else {
+                em = obtenerConexion();
+            }
+            BigDecimal resAnterior = BigDecimal.ZERO;
+            
+            resAnterior = persistenciaRespuestas.consultarPuntajeEvalAnterior(em, secEmpleado, fechaCorte);
+            if (resAnterior.compareTo(BigDecimal.ZERO) == 1 ) {
+                res = persistenciaRespuestas.registrarActualizarRespuestaHistorica(em, pregunta, secIndagacion, resAnterior);
+            } else {
+                res = false;
+            }
+            return res;
+        } catch (Exception e) {
+            System.out.println(this.getClass().getName() + ": " + "Error AdministrarEvaluacion.eliminarRespuestas: " + e);
             return false;
         } finally {
             if (em != null && em.isOpen()) {

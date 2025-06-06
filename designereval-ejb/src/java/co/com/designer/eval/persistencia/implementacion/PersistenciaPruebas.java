@@ -62,15 +62,17 @@ public class PersistenciaPruebas implements IPersistenciaPruebas {
     }
 
     @Override
-    public boolean actualizarPorcentaje(EntityManager em, BigInteger secPrueba, String observacion, double porcentaje) {
+    public boolean actualizarPorcentaje(EntityManager em, BigInteger secPrueba, String observacion, double porcentaje, String estado) {
         try {
 //            em.getTransaction().begin();
 //            em.joinTransaction();
             //Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? WHERE A.SECUENCIA = ? ");
-            Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? , A.ESTADOPRUEBA = 'C' WHERE A.SECUENCIA = ? ");
+//            Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? , A.ESTADOPRUEBA = 'C' WHERE A.SECUENCIA = ? ");
+            Query q = em.createNativeQuery("UPDATE EVALINDAGACIONES A SET A.PUNTOOBTENIDO = ? , OBSEVALUADOR = ? , A.ESTADOPRUEBA = ? WHERE A.SECUENCIA = ? ");
             q.setParameter(1, porcentaje);
             q.setParameter(2, observacion);
-            q.setParameter(3, secPrueba);
+            q.setParameter(3, estado);
+            q.setParameter(4, secPrueba);
             q.executeUpdate();
 //            em.getTransaction().commit();
             return true;

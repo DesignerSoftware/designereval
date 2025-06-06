@@ -249,7 +249,7 @@ public class ControladorEvaluacion implements Serializable {
     public boolean mostrarPosiblesRespuestas(Preguntas pregunta) {
         System.out.println("ControladorEvaluacion.mostrarPosiblesRespuestas()" + " respuesta: " + pregunta.getRespuesta());
         boolean isMostrar = true;
-        if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo()) ) {
+        if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo())) {
             if (pregunta.getRespuesta() != null && !pregunta.getRespuesta().equals(BigInteger.ZERO)) {
                 isMostrar = true;
             } else {
@@ -263,6 +263,16 @@ public class ControladorEvaluacion implements Serializable {
 
     public void asignarPuntajeHistorico() {
         System.out.println("ControladorEvaluacion.asignarPuntajeHistorico()");
+        for (Preguntas pregunta : preguntas) {
+            if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo())) {
+                if (administrarEvaluacion.consultarEvaluacionHistorica(evaluadoActual.getEmpleado(), this.convocatoriaActual.getEvalVigConvocatoria(), this.secIndigacion, pregunta)) {
+                    MensajesUI.info("Consulta realizada exitosamente.");
+                } else {
+                    MensajesUI.error("No fue posible consultar la evaluación anterior.");
+                }
+            }
+        }
+        cargarDetallePreguntas();
     }
 
     public double getPuntaje() {

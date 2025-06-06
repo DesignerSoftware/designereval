@@ -1,7 +1,9 @@
 package co.com.designer.eval.administrar.interfaz;
 
+import co.com.designer.eval.entidades.Convocatorias;
 import co.com.designer.eval.entidades.Preguntas;
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,4 +34,5 @@ public interface IAdministrarEvaluacion {
             BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
 
     public boolean reiniciarEvaluacion(BigInteger secIndagacion, String observacion, double porcentaje, BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
+    public boolean consultarEvaluacionHistorica(BigInteger secEmpleado, Date fechaCorte, BigInteger secIndagacion, Preguntas pregunta);
 }
