@@ -265,6 +265,11 @@ public class ControladorEvaluacion implements Serializable {
         System.out.println("ControladorEvaluacion.asignarPuntajeHistorico()");
         for (Preguntas pregunta : preguntas) {
             if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo())) {
+                for (Respuestas respuesta: pregunta.getRespuestas()){
+                    if (respuesta.getCuantitativo().compareTo(BigDecimal.ZERO) == 0){
+                        pregunta.setRespuesta(respuesta.getSecuencia());
+                    }
+                }
                 if (administrarEvaluacion.consultarEvaluacionHistorica(evaluadoActual.getEmpleado(), this.convocatoriaActual.getEvalVigConvocatoria(), this.secIndigacion, pregunta)) {
                     MensajesUI.info("Consulta realizada exitosamente.");
                 } else {
