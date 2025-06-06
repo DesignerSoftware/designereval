@@ -245,6 +245,15 @@ public class ControladorEvaluacion implements Serializable {
         }
         return "HISTORICA".equalsIgnoreCase(tipo);
     }
+    
+    public boolean mostrarRespuestaHistorica(String tipo){
+        System.out.println("ControladorEvaluacion.mostrarRespuestaHistorica()"+" tipo: "+tipo);
+        return "HISTORICA".equalsIgnoreCase(tipo);
+    }
+    
+    public void asignarPuntajeHistorico(){
+        System.out.println("ControladorEvaluacion.asignarPuntajeHistorico()");
+    }
 
     public double getPuntaje() {
         return puntaje;

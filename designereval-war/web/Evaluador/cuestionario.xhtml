@@ -45,13 +45,13 @@
         </p:column>
         <p:column>
             <ui:repeat var="pregunta" value="#{controladorEvaluacion.preguntas}" varStatus="status">
-                <div style="background-color: #{pregunta.respuesta == null ? '' : '#D1D7FA'}>
+                <div style="background-color: #{pregunta.respuesta == null ? '' : '#D1D7FA'}">
                      <ui:repeat var="despreg" value="#{pregunta.arDescripcion}" varStatus="desstatus">
                     <h:outputText value="#{despreg}"
                                   style="font-weight: bold;"/>
                     <br/>
             </ui:repeat>
-            <div style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? 'none' : ''}">
+            <div style="display: #{controladorEvaluacion.mostrarRespuestaHistorica(pregunta.tipo) ? '' : 'none'}">
                 <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}" >
                     <f:selectItems value="#{pregunta.respuestas}" var="r" 
                                    itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
@@ -62,7 +62,7 @@
             </div>
             </div>
             <center>
-                <p:commandButton value="Seleccionar evaluación" onclick="PF('evaluaciones').show();"
+                <p:commandButton value="Consultar evaluación anterior" onclick="PF('evaluaciones').show();"
                                  process="@this"
                                  style="display: #{controladorEvaluacion.isHistorica(pregunta.tipo) ? '' : 'none'}"/>
             </center>
@@ -162,12 +162,12 @@
         </p:panelGrid>
     </p:dialog>
 
-    <p:dialog id="evaluaciones" header="Atención" widgetVar="evaluaciones"  resizable="false" 
+    <p:dialog id="evaluaciones" header="Consulta evaluación anterior" widgetVar="evaluaciones"  resizable="false" 
               draggable="false" modal="true" closable="false" closeOnEscape="true">  
         <p:panelGrid columns="1" styleClass="noBorders">
             <p:column>
                 <center>
-                    <h:outputText value="En construcción"/>
+                    <h:outputText value="A continuación, se va a utilizar el puntaje de la evaluación anterior más reciente. ¿Desea continuar?"/>
                 </center>
             </p:column>
             <p:column>
@@ -175,6 +175,7 @@
                                  onclick="PF('evaluaciones').hide();"
                                  process="@this"/>
                 <p:commandButton value="Si" style="float: right;" 
+                                 actionListener="#{controladorEvaluacion.asignarPuntajeHistorico()}"
                                  onclick="PF('evaluaciones').hide();"
                                  update=":principalForm:cuestionario"
                                  process="@this" />
