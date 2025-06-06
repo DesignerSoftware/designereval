@@ -226,11 +226,13 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + " AND ERCI.EVALCONVOCATORIA = ECI.SECUENCIA \n"
                     + " AND ERCI.EMPLEADO = ERC.EMPLEADO \n"
                     + " AND ECI.ESTADO =EC.ESTADO \n"
-                    + " AND EVCI.FECHAVIGENCIA < TRUNC(TO_DATE( ? , 'DD-MM-YYYY'), 'MM')) \n"
-                    + "AND EC.ESTADO IN ('ALCANCE') \n"
+                    + " AND EVCI.FECHAVIGENCIA BETWEEN TRUNC(TO_DATE('?', 'DDMMYYYY'), 'MM') AND LAST_DAY(TO_DATE('?', 'DDMMYYYY'))) \n"
+//                    + "AND EC.ESTADO IN ('ALCANCE') \n"
+                    + "AND EC.ESTADO IN ('PROCESAR') \n"
                     + "AND ERC.EMPLEADO = ? ");
             q.setParameter(1, vcFechaCorte);
-            q.setParameter(2, secEmpleado);
+            q.setParameter(2, vcFechaCorte);
+            q.setParameter(3, secEmpleado);
             BigDecimal resultado = (BigDecimal) q.getSingleResult();
             return resultado;
         } catch (Exception ex) {
