@@ -68,8 +68,8 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
     @Override
     public List<Preguntas> obtenerCuestinonario(BigInteger secPrueba, BigInteger secIndagacion) {
         System.out.println("AdministrarEvaluacion.obtenerCuestionario: "
-                +"secPrueba: "+secPrueba
-                +"secIndagacion: "+secIndagacion);
+                + "secPrueba: " + secPrueba
+                + "secIndagacion: " + secIndagacion);
         EntityManager em = null;
         List<Preguntas> lst = null;
         try {
@@ -78,13 +78,29 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
                 em = obtenerConexion();
             }
             lst = obtenerPreguntas(secPrueba);
+            for (Preguntas pregunta : lst) {
+                System.out.println("res_1: ");
+                if (pregunta.getRespuestas() != null) {
+                    for (Respuestas respuesta : pregunta.getRespuestas()) {
+                        System.out.println("res_1: " + respuesta.getCuantitativo() + " ; " + respuesta.getCualitativo() + " ; " + respuesta.getDescripcion());
+                    }
+                }
+            }
             if (lst != null && !lst.isEmpty()) {
                 for (int i = 0; i < lst.size(); i++) {
-                    System.out.println("Pregunta: "+lst.get(i).getSecuencia()+" tipo: "+lst.get(i).getTipo());
+                    System.out.println("Pregunta: " + lst.get(i).getSecuencia() + " tipo: " + lst.get(i).getTipo());
                     if (lst.get(i).getTipo().equalsIgnoreCase("HISTORICA")) {
-                        lst.get(i).setRespuestas(obtenerRespuestasHistorica(lst.get(i).getSecuencia()));
+                        lst.get(i).setRespuestas(obtenerRespuestasHistorica(lst.get(i).getSecuencia(), secIndagacion));
                     } else {
                         lst.get(i).setRespuestas(obtenerRespuestas(lst.get(i).getSecuencia()));
+                    }
+                    for (Preguntas pregunta : lst) {
+                        System.out.println("res_2: ");
+                        if (pregunta.getRespuestas() != null) {
+                            for (Respuestas respuesta : pregunta.getRespuestas()) {
+                                System.out.println("res_2: " + respuesta.getCuantitativo() + " ; " + respuesta.getCualitativo() + " ; " + respuesta.getDescripcion());
+                            }
+                        }
                     }
                     lst.get(i).setRespuesta(persistenciaRespuestas.consultarRespuesta(em, secIndagacion, lst.get(i).getSecuencia()));
                     /*if (lst.get(i).getRespuesta() == null) {
@@ -92,6 +108,14 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
                     } else {
                         lst.get(i).setNuevo(false);
                     }*/
+                    for (Preguntas pregunta : lst) {
+                        System.out.println("res_3: ");
+                        if (pregunta.getRespuestas() != null) {
+                            for (Respuestas respuesta : pregunta.getRespuestas()) {
+                                System.out.println("res_3: " + respuesta.getCuantitativo() + " ; " + respuesta.getCualitativo() + " ; " + respuesta.getDescripcion());
+                            }
+                        }
+                    }
                     lst.get(i).setNuevo(true);
                 }
             }
@@ -124,7 +148,10 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
         }
     }
 
-    public List<Respuestas> obtenerRespuestas(BigInteger secPregunta) {
+    private List<Respuestas> obtenerRespuestas(BigInteger secPregunta) {
+        System.out.println("AdministrarEvaluacion.obtenerRespuestas()"
+                + " secPregunta: " + secPregunta
+        );
         EntityManager em = null;
         try {
             if (em != null && em.isOpen()) {
@@ -141,15 +168,19 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             }
         }
     }
-    
-    public List<Respuestas> obtenerRespuestasHistorica(BigInteger secPregunta) {
+
+    private List<Respuestas> obtenerRespuestasHistorica(BigInteger secPregunta, BigInteger secIndagacion) {
+        System.out.println("AdministrarEvaluacion.obtenerRespuestasHistorica("
+                + " secPregunta: " + secPregunta
+                + " secIndagacion: " + secIndagacion
+                + " )");
         EntityManager em = null;
         try {
             if (em != null && em.isOpen()) {
             } else {
                 em = obtenerConexion();
             }
-            return persistenciaRespuestas.obtenerRespuestas(em, secPregunta, "S");
+            return persistenciaRespuestas.obtenerRespuestas(em, secPregunta, secIndagacion, "S");
         } catch (Exception e) {
             System.out.println(this.getClass().getName() + ": " + "Error AdministrarEvaluacion.obtenerRespuestas-2: " + e);
             return null;
@@ -219,6 +250,7 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
         }
     }
 
+    /*
     @Override
     public boolean registrarActualizarRespuesta(List<Preguntas> preguntas, BigInteger secIndagacion) {
         EntityManager em = null;
@@ -237,6 +269,7 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             }
         }
     }
+    */
 
     @Override
     public boolean eliminarRespuestas(BigInteger secIndagacion) {
@@ -327,7 +360,7 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
     @Override
     public boolean registrarRespuestasPuntos(List<Preguntas> preguntas, BigInteger secIndagacion,
             String observacionEvaluador, double porcentaje,
-            BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado) {
+            BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado, BigInteger secEmpleado, Date fechaCorte) {
         EntityManager em = null;
         boolean res = false;
         try {
@@ -337,7 +370,7 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             }
             res = persistenciaRespuestas.eliminarRespuestas(em, secIndagacion);
             if (res) {
-                res = persistenciaRespuestas.registrarActualizarRespuesta(em, preguntas, secIndagacion);
+                res = persistenciaRespuestas.registrarActualizarRespuesta(em, preguntas, secIndagacion, secConvocatoria, secEvaluado, secEmpleado, fechaCorte);
                 if (res) {
                     res = persistenciaPruebas.actualizarPorcentaje(em, secIndagacion, observacionEvaluador, porcentaje, "C");
                     if (res) {
@@ -356,9 +389,9 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
             }
         }
     }
-    
+
     @Override
-    public boolean consultarEvaluacionHistorica(BigInteger secEmpleado, Date fechaCorte, BigInteger secIndagacion, Preguntas pregunta) {
+    public BigDecimal consultarEvaluacionHistorica(BigInteger secEmpleado, BigInteger secConvocatoria, Date fechaCorte, BigInteger secIndagacion, Preguntas pregunta) {
         EntityManager em = null;
         boolean res;
         try {
@@ -367,17 +400,14 @@ public class AdministrarEvaluacion implements IAdministrarEvaluacion, Serializab
                 em = obtenerConexion();
             }
             BigDecimal resAnterior = BigDecimal.ZERO;
+
+            resAnterior = persistenciaRespuestas.consultarPuntajeEvalAnterior(em, secEmpleado, secConvocatoria, fechaCorte);
             
-            resAnterior = persistenciaRespuestas.consultarPuntajeEvalAnterior(em, secEmpleado, fechaCorte);
-            if (resAnterior.compareTo(BigDecimal.ZERO) == 1 ) {
-                res = persistenciaRespuestas.registrarActualizarRespuestaHistorica(em, pregunta, secIndagacion, resAnterior);
-            } else {
-                res = false;
-            }
-            return res;
+            return resAnterior;
         } catch (Exception e) {
             System.out.println(this.getClass().getName() + ": " + "Error AdministrarEvaluacion.eliminarRespuestas: " + e);
-            return false;
+            //return false;
+            return new BigDecimal("-1");
         } finally {
             if (em != null && em.isOpen()) {
                 em.close();

@@ -21,13 +21,16 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 
     @Override
     public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta) {
+        System.out.println("PersistenciaRespuestas.obtenerRespuestas()"
+                + " secPregunta: " + secPregunta);
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
-            Query q = em.createNativeQuery("SELECT SECUENCIA, CUALITATIVO, CUANTITATIVO, DESCRIPCION "
-                    + "FROM EVALRESPUESTAS RES "
-                    + "WHERE RES.EVALPREGUNTAS = ? "
-                    + "ORDER BY CUANTITATIVO ASC ", Respuestas.class);
+            Query q = em.createNativeQuery("SELECT SECUENCIA, CUALITATIVO, CUANTITATIVO, DESCRIPCION \n"
+                    + "FROM EVALRESPUESTAS RES \n"
+                    + "WHERE RES.EVALPREGUNTAS = ? \n"
+                    //                    + "ORDER BY CUANTITATIVO ASC ", Respuestas.class);
+                    + "ORDER BY CUANTITATIVO DESC ", Respuestas.class);
             q.setParameter(1, secPregunta);
             List<Respuestas> lst = q.getResultList();
 //            em.getTransaction().commit();
@@ -40,7 +43,13 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
     }
 
     @Override
-    public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta, String Historica) {
+    public List<Respuestas> obtenerRespuestas(EntityManager em,
+            BigInteger secPregunta, BigInteger secIndagacion, String Historica) {
+        System.out.println("PersistenciaRespuestas.obtenerRespuestas()"
+                + " secPregunta: " + secPregunta
+                + " secIndagacion: " + secIndagacion
+                + " Historica: " + Historica
+        );
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
@@ -50,9 +59,11 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + "FROM EVALRESPUESTAS RES, EvalRespuestasIndagaciones ERI \n"
                     + "WHERE RES.SECUENCIA = ERI.EVALRESPUESTA(+) \n"
                     + "AND RES.EVALPREGUNTAS = ERI.EVALPREGUNTA(+) \n"
+                    + "AND ERI.EVALINDAGACION(+) = ? \n"
                     + "AND RES.EVALPREGUNTAS = ? \n"
                     + "ORDER BY CUANTITATIVO ASC", Respuestas.class);
-            q.setParameter(1, secPregunta);
+            q.setParameter(1, secIndagacion);
+            q.setParameter(2, secPregunta);
             List<Respuestas> lst = q.getResultList();
 //            em.getTransaction().commit();
             return lst;
@@ -66,6 +77,11 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
     @Override
     public boolean registrarRespuesta(EntityManager em, BigInteger secIndagacion,
             BigInteger secPregunta, BigInteger secRespuesta) {
+        System.out.println("PersistenciaRespuestas.registrarRespuesta()"
+                + " secIndagacion: " + secIndagacion
+                + " secPregunta: " + secPregunta
+                + " secRespuesta: " + secRespuesta
+        );
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
@@ -92,6 +108,11 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
     @Override
     public boolean actualizarRespuesta(EntityManager em, BigInteger secIndagacion,
             BigInteger secPregunta, BigInteger secRespuesta) {
+        System.out.println("PersistenciaRespuestas.actualizarRespuesta()"
+                + " secIndagacion: " + secIndagacion
+                + " secPregunta: " + secPregunta
+                + " secRespuesta: " + secRespuesta
+        );
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
@@ -117,35 +138,52 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
     }
 
     @Override
-    public boolean registrarActualizarRespuesta(EntityManager em, List<Preguntas> preguntas, BigInteger secIndagacion) {
+    public boolean registrarActualizarRespuesta(EntityManager em, List<Preguntas> preguntas, BigInteger secIndagacion
+            , BigInteger secConvocatoria, BigInteger secEvaluado, BigInteger secEmpleado, Date fechaCorte) {
+        System.out.println("PersistenciaRespuestas.registrarActualizarRespuesta()"
+                + " preguntas: " + preguntas.toString()
+                + " secIndagacion: " + secIndagacion
+        );
+        boolean res = false;
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
             for (Preguntas pregunta : preguntas) {
                 Query q = null;
-                if (pregunta.isNuevo()) {
-                    q = em.createNativeQuery("INSERT INTO EVALRESPUESTASINDAGACIONES (EVALINDAGACION, EVALPREGUNTA, EVALRESPUESTA, CUALITATIVOASIGNADO, CUANTITATIVOASIGNADO ) "
-                            + "VALUES ( ?, ?, ?, "
-                            + "(SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?), "
-                            + "(SELECT CUANTITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) "
-                            + ") ");
+                if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo())) {
+                    BigDecimal resAnterior = BigDecimal.ZERO;
+                    resAnterior = consultarPuntajeEvalAnterior(em, secEmpleado, secConvocatoria, fechaCorte);
+                    if (resAnterior.compareTo(BigDecimal.ZERO) == 1) {
+                        res = registrarActualizarRespuestaHistorica(em, pregunta, secIndagacion, resAnterior);
+                    } else {
+                        res = false;
+                    }
                 } else {
-                    q = em.createNativeQuery("UPDATE EVALRESPUESTASINDAGACIONES "
-                            + "SET CUALITATIVOASIGNADO = (SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) , "
-                            + "CUANTITATIVOASIGNADO = (SELECT CUANTITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) , "
-                            + "EVALRESPUESTA = ? "
-                            + "WHERE EVALINDAGACION = ? "
-                            + "AND EVALPREGUNTA = ? ");
+                    if (pregunta.isNuevo()) {
+                        q = em.createNativeQuery("INSERT INTO EVALRESPUESTASINDAGACIONES (EVALINDAGACION, EVALPREGUNTA, EVALRESPUESTA, CUALITATIVOASIGNADO, CUANTITATIVOASIGNADO ) \n"
+                                + "VALUES ( ?, ?, ?, \n"
+                                + "(SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?), \n"
+                                + "(SELECT CUANTITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) \n"
+                                + ") ");
+                    } else {
+                        q = em.createNativeQuery("UPDATE EVALRESPUESTASINDAGACIONES \n"
+                                + "SET CUALITATIVOASIGNADO = (SELECT CUALITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) , \n"
+                                + "CUANTITATIVOASIGNADO = (SELECT CUANTITATIVO FROM EVALRESPUESTAS WHERE SECUENCIA = ?) , \n"
+                                + "EVALRESPUESTA = ? \n"
+                                + "WHERE EVALINDAGACION = ? \n"
+                                + "AND EVALPREGUNTA = ? \n");
+                    }
+                    q.setParameter(1, secIndagacion);
+                    q.setParameter(2, pregunta.getSecuencia());
+                    q.setParameter(3, pregunta.getRespuesta());
+                    q.setParameter(4, pregunta.getRespuesta());
+                    q.setParameter(5, pregunta.getRespuesta());
+                    q.executeUpdate();
+                    res = true;
                 }
-                q.setParameter(1, secIndagacion);
-                q.setParameter(2, pregunta.getSecuencia());
-                q.setParameter(3, pregunta.getRespuesta());
-                q.setParameter(4, pregunta.getRespuesta());
-                q.setParameter(5, pregunta.getRespuesta());
-                q.executeUpdate();
             }
 //            em.getTransaction().commit();
-            return true;
+            return res;
         } catch (Exception ex) {
             System.out.println(this.getClass().getName() + ": " + "Error PersistenciaRespuestas.registrarActualizarRespuesta: " + ex);
 //            terminarTransaccionException(em);
@@ -156,12 +194,16 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
     @Override
     public BigInteger consultarRespuesta(EntityManager em, BigInteger secIndagacion,
             BigInteger secPregunta) {
+        System.out.println("PersistenciaRespuestas.consultarRespuesta()"
+                + " secIndagacion: " + secIndagacion
+                + " secPregunta: " + secPregunta
+        );
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
-            Query q = em.createNativeQuery("SELECT EVALRESPUESTA "
-                    + "FROM EVALRESPUESTASINDAGACIONES "
-                    + "WHERE EVALINDAGACION = ? "
+            Query q = em.createNativeQuery("SELECT EVALRESPUESTA \n"
+                    + "FROM EVALRESPUESTASINDAGACIONES \n"
+                    + "WHERE EVALINDAGACION = ? \n"
                     + "AND EVALPREGUNTA = ? ");
             q.setParameter(1, secIndagacion);
             q.setParameter(2, secPregunta);
@@ -177,6 +219,9 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
 
     @Override
     public boolean eliminarRespuestas(EntityManager em, BigInteger secIndagacion) {
+        System.out.println("PersistenciaRespuestas.eliminarRespuestas()"
+                + " secIndagacion: " + secIndagacion
+        );
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();
@@ -205,7 +250,12 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
     }
 
     @Override
-    public BigDecimal consultarPuntajeEvalAnterior(EntityManager em, BigInteger secEmpleado, Date dtFechaCorte) {
+    public BigDecimal consultarPuntajeEvalAnterior(EntityManager em, BigInteger secEmpleado, BigInteger secConvocatoria, Date dtFechaCorte) {
+        System.out.println("PersistenciaRespuestas.consultarPuntajeEvalAnterior()"
+                + " secEmpleado: " + secEmpleado
+                + " secConvocatoria: " + secConvocatoria
+                + " dtFechaCorte: " + dtFechaCorte
+        );
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         String vcFechaCorte = sdf.format(dtFechaCorte);
         try {
@@ -217,6 +267,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + "WHERE EVC.EMPRESA = EM.SECUENCIA \n"
                     + "AND EC.EVALVIGCONVOCATORIA = EVC.SECUENCIA \n"
                     + "AND ERC.EVALCONVOCATORIA = EC.SECUENCIA \n"
+                    + "AND EC.SECUENCIA <> ? "
                     + "AND EVC.FECHAVIGENCIA = ( \n"
                     + " SELECT MAX(EVCI.FECHAVIGENCIA) \n"
                     + " FROM EVALVIGCONVOCATORIAS EVCI, EVALCONVOCATORIAS ECI \n"
@@ -226,13 +277,16 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + " AND ERCI.EVALCONVOCATORIA = ECI.SECUENCIA \n"
                     + " AND ERCI.EMPLEADO = ERC.EMPLEADO \n"
                     + " AND ECI.ESTADO =EC.ESTADO \n"
-                    + " AND EVCI.FECHAVIGENCIA BETWEEN TRUNC(TO_DATE('?', 'DDMMYYYY'), 'MM') AND LAST_DAY(TO_DATE('?', 'DDMMYYYY'))) \n"
-//                    + "AND EC.ESTADO IN ('ALCANCE') \n"
+                    + " AND ECI.SECUENCIA <> ? "
+                    + " AND EVCI.FECHAVIGENCIA BETWEEN TRUNC(TO_DATE( ? , 'DD-MM-YYYY'), 'MM') AND LAST_DAY(TO_DATE( ? , 'DD-MM-YYYY'))) \n"
+                    //                    + "AND EC.ESTADO IN ('ALCANCE') \n"
                     + "AND EC.ESTADO IN ('PROCESAR') \n"
                     + "AND ERC.EMPLEADO = ? ");
-            q.setParameter(1, vcFechaCorte);
-            q.setParameter(2, vcFechaCorte);
-            q.setParameter(3, secEmpleado);
+            q.setParameter(1, secConvocatoria);
+            q.setParameter(2, secConvocatoria);
+            q.setParameter(3, vcFechaCorte);
+            q.setParameter(4, vcFechaCorte);
+            q.setParameter(5, secEmpleado);
             BigDecimal resultado = (BigDecimal) q.getSingleResult();
             return resultado;
         } catch (Exception ex) {
@@ -242,7 +296,13 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
     }
 
     @Override
-    public boolean registrarActualizarRespuestaHistorica(EntityManager em, Preguntas pregunta, BigInteger secIndagacion, BigDecimal resAnterior) {
+    public boolean registrarActualizarRespuestaHistorica(EntityManager em,
+            Preguntas pregunta, BigInteger secIndagacion, BigDecimal resAnterior) {
+        System.out.println("PersistenciaRespuestas.registrarActualizarRespuestaHistorica()"
+                + " pregunta: " + pregunta
+                + " secIndagacion: " + secIndagacion
+                + " resAnterior: " + resAnterior
+        );
         try {
             em.joinTransaction();
 //            em.getTransaction().begin();

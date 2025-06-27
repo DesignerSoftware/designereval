@@ -64,6 +64,7 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void cargarPreguntas() {
+        System.out.println("ControladorEvaluacion.cargarPreguntas()");
         FacesContext x = FacesContext.getCurrentInstance();
         evaluadoActual = (Evaluados) ((ControladorInicioEval) x.getApplication().evaluateExpressionGet(x, "#{controladorInicioEval}", ControladorInicioEval.class)).obtenerInformacion(0);
         evaluado = evaluadoActual.getNombrePersona();
@@ -83,14 +84,21 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void cargarDetallePreguntas() {
+        System.out.println("ControladorEvaluacion.cargarDetallePreguntas()");
         preguntas = administrarEvaluacion.obtenerCuestinonario(secPrueba, secIndigacion);
         nroPreguntas = administrarEvaluacion.obtenerNroPreguntas(secPrueba);
         validarSiExistenRespuestas();
         obtenerPuntajeMaximo();
         calcularPuntajePorcentaje();
+        for (Preguntas pregunta : preguntas) {
+            for (Respuestas respuesta : pregunta.getRespuestas()) {
+                System.out.println("res_4: " + respuesta.getCuantitativo() + " ; " + respuesta.getCualitativo() + " ; " + respuesta.getDescripcion());
+            }
+        }
     }
 
     public void enviarRespuestas() {
+        System.out.println("ControladorEvaluacion.enviarRespuestas()");
         boolean todas = true;
         for (Preguntas pregunta : preguntas) {
             if (pregunta.getRespuesta() == null) {
@@ -104,23 +112,10 @@ public class ControladorEvaluacion implements Serializable {
                 if ((observacionEvaluador.length() > 30 && observacionEvaluador.length() < 500)
                         || observacionEvaluador.length() == 30 || observacionEvaluador.length() == 500) {
                     boolean error = true;
-                    /*if (administrarEvaluacion.registrarActualizarRespuesta(preguntas, secIndigacion)) {
-                        error = false;
-                    } else {
-                        MensajesUI.error("No fue posible registrar las respuesta.");
-                        error = true;
-                    }
-                    if (!error) {
-                        if (administrarEvaluacion.actualizarPorcentaje(secIndigacion, observacionEvaluador, porcentaje)
-                                && administrarEvaluacion.actualizarPorcentaje(secConvocatoria, secEvaluado, agrupado)) {
-                            PrimefacesContextUI.ejecutar("PF('envioExitoso').show()");
-                        } else {
-                            MensajesUI.error("No fue posible registrar el puntaje, ni la observación en la prueba.");
-                        }
-                    }*/
+                    
                     if (administrarEvaluacion.registrarRespuestasPuntos(preguntas, secIndigacion,
                             observacionEvaluador, porcentaje,
-                            secConvocatoria, secEvaluado, agrupado)) {
+                            secConvocatoria, secEvaluado, agrupado, evaluadoActual.getEmpleado(), this.convocatoriaActual.getEvalVigConvocatoria())) {
                         PrimefacesContextUI.ejecutar("PF('envioExitoso').show()");
                     } else {
                         MensajesUI.error("No fue posible registrar la evaluación. Inténtelo de nuevo por favor.");
@@ -137,6 +132,7 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void eliminarRespuestas() {
+        System.out.println("ControladorEvaluacion.eliminarRespuestas()");
         observacionEvaluador = null;
         /*if (administrarEvaluacion.eliminarRespuestas(secIndigacion)
                 && administrarEvaluacion.actualizarPorcentaje(secIndigacion, observacionEvaluador, 0)
@@ -151,6 +147,7 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void validarSiExistenRespuestas() {
+        System.out.println("ControladorEvaluacion.validarSiExistenRespuestas()");
         tieneRespuestas = false;
         for (Preguntas pregunta : preguntas) {
 //            if (!pregunta.isNuevo()) {
@@ -162,6 +159,7 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void obtenerPuntajeMaximo() {
+        System.out.println("ControladorEvaluacion.obtenerPuntajeMaximo()");
         /*
         puntajeMaximo = BigDecimal.ZERO;
         for (Preguntas pregunta : preguntas) {
@@ -178,6 +176,7 @@ public class ControladorEvaluacion implements Serializable {
     }
 
     public void calcularPuntajePorcentaje() {
+        System.out.println("ControladorEvaluacion.calcularPuntajePorcentaje()");
         double puntajeInt = 0l;
         porcentaje = 0;
         for (Preguntas pregunta : preguntas) {
@@ -197,42 +196,52 @@ public class ControladorEvaluacion implements Serializable {
 
     //GETTER AND SETTER
     public List<Preguntas> getPreguntas() {
+        System.out.println("ControladorEvaluacion.getPreguntas()");
         return preguntas;
     }
 
     public String getEvaluado() {
+        System.out.println("ControladorEvaluacion.getEvaluado()");
         return evaluado;
     }
 
     public String getEvaluador() {
+        System.out.println("ControladorEvaluacion.getEvaluador()");
         return evaluador;
     }
 
     public String getConvocatoria() {
+        System.out.println("ControladorEvaluacion.getConvocatoria()");
         return convocatoria;
     }
 
     public BigInteger getNroPreguntas() {
+        System.out.println("ControladorEvaluacion.getNroPreguntas()");
         return nroPreguntas;
     }
 
     public BigDecimal getPuntajeMaximo() {
+        System.out.println("ControladorEvaluacion.getPuntajeMaximo()");
         return puntajeMaximo;
     }
 
     public String getPrueba() {
+        System.out.println("ControladorEvaluacion.getPrueba()");
         return prueba;
     }
 
     public String getObservacionEvaluador() {
+        System.out.println("ControladorEvaluacion.getObservacionEvaluador()");
         return observacionEvaluador;
     }
 
     public void setObservacionEvaluador(String observacionEvaluador) {
+        System.out.println("ControladorEvaluacion.setObservacionEvaluador()");
         this.observacionEvaluador = observacionEvaluador;
     }
 
     public boolean isTieneRespuestas() {
+        System.out.println("ControladorEvaluacion.isTieneRespuestas()");
         return tieneRespuestas;
     }
 
@@ -263,36 +272,49 @@ public class ControladorEvaluacion implements Serializable {
 
     public void asignarPuntajeHistorico() {
         System.out.println("ControladorEvaluacion.asignarPuntajeHistorico()");
+        boolean cnContinuar = false;
         for (Preguntas pregunta : preguntas) {
+            System.out.println("pregunta: " + pregunta.getSecuencia() + " " + pregunta.getTipo());
+            System.out.println("Cantidad respuestas: " + pregunta.getRespuestas());
             if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo())) {
-                for (Respuestas respuesta: pregunta.getRespuestas()){
-                    if (respuesta.getCuantitativo().compareTo(BigDecimal.ZERO) == 0){
-                        pregunta.setRespuesta(respuesta.getSecuencia());
+                for (Respuestas respuesta : pregunta.getRespuestas()) {
+                    System.out.println("respuesta: " + respuesta);
+                    if (respuesta.getCuantitativo().compareTo(BigDecimal.ZERO) == 0) {
+                        BigDecimal valorHistorico = administrarEvaluacion.consultarEvaluacionHistorica(evaluadoActual.getEmpleado(), this.convocatoriaActual.getSecuencia(), this.convocatoriaActual.getEvalVigConvocatoria(), this.secIndigacion, pregunta);
+                        System.out.println("valorHistorico: "+valorHistorico);
+                        if (valorHistorico.compareTo(new BigDecimal("-1")) > 0) {
+                            respuesta.setCuantitativo(valorHistorico);
+                            pregunta.setRespuesta(respuesta.getSecuencia());
+                            MensajesUI.info("Consulta realizada exitosamente.");
+                            cnContinuar = true;
+                        } else {
+                            System.out.println("Error " + "ControladorEvaluacion.asignarPuntajeHistorico()" + "No asigno la respuesta");
+                            MensajesUI.error("No fue posible consultar la evaluación anterior.");
+                        }
                     }
-                }
-                if (administrarEvaluacion.consultarEvaluacionHistorica(evaluadoActual.getEmpleado(), this.convocatoriaActual.getEvalVigConvocatoria(), this.secIndigacion, pregunta)) {
-                    MensajesUI.info("Consulta realizada exitosamente.");
-                } else {
-                    MensajesUI.error("No fue posible consultar la evaluación anterior.");
                 }
             }
         }
-        cargarDetallePreguntas();
+        //cargarDetallePreguntas();
     }
 
     public double getPuntaje() {
+        System.out.println("ControladorEvaluacion.getPuntaje()");
         return puntaje;
     }
 
     public double getPorcentaje() {
+        System.out.println("ControladorEvaluacion.getPorcentaje()");
         return porcentaje;
     }
 
     public boolean isObservacionObligatoria() {
+        System.out.println("ControladorEvaluacion.isObservacionObligatoria()");
         return observacionObligatoria;
     }
 
     public Pruebas getPruebaActual() {
+        System.out.println("ControladorEvaluacion.getPruebaActual()");
         return pruebaActual;
     }
 

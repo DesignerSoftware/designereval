@@ -16,7 +16,7 @@ public interface IPersistenciaRespuestas {
 
     public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta);
 
-    public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta, String Historica);
+    public List<Respuestas> obtenerRespuestas(EntityManager em, BigInteger secPregunta, BigInteger secIndagacion, String Historica);
 
     public boolean registrarRespuesta(EntityManager em, BigInteger secIndagacion, BigInteger secPregunta, BigInteger secRespuesta);
 
@@ -26,7 +26,8 @@ public interface IPersistenciaRespuestas {
 
     public boolean eliminarRespuestas(EntityManager em, BigInteger secIndagacion);
 
-    public boolean registrarActualizarRespuesta(EntityManager em, List<Preguntas> preguntas, BigInteger secIndagacion);
+    public boolean registrarActualizarRespuesta(EntityManager em, List<Preguntas> preguntas, BigInteger secIndagacion
+            , BigInteger secConvocatoria, BigInteger secEvaluado, BigInteger secEmpleado, Date fechaCorte);
 
     /**
      * Método para consultar el puntaje obtenido por un emleado en 
@@ -35,10 +36,11 @@ public interface IPersistenciaRespuestas {
      * 
      * @param em Manejador de la conexión.
      * @param secEmpleado secuencia del empleado.
+     * @param secConvocatoria secuencia de la convocatoria actual
      * @param dtFechaCorte Fecha límite para realizar la consulta.
      * @return Puntaje obtenido por el empleado en esa evaluación.
      */
-    public BigDecimal consultarPuntajeEvalAnterior(EntityManager em, BigInteger secEmpleado, Date dtFechaCorte);
+    public BigDecimal consultarPuntajeEvalAnterior(EntityManager em, BigInteger secEmpleado, BigInteger secConvocatoria, Date dtFechaCorte);
     
     public boolean registrarActualizarRespuestaHistorica(EntityManager em, Preguntas pregunta, BigInteger secIndagacion, BigDecimal resAnterior);
     

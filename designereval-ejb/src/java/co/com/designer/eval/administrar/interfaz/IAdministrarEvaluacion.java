@@ -2,6 +2,7 @@ package co.com.designer.eval.administrar.interfaz;
 
 import co.com.designer.eval.entidades.Convocatorias;
 import co.com.designer.eval.entidades.Preguntas;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -28,11 +29,11 @@ public interface IAdministrarEvaluacion {
 
     public boolean actualizarPorcentaje(BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
 
-    public boolean registrarActualizarRespuesta(List<Preguntas> preguntas, BigInteger secIndagacion);
+    //public boolean registrarActualizarRespuesta(List<Preguntas> preguntas, BigInteger secIndagacion);
     public boolean registrarRespuestasPuntos(List<Preguntas> preguntas, BigInteger secIndagacion,
             String observacionEvaluador, double porcentaje,
-            BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
+            BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado, BigInteger secEmpleado, Date fechaCorte);
 
     public boolean reiniciarEvaluacion(BigInteger secIndagacion, String observacion, double porcentaje, BigInteger secConvocatoria, BigInteger secEvaluado, Integer agrupado);
-    public boolean consultarEvaluacionHistorica(BigInteger secEmpleado, Date fechaCorte, BigInteger secIndagacion, Preguntas pregunta);
+    public BigDecimal consultarEvaluacionHistorica(BigInteger secEmpleado, BigInteger secConvocatoria, Date fechaCorte, BigInteger secIndagacion, Preguntas pregunta);
 }

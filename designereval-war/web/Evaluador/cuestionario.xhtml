@@ -44,7 +44,7 @@
             </center>
         </p:column>
         <p:column>
-            <ui:repeat var="pregunta" value="#{controladorEvaluacion.preguntas}" varStatus="status">
+            <ui:repeat id="rppreguntas" var="pregunta" value="#{controladorEvaluacion.preguntas}" varStatus="status">
                 <div style="background-color: #{pregunta.respuesta == null ? '' : '#D1D7FA'}">
                      <ui:repeat var="despreg" value="#{pregunta.arDescripcion}" varStatus="desstatus">
                     <h:outputText value="#{despreg}"
@@ -52,7 +52,7 @@
                     <br/>
             </ui:repeat>
             <div style="display: #{controladorEvaluacion.mostrarPosiblesRespuestas(pregunta) ? '' : 'none'}">
-                <p:selectOneRadio layout="pageDirection" value="#{pregunta.respuesta}" >
+                <p:selectOneRadio id="sorrespuestas" layout="pageDirection" value="#{pregunta.respuesta}" >
                     <f:selectItems value="#{pregunta.respuestas}" var="r" 
                                    itemLabel=" #{r.cuantitativo} ) #{r.cualitativo} - #{r.descripcion}" 
                                    itemValue="#{r.secuencia}"/> 
@@ -178,6 +178,7 @@
                                  actionListener="#{controladorEvaluacion.asignarPuntajeHistorico()}"
                                  onclick="PF('evaluaciones').hide();"
                                  update=":principalForm:cuestionario"
+                                 oncomplete="actualizarScore();"
                                  process="@this" />
             </p:column>
         </p:panelGrid>
