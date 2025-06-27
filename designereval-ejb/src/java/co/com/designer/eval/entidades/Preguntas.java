@@ -28,6 +28,9 @@ public class Preguntas implements Serializable {
     private String observacion;
     @Column(name = "TIPO")
     private String tipo;
+    @Column(name="PESO")
+    private BigInteger peso;
+    
     @Transient
     private List<Respuestas> respuestas;
     @Transient
@@ -89,6 +92,14 @@ public class Preguntas implements Serializable {
         this.tipo = tipo;
     }
 
+    public BigInteger getPeso() {
+        return peso;
+    }
+
+    public void setPeso(BigInteger peso) {
+        this.peso = peso;
+    }
+    
     public List<Respuestas> getRespuestas() {
         return respuestas;
     }

@@ -23,7 +23,7 @@ public class PersistenciaPreguntas implements IPersistenciaPreguntas {
         try {
 //            em.getTransaction().begin();
             em.joinTransaction();
-            Query q = em.createNativeQuery("SELECT SECUENCIA, CONSECUTIVO, REPLACE(DESCRIPCION, CHR(10), chr(35)) DESCRIPCION, OBSERVACIONES, TIPO \n"
+            Query q = em.createNativeQuery("SELECT SECUENCIA, CONSECUTIVO, REPLACE(DESCRIPCION, CHR(10), chr(35)) DESCRIPCION, OBSERVACIONES, TIPO, PESO \n"
                     + "FROM EVALPREGUNTAS \n"
                     + "WHERE EVALPLANILLA=( \n"
                     + " SELECT PL.SECUENCIA \n"

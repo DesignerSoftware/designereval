@@ -183,7 +183,8 @@ public class ControladorEvaluacion implements Serializable {
             if (pregunta.getRespuesta() != null) {
                 for (Respuestas respuesta : pregunta.getRespuestas()) {
                     if (respuesta.getSecuencia().compareTo(pregunta.getRespuesta()) == 0) {
-                        puntajeInt = puntajeInt + respuesta.getCuantitativo().doubleValue();
+//                        puntajeInt = puntajeInt + respuesta.getCuantitativo().doubleValue();
+                        puntajeInt = puntajeInt + (respuesta.getCuantitativo().doubleValue()*pregunta.getPeso().doubleValue());
                         break;
                     }
                 }
