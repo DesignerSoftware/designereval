@@ -107,12 +107,13 @@ public class ControladorEvaluacion implements Serializable {
             }
         }
         if (todas) {
-            observacionEvaluador = observacionEvaluador.trim();
-            if ((observacionObligatoria && (observacionEvaluador != null && !observacionEvaluador.isEmpty()))) {
+
+            if (((observacionEvaluador != null && !observacionEvaluador.isEmpty())) && observacionObligatoria) {
+                observacionEvaluador = observacionEvaluador.trim();
                 if ((observacionEvaluador.length() > 30 && observacionEvaluador.length() < 500)
                         || observacionEvaluador.length() == 30 || observacionEvaluador.length() == 500) {
                     boolean error = true;
-                    
+
                     if (administrarEvaluacion.registrarRespuestasPuntos(preguntas, secIndigacion,
                             observacionEvaluador, porcentaje,
                             secConvocatoria, secEvaluado, agrupado, evaluadoActual.getEmpleado(), this.convocatoriaActual.getEvalVigConvocatoria())) {
@@ -183,8 +184,8 @@ public class ControladorEvaluacion implements Serializable {
             if (pregunta.getRespuesta() != null) {
                 for (Respuestas respuesta : pregunta.getRespuestas()) {
                     if (respuesta.getSecuencia().compareTo(pregunta.getRespuesta()) == 0) {
-//                        puntajeInt = puntajeInt + respuesta.getCuantitativo().doubleValue();
-                        puntajeInt = puntajeInt + (respuesta.getCuantitativo().doubleValue()*pregunta.getPeso().doubleValue());
+                        puntajeInt = puntajeInt + respuesta.getCuantitativo().doubleValue();
+//                        puntajeInt = puntajeInt + (respuesta.getCuantitativo().doubleValue()*pregunta.getPeso().doubleValue()/100);
                         break;
                     }
                 }
@@ -280,19 +281,19 @@ public class ControladorEvaluacion implements Serializable {
             if ("HISTORICA".equalsIgnoreCase(pregunta.getTipo())) {
                 for (Respuestas respuesta : pregunta.getRespuestas()) {
                     System.out.println("respuesta: " + respuesta);
-                    if (respuesta.getCuantitativo().compareTo(BigDecimal.ZERO) == 0) {
-                        BigDecimal valorHistorico = administrarEvaluacion.consultarEvaluacionHistorica(evaluadoActual.getEmpleado(), this.convocatoriaActual.getSecuencia(), this.convocatoriaActual.getEvalVigConvocatoria(), this.secIndigacion, pregunta);
-                        System.out.println("valorHistorico: "+valorHistorico);
-                        if (valorHistorico.compareTo(new BigDecimal("-1")) > 0) {
-                            respuesta.setCuantitativo(valorHistorico);
-                            pregunta.setRespuesta(respuesta.getSecuencia());
-                            MensajesUI.info("Consulta realizada exitosamente.");
-                            cnContinuar = true;
-                        } else {
-                            System.out.println("Error " + "ControladorEvaluacion.asignarPuntajeHistorico()" + "No asigno la respuesta");
-                            MensajesUI.error("No fue posible consultar la evaluación anterior.");
-                        }
+//                    if (respuesta.getCuantitativo().compareTo(BigDecimal.ZERO) == 0) {
+                    BigDecimal valorHistorico = administrarEvaluacion.consultarEvaluacionHistorica(evaluadoActual.getEmpleado(), this.convocatoriaActual.getSecuencia(), this.convocatoriaActual.getEvalVigConvocatoria(), this.secIndigacion, pregunta);
+                    System.out.println("valorHistorico: " + valorHistorico);
+                    if (valorHistorico.compareTo(new BigDecimal("-1")) > 0) {
+                        respuesta.setCuantitativo(valorHistorico);
+                        pregunta.setRespuesta(respuesta.getSecuencia());
+                        MensajesUI.info("Consulta realizada exitosamente.");
+                        cnContinuar = true;
+                    } else {
+                        System.out.println("Error " + "ControladorEvaluacion.asignarPuntajeHistorico()" + "No asigno la respuesta");
+                        MensajesUI.error("No fue posible consultar la evaluación anterior.");
                     }
+//                    }
                 }
             }
         }
