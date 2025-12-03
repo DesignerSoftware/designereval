@@ -267,7 +267,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + "WHERE EVC.EMPRESA = EM.SECUENCIA \n"
                     + "AND EC.EVALVIGCONVOCATORIA = EVC.SECUENCIA \n"
                     + "AND ERC.EVALCONVOCATORIA = EC.SECUENCIA \n"
-                    + "AND EC.SECUENCIA <> ? "
+                    + "AND EC.SECUENCIA <> ? \n"
                     + "AND EVC.FECHAVIGENCIA = ( \n"
                     + " SELECT MAX(EVCI.FECHAVIGENCIA) \n"
                     + " FROM EVALVIGCONVOCATORIAS EVCI, EVALCONVOCATORIAS ECI \n"
@@ -277,10 +277,10 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + " AND ERCI.EVALCONVOCATORIA = ECI.SECUENCIA \n"
                     + " AND ERCI.EMPLEADO = ERC.EMPLEADO \n"
                     + " AND ECI.ESTADO =EC.ESTADO \n"
-                    + " AND ECI.SECUENCIA <> ? "
-                    + " AND EVCI.FECHAVIGENCIA BETWEEN TRUNC(TO_DATE( ? , 'DD-MM-YYYY'), 'MM') AND LAST_DAY(TO_DATE( ? , 'DD-MM-YYYY'))) \n"
-                    //                    + "AND EC.ESTADO IN ('ALCANCE') \n"
-                    + "AND EC.ESTADO IN ('PROCESAR') \n"
+                    + " AND ECI.SECUENCIA <> ? \n"
+                    + " AND EVCI.FECHAVIGENCIA BETWEEN TRUNC(TO_DATE( ? , 'DD-MM-YYYY')-30, 'MM') AND LAST_DAY(TO_DATE( ? , 'DD-MM-YYYY'))) \n"
+                    //+ "AND EC.ESTADO IN ('ALCANCE') \n"
+                    //+ "AND EC.ESTADO IN ('PROCESAR') \n"
                     + "AND ERC.EMPLEADO = ? ");
             q.setParameter(1, secConvocatoria);
             q.setParameter(2, secConvocatoria);
