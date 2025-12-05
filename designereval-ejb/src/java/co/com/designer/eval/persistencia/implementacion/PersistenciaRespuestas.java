@@ -276,7 +276,7 @@ public class PersistenciaRespuestas implements IPersistenciaRespuestas {
                     + " AND ECI.EVALVIGCONVOCATORIA = EVCI.SECUENCIA \n"
                     + " AND ERCI.EVALCONVOCATORIA = ECI.SECUENCIA \n"
                     + " AND ERCI.EMPLEADO = ERC.EMPLEADO \n"
-                    + " AND ECI.ESTADO =EC.ESTADO \n"
+                    //+ " AND ECI.ESTADO =EC.ESTADO \n"
                     + " AND ECI.SECUENCIA <> ? \n"
                     + " AND EVCI.FECHAVIGENCIA BETWEEN TRUNC(TO_DATE( ? , 'DD-MM-YYYY')-30, 'MM') AND LAST_DAY(TO_DATE( ? , 'DD-MM-YYYY'))) \n"
                     //+ "AND EC.ESTADO IN ('ALCANCE') \n"
